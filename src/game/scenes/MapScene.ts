@@ -177,13 +177,25 @@ export class MapScene extends Phaser.Scene {
     this.scale.on(Phaser.Scale.Events.RESIZE, this.updateCameraZoom);
     this.updateCameraZoom();
 
+    // Camera.preRender() (where startFollow's lerp actually moves
+    // scrollX/scrollY) runs during Phaser's render pass, AFTER every scene's
+    // update() has already run for this frame -- so emitting camera:frame
+    // from update() would always carry the PREVIOUS frame's scroll, one step
+    // behind what's actually drawn. Normally that's a sub-pixel, invisible
+    // lag, but right after a big camera jump (entering the map, closing a
+    // panel, a zoom change) the lerp step itself is large, and DOM badges
+    // (see DiscoveryIndicators) would visibly trail behind their landmark's
+    // sprite for a frame or two. Camera's own 'followupdate' event fires
+    // once scrollX/scrollY are finalized for the frame (after clamping),
+    // guaranteeing this always reflects what's actually on screen.
+    this.cameras.main.on(Phaser.Cameras.Scene2D.Events.FOLLOW_UPDATE, this.emitCameraFrame, this);
+
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanup());
 
     this.bus.emit('game:ready', undefined);
   }
 
   update(_time: number, delta: number): void {
-    this.emitCameraFrame();
     this.updateLandmarkLights();
 
     if (!this.controlsEnabled) {
@@ -666,10 +678,14 @@ export class MapScene extends Phaser.Scene {
   };
 
   /**
-   * Reports the camera's current transform and the snail's world position
-   * every frame so DOM overlays (DiscoveryIndicators) can project each
-   * landmark's world position to screen pixels themselves and stay glued to
-   * the map through the camera's continuous follow-lerp and any zoom change.
+   * Reports the camera's current transform and the snail's world position so
+   * DOM overlays (DiscoveryIndicators) can project each landmark's world
+   * position to screen pixels themselves and stay glued to the map through
+   * the camera's continuous follow-lerp and any zoom change. Bound to the
+   * camera's own 'followupdate' event (see create()) rather than called from
+   * update() -- that event fires once scrollX/scrollY are finalized for the
+   * frame, so this always reports what's actually about to be drawn instead
+   * of the previous frame's stale scroll.
    */
   private emitCameraFrame(): void {
     const camera = this.cameras.main;
@@ -684,6 +700,7 @@ export class MapScene extends Phaser.Scene {
 
   private cleanup(): void {
     this.scale.off(Phaser.Scale.Events.RESIZE, this.updateCameraZoom);
+    this.cameras.main.off(Phaser.Cameras.Scene2D.Events.FOLLOW_UPDATE, this.emitCameraFrame, this);
     this.unsubscribers.forEach((unsub) => unsub());
     this.unsubscribers = [];
     this.ambient.destroy();
