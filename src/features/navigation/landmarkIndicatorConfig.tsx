@@ -44,7 +44,7 @@ export type LandmarkIndicatorConfig = {
 export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConfig> = {
   kiosk: {
     icon: TShirt,
-    label: 'Mertx',
+    label: 'Denda',
     revealRadius: LANDMARK_REVEAL_RADIUS,
     visualHeight: 118,
   },

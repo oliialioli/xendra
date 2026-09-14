@@ -102,7 +102,7 @@ export const xendraContent: XendraContent = {
       id: 'kiosk',
       route: '/merch',
       title: 'Kioskoa',
-      shortLabel: 'Mertx',
+      shortLabel: 'Denda',
       description: 'Xendraren kioskoa, taldearen berritasunekin.',
       position: LANDMARK_POSITIONS.kiosk,
       interactionRadius: LANDMARK_INTERACTION_RADIUS,

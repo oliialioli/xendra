@@ -28,7 +28,7 @@
 }
 
 .panel.wide {
-  width: min(640px, calc(100vw - var(--space-5) * 2));
+  width: min(760px, calc(100vw - var(--space-5) * 2));
 }
 
 .header {

@@ -40,6 +40,7 @@ export const PANEL_ROUTES: PanelRouteConfig[] = [
     landmarkId: 'stage',
     title: 'Kontzertuak',
     Component: ConcertsPanel,
+    variant: 'wide',
     icon: '☾',
   },
   {
@@ -55,12 +56,13 @@ export const PANEL_ROUTES: PanelRouteConfig[] = [
     landmarkId: 'trainHistory',
     title: 'Xendraren historia',
     Component: HistoryPanel,
+    variant: 'wide',
     icon: '☖',
   },
   {
     route: '/merch',
     landmarkId: 'kiosk',
-    title: 'Mertx',
+    title: 'Denda',
     Component: MerchPanel,
     variant: 'wide',
     icon: '✦',
