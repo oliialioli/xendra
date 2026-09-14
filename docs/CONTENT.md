@@ -8,9 +8,8 @@ código.
 
 ## Prioritario
 
-- [ ] **Confirmar `Bia` vs `Bihia`** — campo único `album.albumTitle` en
-      `xendraContent.ts` (buscar `TODO_CONFIRM_ALBUM_TITLE`). No está duplicado en
-      ningún componente: cambiar solo este valor.
+- [x] **`Bia` vs `Bihia`** — confirmado como "Bihia" (badok.eus y Apple Music).
+      `album.albumTitle` en `xendraContent.ts`.
 - [ ] **Saludo exacto del kiosco** — actualmente `«Aupa, egun on!»` provisional.
       Campo `kiosk.greetingTodo` en `xendraContent.ts`, usado en `MerchPanel.tsx`.
 - [ ] **Email de contacto/contratación** — campo `contact.email` (actualmente
@@ -19,17 +18,16 @@ código.
 
 ## Integrantes (7)
 
-Array `members` en `xendraContent.ts`. Para cada uno: `name`, `pronouns`,
-`bio`, y opcionalmente `photoPath` (ver `docs/ASSETS.md`). El `instrument` de
-cada uno ya está asignado según los 7 instrumentos conocidos de la banda (violín,
-violonchelo, batería, guitarra acústica, guitarra eléctrica, bajo, piano) — solo
-falta el nombre y la biografía real de cada persona.
+Array `members` en `xendraContent.ts`. Nombres e instrumentos ya son reales
+(fuente: la propia banda). Falta: `pronouns` y `bio` (biografía breve) de cada
+persona, y opcionalmente `photoPath` (ver `docs/ASSETS.md`).
 
 ## Disco y canciones (8)
 
-Array `album.tracks` en `xendraContent.ts`. Para cada una de las 8 canciones:
-`title`, `durationLabel`, y opcionalmente `previewUrl`/`fullTrackUrl`. También
-`album.coverPath` y `album.credits`.
+Array `album.tracks` en `xendraContent.ts`. Títulos ya son reales (fuente:
+badok.eus). Falta: `durationLabel` de cada canción (no aparece publicado en
+badok.eus ni Apple Music) y opcionalmente `previewUrl`/`fullTrackUrl`.
+`album.coverPath` (portada) también sigue pendiente.
 
 ## Conciertos
 
@@ -66,7 +64,6 @@ elemento: `kind` (`photo`/`video`), `thumbnailPath`, `fullPath`, `altText`.
 
 - Ningún nombre de integrante, fecha de concierto, letra, título de canción,
   precio, enlace o dato de contacto ha sido inventado: todo lo que falta está
-  marcado explícitamente con `TODO_CONTENT` (o `TODO_CONFIRM_ALBUM_TITLE` para el
-  caso del título del disco).
+  marcado explícitamente con `TODO_CONTENT`.
 - Al rellenar contenido real, mantén los tipos de `src/types/content.ts` — el
   build (`npm run typecheck`) fallará si falta o sobra algún campo.

@@ -5,12 +5,8 @@ import { LANDMARK_INTERACTION_RADIUS, LANDMARK_POSITIONS } from './mapGeometry';
  * Single source of truth for every editable string in the experience.
  * Content is in Euskera (Basque) throughout. See docs/CONTENT.md for the
  * full list of TODO_CONTENT items to replace.
- *
- * TODO_CONFIRM_ALBUM_TITLE: source material is inconsistent between "Bia" and
- * "Bihia". "Bihia" is used provisionally everywhere via `album.albumTitle`.
- * Update this single field once confirmed -- never duplicate the title in components.
  */
-const albumTitle = 'Bihia'; // TODO_CONFIRM_ALBUM_TITLE
+const albumTitle = 'Bihia'; // confirmed via badok.eus and Apple Music
 
 export const xendraContent: XendraContent = {
   band: {
@@ -35,15 +31,24 @@ export const xendraContent: XendraContent = {
 
   album: {
     albumTitle,
-    albumTitleTodo: 'TODO_CONFIRM_ALBUM_TITLE: berretsi "Bia" ala "Bihia"',
     coverPath: null,
-    credits: 'SIMA estudioan grabatua, 2024ko uztailean, Ibai Osinagaren laguntzaz.',
+    credits:
+      'SIMA estudioan grabatua eta nahastua (Irunberri, Nafarroa), Ibai Osinagaren laguntzaz. Masterizazioa: Martxel Arkarazo (Garate estudioak, Andoain). 2025eko urtarrilaren 9an atera zen.',
     externalLinks: [{ label: 'Apple Music', url: 'https://music.apple.com/es/album/bihia/1785223280' }],
-    tracks: Array.from({ length: 8 }, (_, index) => ({
+    tracks: [
+      'Amilena',
+      'Belar txarrak',
+      'Lurrazala',
+      'Hor',
+      'Errauts eskuak',
+      'Erregai',
+      'Hura',
+      'Bakoitzari berea',
+    ].map((title, index) => ({
       id: `track-${index + 1}`,
       index: index + 1,
-      title: `TODO_CONTENT: ${index + 1}. abestia`,
-      durationLabel: '--:--',
+      title,
+      durationLabel: '--:--', // TODO_CONTENT: iraupen zehatzak (ez daude ez badok.eus ez Apple Music-en agerian)
       previewUrl: null,
       fullTrackUrl: null,
     })),
@@ -89,7 +94,7 @@ export const xendraContent: XendraContent = {
       id: 'kiosk',
       route: '/merch',
       title: 'Kioskoa',
-      shortLabel: 'Salgaiak',
+      shortLabel: 'Merch',
       description: 'Xendraren kioskoa, taldearen berritasunekin.',
       position: LANDMARK_POSITIONS.kiosk,
       interactionRadius: LANDMARK_INTERACTION_RADIUS,

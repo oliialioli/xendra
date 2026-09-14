@@ -10,7 +10,6 @@ export function MusicPanel() {
     <div>
       <section className={shared.section}>
         <h3>{album.albumTitle}</h3>
-        <p className={shared.statusText}>{album.albumTitleTodo}</p>
         <p className={shared.lead}>{album.credits}</p>
         {album.externalLinks.length > 0 && (
           <ul className={shared.list}>

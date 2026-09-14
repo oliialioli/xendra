@@ -56,7 +56,6 @@ export type Track = {
 
 export type Album = {
   albumTitle: string;
-  albumTitleTodo: string;
   coverPath: string | null;
   credits: string;
   externalLinks: { label: string; url: string }[];

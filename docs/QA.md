@@ -47,7 +47,6 @@ pasada manual.
 - [ ] Conciertos sin datos reales → empty state cuidado, ninguna fecha inventada.
 - [ ] Archivo (fotos/vídeos) sin datos reales → empty state, ningún placeholder de
       stock.
-- [ ] `TODO_CONFIRM_ALBUM_TITLE` visible en el panel de música y en el código.
 - [ ] Formulario de contacto: valida campos, y si `contact.email` es `null` no
       permite "enviar" nada ni finge un envío (test cubierto en
       `ContactPanel.test.tsx`).

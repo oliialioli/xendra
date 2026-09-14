@@ -60,7 +60,7 @@ export const PANEL_ROUTES: PanelRouteConfig[] = [
   {
     route: '/merch',
     landmarkId: 'kiosk',
-    title: 'Salgaiak',
+    title: 'Merch',
     Component: MerchPanel,
     variant: 'wide',
     icon: '✦',
