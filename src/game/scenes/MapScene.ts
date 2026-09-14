@@ -193,9 +193,6 @@ export class MapScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanup());
 
     this.bus.emit('game:ready', undefined);
-
-    // TEMP DEBUG -- removed before final delivery
-    (window as unknown as { __xendra: unknown }).__xendra = { scene: this };
   }
 
   update(_time: number, delta: number): void {

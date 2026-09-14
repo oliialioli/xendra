@@ -148,6 +148,11 @@ export const OBSTACLE_RECTS: ObstacleRect[] = [
   // frontmost bench's own corner), so that point itself -- where the player
   // approaches from the path -- stays walkable.
   { id: 'stage-structure', x: 646, y: 295, width: 286, height: 166 },
+  // Sized to the music school's own building footprint (see SCHOOL_CONFIG
+  // below), inset slightly from the analyzed silhouette so its roof's own
+  // edge lip stays walkable-adjacent, with its bottom edge a little above
+  // the anchor point (the entrance) so the player can approach from the front.
+  { id: 'school-building', x: 1547, y: 435, width: 182, height: 144 },
 ];
 
 /** Small round obstacles. Empty for now -- see the OBSTACLE_RECTS comment above. */
@@ -206,10 +211,34 @@ export const STAGE_CONFIG = {
   widthPercent: 14,
 };
 
+/**
+ * Editable placement for the music school, same pattern as KIOSK_CONFIG /
+ * STAGE_CONFIG above. Starting values converted from a 1672x941 reference
+ * screenshot the band measured coordinates on (x:1105, y:420, ~205-220px
+ * wide there) into this project's actual WORLD_WIDTH/HEIGHT, then nudged
+ * slightly once checked against the real plaza artwork.
+ */
+export const SCHOOL_CONFIG = {
+  /** Horizontal position, 0-100, percentage of WORLD_WIDTH. */
+  xPercent: 64.0,
+  /**
+   * Vertical position, 0-100, percentage of WORLD_HEIGHT -- the building's
+   * own ground-contact point (bottom-center of its analyzed silhouette), not
+   * the center of the PNG canvas.
+   */
+  yPercent: 40.9,
+  /**
+   * Approved on-screen width (percentage of WORLD_WIDTH) of the *visible
+   * building* silhouette only -- not the PNG's full canvas width, which
+   * includes transparent padding.
+   */
+  widthPercent: 8.3,
+};
+
 export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   kiosk: { x: (KIOSK_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (KIOSK_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   stage: { x: (STAGE_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (STAGE_CONFIG.yPercent / 100) * WORLD_HEIGHT },
-  school: { x: 1623, y: 543 },
+  school: { x: (SCHOOL_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (SCHOOL_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   fountain: { x: 1240, y: 658 },
   trainHistory: { x: 2159, y: 582 },
   bulletinBoard: { x: 988, y: 918 },
@@ -284,6 +313,15 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
     path: '/assets/landmarks/escenario-xendra.png',
     lightsPath: '/assets/landmarks/escenario-xendra-luces.png',
     approvedBuildingWidth: (STAGE_CONFIG.widthPercent / 100) * WORLD_WIDTH,
+    renderOffset: { x: 0, y: 0 },
+  },
+  // "default" state art. A future "active" state
+  // (escuela-musica-xendra-active.png) will reuse this exact position, size
+  // and anchor -- no config changes needed beyond adding its own path once
+  // that asset exists.
+  school: {
+    path: '/assets/landmarks/escuela-musica-xendra-default.png',
+    approvedBuildingWidth: (SCHOOL_CONFIG.widthPercent / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
   },
 };
