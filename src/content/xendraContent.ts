@@ -54,7 +54,15 @@ export const xendraContent: XendraContent = {
     })),
   },
 
-  concerts: [],
+  // FAKE_PLACEHOLDER_DATA -- taldeak eskatuta, diseinua ikusteko soilik.
+  // Ordeztu benetako kontzertuekin (edo hustu [] arte) inoiz argitaratu aurretik.
+  concerts: [
+    { id: 'fake-c1', city: 'Uharte', venue: 'Kultur Etxea', date: '2026-11-14', time: '21:00', status: 'upcoming', ticketsUrl: 'https://example.com/sarrerak' },
+    { id: 'fake-c2', city: 'Iruña', venue: 'Zentroa', date: '2026-12-05', time: '20:30', status: 'soldOut', ticketsUrl: null },
+    { id: 'fake-c3', city: 'Lizarra', venue: 'Gazteszena', date: '2027-01-17', time: null, status: 'upcoming', ticketsUrl: null },
+    { id: 'fake-c4', city: 'Artzi', venue: 'Jauregia', date: '2026-05-16', time: '19:30', status: 'past', ticketsUrl: null },
+    { id: 'fake-c5', city: 'Tafalla', venue: 'Kultur Etxea', date: '2025-11-02', time: null, status: 'past', ticketsUrl: null },
+  ],
 
   merch: [
     { id: 'merch-1', name: 'Kamiseta naturala', imagePath: '/assets/merch/kamiseta-naturala.jpg', priceLabel: null, available: false, ctaMode: 'comingSoon', ctaUrl: null },
@@ -69,7 +77,18 @@ export const xendraContent: XendraContent = {
     { id: 'history-5', year: '2026', title: 'Bira', description: '"Bihia" diskoa aurkezten, kontzertu bira eskaintzen dabiltza; besteak beste, Artziko Jauregian jo zuten 2026ko maiatzean.' },
   ],
 
-  media: [],
+  // FAKE_PLACEHOLDER_DATA -- taldeak eskatuta, diseinua ikusteko soilik.
+  // Argazki/bideo fitxategirik ez dagoenez oraindik, thumbnailPath/fullPath
+  // null dira (karratu gris gisa erakutsiko dira). Ordeztu benetako
+  // artxiboarekin (edo hustu [] arte) inoiz argitaratu aurretik.
+  media: [
+    { id: 'fake-m1', kind: 'photo', thumbnailPath: null, fullPath: null, altText: 'Xendra taldea entseguan' },
+    { id: 'fake-m2', kind: 'photo', thumbnailPath: null, fullPath: null, altText: 'Kontzertua Uharten' },
+    { id: 'fake-m3', kind: 'video', thumbnailPath: null, fullPath: null, altText: '"Amilena" bideoklipa' },
+    { id: 'fake-m4', kind: 'photo', thumbnailPath: null, fullPath: null, altText: 'Diskoaren grabaketa SIMA estudioan' },
+    { id: 'fake-m5', kind: 'video', thumbnailPath: null, fullPath: null, altText: 'Artziko Jauregiko emanaldia' },
+    { id: 'fake-m6', kind: 'photo', thumbnailPath: null, fullPath: null, altText: 'Taldekideak plazan' },
+  ],
 
   press: [
     {
