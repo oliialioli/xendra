@@ -18,7 +18,7 @@ export const xendraContent: XendraContent = {
     originText:
       'Xendra hitza nafar euskara zaharreko hitz batetik dator, bide, senda edo bidezidor bat adierazteko.', // TODO_CONTENT: etimologia zehatza taldearekin berretsi
     bio:
-      'Xendra Uharten (Nafarroa) sortutako sorkuntza proiektu bat da, pixkanaka osatzen joan den zazpi gazteren taldea: egunerokoan elkarrekin musika sortu eta jotzen dute. Bakoitzaren bizipenetatik abiatuta, taldeak euskarazko kantuak proposatzen ditu, ahal den heinean gai unibertsalak jorratuz.',
+      'Xendra Uharten (Nafarroa) sortutako sorkuntza proiektu bat da, pixkanaka osatzen joan den zazpi gazteren taldea: egunerokoan elkarrekin musika sortu eta jotzen dute. Folk, pop eta rock estiloak nahasten dituzte euren kantuetan. Bakoitzaren bizipenetatik abiatuta, taldeak euskarazko kantuak proposatzen ditu, ahal den heinean gai unibertsalak jorratuz.',
     tagline: 'Aurkitzeko bidea.', // TODO_CONTENT: sarrerako esaldi definitiboa
     entrySubtitle: 'Zeharkatu uhartea, aurkitu musika.', // TODO_CONTENT
   },
@@ -58,9 +58,10 @@ export const xendraContent: XendraContent = {
   ],
 
   history: [
-    { id: 'history-1', year: 'TODO_CONTENT', title: 'Xendraren sorrera', description: 'Uharten (Nafarroa) sortutako sorkuntza proiektua, pixkanaka osatzen joan den zazpi gazteren taldea.' },
+    { id: 'history-1', year: 'TODO_CONTENT', title: 'Xendraren sorrera', description: 'Bikote moduan hasitako proiektua da Xendra, pixkanaka handituz joan dena harik eta Uharten (Nafarroa) egoitza duen gaur egungo zazpikotea osatu arte.' },
     { id: 'history-2', year: 'TODO_CONTENT', title: 'Abestiak prestatzen', description: 'Urtebete inguru eman zuten elkarrekin kantuak sortzen eta lantzen, diskoa grabatu aurretik.' },
     { id: 'history-3', year: '2024', title: `"${albumTitle}" diskoaren grabaketa`, description: `2024ko uztailean grabatu zuten beraien lehen diskoa, "${albumTitle}" izenpean, SIMA estudioan, Ibai Osinagaren laguntzaz.` },
+    { id: 'history-4', year: '2026', title: 'Bira', description: '"Bihia" diskoa aurkezten, kontzertu bira eskaintzen dabiltza; besteak beste, Artziko Jauregian jo zuten 2026ko maiatzean.' },
   ],
 
   media: [],
