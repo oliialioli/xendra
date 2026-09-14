@@ -40,11 +40,10 @@ export function LandmarkIndicator({
   registerElement,
 }: LandmarkIndicatorProps) {
   const [hoverOrFocus, setHoverOrFocus] = useState(false);
-  const [tapRevealed, setTapRevealed] = useState(false);
   const [justBecameInteractable, setJustBecameInteractable] = useState(false);
   const wasInteractable = useRef(false);
 
-  const revealed = autoRevealed || hoverOrFocus || tapRevealed;
+  const revealed = autoRevealed || hoverOrFocus;
   const Icon = config.icon;
 
   useEffect(() => {
@@ -53,14 +52,6 @@ export function LandmarkIndicator({
     }
     wasInteractable.current = interactable;
   }, [interactable]);
-
-  const handleClick = () => {
-    if (interactable) {
-      onInteract();
-      return;
-    }
-    setTapRevealed((v) => !v);
-  };
 
   return (
     <div
@@ -90,9 +81,9 @@ export function LandmarkIndicator({
           onMouseLeave={() => setHoverOrFocus(false)}
           onFocus={() => setHoverOrFocus(true)}
           onBlur={() => setHoverOrFocus(false)}
-          onClick={handleClick}
+          onClick={onInteract}
           aria-expanded={revealed}
-          aria-label={interactable ? `${title}. Sakatu elkarreragiteko.` : title}
+          aria-label={`${title}. Sakatu irekitzeko.`}
           tabIndex={suppressed ? -1 : 0}
         >
           <span

@@ -13,7 +13,8 @@ export type DiscoveryIndicatorsProps = {
   /** Hidden and disabled while a panel/menu/intro sits over the map. */
   suppressed: boolean;
   reducedMotion: boolean;
-  onInteract: () => void;
+  /** Called with the clicked badge's own landmark id -- clicking a badge always opens its panel directly, regardless of the snail's distance. */
+  onInteract: (id: LandmarkId) => void;
 };
 
 /**
@@ -122,7 +123,7 @@ export function DiscoveryIndicators({
           reducedMotion={reducedMotion}
           suppressed={suppressed}
           index={index}
-          onInteract={onInteract}
+          onInteract={() => onInteract(landmark.id)}
           registerElement={registerCallbacks[landmark.id]!}
         />
       ))}

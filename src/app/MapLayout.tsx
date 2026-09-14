@@ -117,7 +117,7 @@ export function MapLayout() {
         nearestId={nearestId}
         suppressed={controlsBlocked}
         reducedMotion={settings.effectiveReducedMotion}
-        onInteract={() => bus.emit('controls:interactPressed', undefined)}
+        onInteract={(id) => bus.emit('landmark:interact', { id })}
       />
 
       <Hud
