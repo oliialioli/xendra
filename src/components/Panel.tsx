@@ -12,13 +12,13 @@ export type PanelProps = {
 };
 
 /**
- * Shared panel shell used by every section (music, concerts, group...).
- * Desktop: a compact card anchored near the bottom-left, so the map stays
- * visible and stays the protagonist -- no full-screen dark backdrop, just an
- * invisible click-catcher behind it for "click outside to close". Mobile:
- * the same component becomes a bottom sheet (see Panel.module.css).
- * Handles focus trap, Escape-to-close, aria-labelledby, and scroll
- * containment, so each section only needs to provide a title and content.
+ * Shared panel shell used by every section (music, concerts, group...). A
+ * compact card anchored to the right edge on every viewport, so the map
+ * stays visible and stays the protagonist -- no full-screen dark backdrop,
+ * just an invisible click-catcher behind it for "click outside to close"
+ * (see Panel.module.css). Handles focus trap, Escape-to-close,
+ * aria-labelledby, and scroll containment, so each section only needs to
+ * provide a title and content.
  */
 export function Panel({ title, onClose, children, variant = 'side', icon }: PanelProps) {
   const titleId = useId();

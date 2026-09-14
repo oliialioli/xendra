@@ -10,15 +10,28 @@ export function MerchPanel() {
       <div className={shared.grid}>
         {xendraContent.merch.map((product) => (
           <article key={product.id} className={shared.card}>
-            <div
-              aria-hidden="true"
-              style={{
-                width: '100%',
-                aspectRatio: '1 / 1',
-                borderRadius: 'var(--radius-sm)',
-                background: 'var(--color-sand)',
-              }}
-            />
+            {product.imagePath ? (
+              <img
+                src={product.imagePath}
+                alt={product.name}
+                style={{
+                  width: '100%',
+                  aspectRatio: '1 / 1',
+                  objectFit: 'cover',
+                  borderRadius: 'var(--radius-sm)',
+                }}
+              />
+            ) : (
+              <div
+                aria-hidden="true"
+                style={{
+                  width: '100%',
+                  aspectRatio: '1 / 1',
+                  borderRadius: 'var(--radius-sm)',
+                  background: 'var(--color-sand)',
+                }}
+              />
+            )}
             <h3 className={shared.cardTitle}>{product.name}</h3>
             <p className={shared.statusText}>
               {product.priceLabel ?? 'Prezioa zehazteke'}

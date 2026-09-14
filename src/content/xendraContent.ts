@@ -57,19 +57,29 @@ export const xendraContent: XendraContent = {
   concerts: [],
 
   merch: [
-    { id: 'merch-1', name: 'TODO_CONTENT: kamiseta', imagePath: null, priceLabel: null, available: false, ctaMode: 'comingSoon', ctaUrl: null },
-    { id: 'merch-2', name: 'TODO_CONTENT: disko fisikoa', imagePath: null, priceLabel: null, available: false, ctaMode: 'comingSoon', ctaUrl: null },
-    { id: 'merch-3', name: 'TODO_CONTENT: posterra', imagePath: null, priceLabel: null, available: false, ctaMode: 'comingSoon', ctaUrl: null },
+    // TODO_ASSET: jarri /public/assets/merch/kamiseta-naturala.jpg (edo .png) eskuragarri dagoenean.
+    { id: 'merch-1', name: 'Kamiseta naturala', imagePath: null, priceLabel: null, available: false, ctaMode: 'comingSoon', ctaUrl: null },
+    // TODO_ASSET: jarri /public/assets/merch/kamiseta-urdina.jpg (edo .png) eskuragarri dagoenean.
+    { id: 'merch-2', name: 'Kamiseta urdin iluna', imagePath: null, priceLabel: null, available: false, ctaMode: 'comingSoon', ctaUrl: null },
   ],
 
   history: [
     { id: 'history-1', year: 'TODO_CONTENT', title: 'Xendraren sorrera', description: 'Bikote moduan hasitako proiektua da Xendra, pixkanaka handituz joan dena harik eta Uharten (Nafarroa) egoitza duen gaur egungo zazpikotea osatu arte.' },
     { id: 'history-2', year: 'TODO_CONTENT', title: 'Abestiak prestatzen', description: 'Urtebete inguru eman zuten elkarrekin kantuak sortzen eta lantzen, diskoa grabatu aurretik.' },
     { id: 'history-3', year: '2024', title: `"${albumTitle}" diskoaren grabaketa`, description: `2024ko uztailean grabatu zuten beraien lehen diskoa, "${albumTitle}" izenpean, SIMA estudioan, Ibai Osinagaren laguntzaz.` },
-    { id: 'history-4', year: '2026', title: 'Bira', description: '"Bihia" diskoa aurkezten, kontzertu bira eskaintzen dabiltza; besteak beste, Artziko Jauregian jo zuten 2026ko maiatzean.' },
+    { id: 'history-4', year: '2025', title: `"${albumTitle}" diskoaren argitalpena`, description: `2025eko urtarrilaren 9an atera zuten "${albumTitle}" diskoa.` },
+    { id: 'history-5', year: '2026', title: 'Bira', description: '"Bihia" diskoa aurkezten, kontzertu bira eskaintzen dabiltza; besteak beste, Artziko Jauregian jo zuten 2026ko maiatzean.' },
   ],
 
   media: [],
+
+  press: [
+    {
+      id: 'press-1',
+      label: 'Xendra taldeko pop-rock doinuek jantziko dute larunbatean Artziko jauregia (Irati Irratia, 2026-05-12)',
+      url: 'https://iratiirratia.eus/index.php/2026/05/12/xendra-taldeko-pop-rock-doinuek-jantziko-dute-larunbatean-artziko-jauregia/',
+    },
+  ],
 
   contact: {
     email: null, // TODO_CONTENT: kontaktu/kontratazio emaila
@@ -94,7 +104,7 @@ export const xendraContent: XendraContent = {
       id: 'kiosk',
       route: '/merch',
       title: 'Kioskoa',
-      shortLabel: 'Merch',
+      shortLabel: 'Mertx',
       description: 'Xendraren kioskoa, taldearen berritasunekin.',
       position: LANDMARK_POSITIONS.kiosk,
       interactionRadius: LANDMARK_INTERACTION_RADIUS,

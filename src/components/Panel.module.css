@@ -1,6 +1,6 @@
 /*
- * Editorial/cartographic card, anchored near the bottom-left on desktop so
- * the map stays the protagonist -- no full-screen dark scrim. `.scrim` is
+ * Editorial/cartographic card, anchored to the right edge on every viewport
+ * so the map stays the protagonist -- no full-screen dark scrim. `.scrim` is
  * only an invisible full-viewport click-catcher for "click outside to close".
  */
 .scrim {
@@ -12,11 +12,11 @@
 
 .panel {
   position: fixed;
-  left: var(--space-5);
+  right: var(--space-5);
+  top: var(--space-5);
   bottom: var(--space-5);
   z-index: var(--z-panel);
   width: min(440px, calc(100vw - var(--space-5) * 2));
-  max-height: min(72vh, 640px);
   display: flex;
   flex-direction: column;
   background: var(--ui-surface);
@@ -24,7 +24,7 @@
   border: 2px solid var(--ui-border);
   border-radius: var(--ui-radius-lg);
   box-shadow: 6px 6px 0 0 var(--ui-shadow);
-  animation: riseIn var(--duration-medium) var(--ease-organic);
+  animation: slideInRight var(--duration-medium) var(--ease-organic);
 }
 
 .panel.wide {
@@ -71,24 +71,21 @@
 @media (max-width: 640px) {
   .panel,
   .panel.wide {
-    left: var(--space-3);
     right: var(--space-3);
-    bottom: 0;
-    width: auto;
-    max-height: 75vh;
-    border-radius: var(--ui-radius-lg) var(--ui-radius-lg) 0 0;
-    border-bottom: none;
+    top: var(--space-3);
+    bottom: var(--space-3);
+    width: min(440px, calc(100vw - var(--space-3) * 2));
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
-@keyframes riseIn {
+@keyframes slideInRight {
   from {
-    transform: translateY(16px);
+    transform: translateX(24px);
     opacity: 0.4;
   }
   to {
-    transform: translateY(0);
+    transform: translateX(0);
     opacity: 1;
   }
 }

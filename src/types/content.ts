@@ -119,6 +119,12 @@ export type KioskGreeting = {
   greetingTodo: string;
 };
 
+export type PressLink = {
+  id: string;
+  label: string;
+  url: string;
+};
+
 export type XendraContent = {
   band: BandInfo;
   members: BandMember[];
@@ -127,6 +133,7 @@ export type XendraContent = {
   merch: MerchProduct[];
   history: HistoryMilestone[];
   media: MediaItem[];
+  press: PressLink[];
   contact: ContactInfo;
   kiosk: KioskGreeting;
   landmarks: Landmark[];

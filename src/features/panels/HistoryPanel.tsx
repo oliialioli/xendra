@@ -17,6 +17,21 @@ export function HistoryPanel() {
           </li>
         ))}
       </ol>
+
+      {xendraContent.press.length > 0 && (
+        <div className={shared.section}>
+          <h3>Prentsan</h3>
+          <ul className={shared.list}>
+            {xendraContent.press.map((item) => (
+              <li key={item.id}>
+                <a className={shared.secondaryLink} href={item.url} target="_blank" rel="noreferrer">
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
