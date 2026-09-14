@@ -20,13 +20,13 @@ export const xendraContent: XendraContent = {
   },
 
   members: [
-    { id: 'member-1', name: 'Leire Diges Izco', pronouns: 'TODO_CONTENT', instrument: 'Ahotsa eta gitarra', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
-    { id: 'member-2', name: 'Iratxo Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Gitarra eta ahotsa', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
-    { id: 'member-3', name: 'Leire Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Biolina', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
-    { id: 'member-4', name: 'Ainhoa Bandres', pronouns: 'TODO_CONTENT', instrument: 'Txeloa', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
-    { id: 'member-5', name: 'Iker Andueza Gil', pronouns: 'TODO_CONTENT', instrument: 'Baxua', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
-    { id: 'member-6', name: 'Laida Beltzunegi Landa', pronouns: 'TODO_CONTENT', instrument: 'Teklatua', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
-    { id: 'member-7', name: 'Ion Galbete Labiano', pronouns: 'TODO_CONTENT', instrument: 'Bateria eta koroak', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
+    { id: 'member-1', name: 'Leire Diges Izco', pronouns: 'TODO_CONTENT', instrument: 'Ahotsa eta gitarra', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/leire-diges.jpg' },
+    { id: 'member-2', name: 'Iratxo Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Gitarra eta ahotsa', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/iratxo.jpg' },
+    { id: 'member-3', name: 'Leire Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Biolina', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/leire-gorostiza.jpg' },
+    { id: 'member-4', name: 'Ainhoa Bandres Abadía', pronouns: 'TODO_CONTENT', instrument: 'Txeloa', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/ainhoa.jpg' },
+    { id: 'member-5', name: 'Iker Andueza Gil', pronouns: 'TODO_CONTENT', instrument: 'Baxua', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/iker.jpg' },
+    { id: 'member-6', name: 'Laida Beltzunegi Landa', pronouns: 'TODO_CONTENT', instrument: 'Teklatua', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/laida.jpg' },
+    { id: 'member-7', name: 'Ion Galbete Labiano', pronouns: 'TODO_CONTENT', instrument: 'Bateria eta koroak', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/ion.jpg' },
   ],
 
   album: {
@@ -77,17 +77,29 @@ export const xendraContent: XendraContent = {
     { id: 'history-5', year: '2026', title: 'Bira', description: '"Bihia" diskoa aurkezten, kontzertu bira eskaintzen dabiltza; besteak beste, Artziko Jauregian jo zuten 2026ko maiatzean.' },
   ],
 
-  // FAKE_PLACEHOLDER_DATA -- taldeak eskatuta, diseinua ikusteko soilik.
-  // Argazki/bideo fitxategirik ez dagoenez oraindik, thumbnailPath/fullPath
-  // null dira (karratu gris gisa erakutsiko dira). Ordeztu benetako
-  // artxiboarekin (edo hustu [] arte) inoiz argitaratu aurretik.
   media: [
-    { id: 'fake-m1', kind: 'photo', thumbnailPath: null, fullPath: null, altText: 'Xendra taldea entseguan' },
-    { id: 'fake-m2', kind: 'photo', thumbnailPath: null, fullPath: null, altText: 'Kontzertua Uharten' },
-    { id: 'fake-m3', kind: 'video', thumbnailPath: null, fullPath: null, altText: '"Amilena" bideoklipa' },
-    { id: 'fake-m4', kind: 'photo', thumbnailPath: null, fullPath: null, altText: 'Diskoaren grabaketa SIMA estudioan' },
-    { id: 'fake-m5', kind: 'video', thumbnailPath: null, fullPath: null, altText: 'Artziko Jauregiko emanaldia' },
-    { id: 'fake-m6', kind: 'photo', thumbnailPath: null, fullPath: null, altText: 'Taldekideak plazan' },
+    { id: 'photo-01', kind: 'photo', thumbnailPath: '/assets/media/photo-01.jpg', fullPath: '/assets/media/photo-01.jpg', altText: 'Bi taldekide oholtzan, kontzertu baten ondoren' },
+    { id: 'photo-02', kind: 'photo', thumbnailPath: '/assets/media/photo-02.jpg', fullPath: '/assets/media/photo-02.jpg', altText: 'Taldea barrezka, kontzertu baten aurretik' },
+    { id: 'photo-03', kind: 'photo', thumbnailPath: '/assets/media/photo-03.jpg', fullPath: '/assets/media/photo-03.jpg', altText: 'Xendra zuzenean, gitarra eta ahotsa' },
+    { id: 'photo-04', kind: 'photo', thumbnailPath: '/assets/media/photo-04.jpg', fullPath: '/assets/media/photo-04.jpg', altText: 'Zazpikotea osorik oholtzan' },
+    { id: 'photo-05', kind: 'photo', thumbnailPath: '/assets/media/photo-05.jpg', fullPath: '/assets/media/photo-05.jpg', altText: 'Jendea kontzertu baten aurretik, zuri-beltzean' },
+    { id: 'photo-06', kind: 'photo', thumbnailPath: '/assets/media/photo-06.jpg', fullPath: '/assets/media/photo-06.jpg', altText: 'Xendra zuzenean, zuri-beltzean' },
+    { id: 'photo-07', kind: 'photo', thumbnailPath: '/assets/media/photo-07.jpg', fullPath: '/assets/media/photo-07.jpg', altText: 'Taldekideak, kontzertu baten aurretik' },
+    { id: 'photo-08', kind: 'photo', thumbnailPath: '/assets/media/photo-08.jpg', fullPath: '/assets/media/photo-08.jpg', altText: 'Xendra zuzenean, aire zabalean' },
+    { id: 'photo-09', kind: 'photo', thumbnailPath: '/assets/media/photo-09.jpg', fullPath: '/assets/media/photo-09.jpg', altText: 'Gitarra-jolea zuzenean, zuri-beltzean' },
+    { id: 'photo-10', kind: 'photo', thumbnailPath: '/assets/media/photo-10.jpg', fullPath: '/assets/media/photo-10.jpg', altText: 'Xendra zuzenean, argi gorriekin' },
+    { id: 'photo-11', kind: 'photo', thumbnailPath: '/assets/media/photo-11.jpg', fullPath: '/assets/media/photo-11.jpg', altText: 'Kontzertu baten girotik' },
+    { id: 'photo-12', kind: 'photo', thumbnailPath: '/assets/media/photo-12.jpg', fullPath: '/assets/media/photo-12.jpg', altText: 'Xendra zuzenean, kalean gauean' },
+    { id: 'photo-13', kind: 'photo', thumbnailPath: '/assets/media/photo-13.jpg', fullPath: '/assets/media/photo-13.jpg', altText: 'Gitarra eta biolontxeloa, kontzertu batean' },
+    { id: 'photo-14', kind: 'photo', thumbnailPath: '/assets/media/photo-14.jpg', fullPath: '/assets/media/photo-14.jpg', altText: 'Biolina eta biolontxeloa, kontzertu batean' },
+    { id: 'photo-15', kind: 'photo', thumbnailPath: '/assets/media/photo-15.jpg', fullPath: '/assets/media/photo-15.jpg', altText: 'Xendra kalean, jendartearekin' },
+    { id: 'photo-16', kind: 'photo', thumbnailPath: '/assets/media/photo-16.jpg', fullPath: '/assets/media/photo-16.jpg', altText: 'Xendra zuzenean, landareen artean' },
+    { id: 'photo-17', kind: 'photo', thumbnailPath: '/assets/media/photo-17.jpg', fullPath: '/assets/media/photo-17.jpg', altText: 'Xendra zuzenean, jendartearen aurrean' },
+    { id: 'photo-18', kind: 'photo', thumbnailPath: '/assets/media/photo-18.jpg', fullPath: '/assets/media/photo-18.jpg', altText: 'Xendra zuzenean, jendartea aurrean duela' },
+    { id: 'photo-19', kind: 'photo', thumbnailPath: '/assets/media/photo-19.jpg', fullPath: '/assets/media/photo-19.jpg', altText: 'Bateria-jolea zuzenean, zuri-beltzean' },
+    { id: 'video-01', kind: 'video', thumbnailPath: '/assets/media/video-01-poster.jpg', fullPath: '/assets/media/video-01.mp4', altText: 'Xendra zuzenean, oholtza gainean' },
+    { id: 'video-02', kind: 'video', thumbnailPath: '/assets/media/video-02-poster.jpg', fullPath: '/assets/media/video-02.mp4', altText: 'Xendra zuzenean, biolinarekin' },
+    { id: 'video-03', kind: 'video', thumbnailPath: '/assets/media/video-03-poster.jpg', fullPath: '/assets/media/video-03.mp4', altText: 'Xendra kalean, kontzertu ttiki batean' },
   ],
 
   press: [

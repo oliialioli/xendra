@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { xendraContent } from '../../content/xendraContent';
 import { EmptyState } from '../../components/EmptyState';
 import { assetPath } from '../../lib/assetPath';
@@ -14,6 +14,21 @@ export function ArchivePanel() {
     () => xendraContent.media.filter((item) => filter === 'all' || item.kind === filter),
     [filter],
   );
+
+  useEffect(() => {
+    if (openIndex === null) return undefined;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setOpenIndex(null);
+      } else if (event.key === 'ArrowRight') {
+        setOpenIndex((i) => (i === null ? null : Math.min(i + 1, items.length - 1)));
+      } else if (event.key === 'ArrowLeft') {
+        setOpenIndex((i) => (i === null ? null : Math.max(i - 1, 0)));
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [openIndex, items.length]);
 
   if (xendraContent.media.length === 0) {
     return (
@@ -51,16 +66,50 @@ export function ArchivePanel() {
             key={item.id}
             type="button"
             className={shared.card}
+            style={{ position: 'relative', padding: 0, overflow: 'hidden' }}
             onClick={() => setOpenIndex(index)}
             aria-label={`Ireki ${item.altText}`}
           >
             {item.thumbnailPath ? (
-              <img src={assetPath(item.thumbnailPath)} alt={item.altText} loading="lazy" />
+              <img
+                src={assetPath(item.thumbnailPath)}
+                alt={item.altText}
+                loading="lazy"
+                style={{ width: '100%', aspectRatio: '4 / 3', objectFit: 'cover', display: 'block' }}
+              />
             ) : (
               <div
                 aria-hidden="true"
                 style={{ width: '100%', aspectRatio: '4 / 3', background: 'var(--color-sand)' }}
               />
+            )}
+            {item.kind === 'video' && (
+              <span
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <span
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    background: 'rgb(0 0 0 / 45%)',
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.1rem',
+                  }}
+                >
+                  ▶
+                </span>
+              </span>
             )}
           </button>
         ))}
@@ -81,15 +130,54 @@ export function ArchivePanel() {
             zIndex: 100,
           }}
           onClick={() => setOpenIndex(null)}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') setOpenIndex(null);
-          }}
         >
-          <img
-            src={assetPath(openItem.fullPath ?? openItem.thumbnailPath ?? '')}
-            alt={openItem.altText}
-            style={{ maxWidth: '90vw', maxHeight: '90vh' }}
-          />
+          {openIndex !== null && openIndex > 0 && (
+            <button
+              type="button"
+              className="xnd-btn-icon"
+              aria-label="Aurrekoa"
+              style={{ position: 'absolute', left: 'var(--space-4)' }}
+              onClick={(event) => {
+                event.stopPropagation();
+                setOpenIndex((i) => (i === null ? null : Math.max(i - 1, 0)));
+              }}
+            >
+              ‹
+            </button>
+          )}
+
+          {openItem.kind === 'video' && openItem.fullPath ? (
+            <video
+              src={assetPath(openItem.fullPath)}
+              poster={openItem.thumbnailPath ? assetPath(openItem.thumbnailPath) : undefined}
+              controls
+              autoPlay
+              style={{ maxWidth: '90vw', maxHeight: '90vh' }}
+              onClick={(event) => event.stopPropagation()}
+            />
+          ) : (
+            <img
+              src={assetPath(openItem.fullPath ?? openItem.thumbnailPath ?? '')}
+              alt={openItem.altText}
+              style={{ maxWidth: '90vw', maxHeight: '90vh' }}
+              onClick={(event) => event.stopPropagation()}
+            />
+          )}
+
+          {openIndex !== null && openIndex < items.length - 1 && (
+            <button
+              type="button"
+              className="xnd-btn-icon"
+              aria-label="Hurrengoa"
+              style={{ position: 'absolute', right: 'var(--space-4)' }}
+              onClick={(event) => {
+                event.stopPropagation();
+                setOpenIndex((i) => (i === null ? null : Math.min(i + 1, items.length - 1)));
+              }}
+            >
+              ›
+            </button>
+          )}
         </div>
       )}
     </div>

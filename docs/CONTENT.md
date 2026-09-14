@@ -18,9 +18,9 @@ código.
 
 ## Integrantes (7)
 
-Array `members` en `xendraContent.ts`. Nombres e instrumentos ya son reales
-(fuente: la propia banda). Falta: `pronouns` y `bio` (biografía breve) de cada
-persona, y opcionalmente `photoPath` (ver `docs/ASSETS.md`).
+Array `members` en `xendraContent.ts`. Nombres, instrumentos y `photoPath` ya
+son reales (fuente: la propia banda). Falta: `pronouns` y `bio` (biografía
+breve) de cada persona.
 
 ## Disco y canciones (8)
 
@@ -31,10 +31,12 @@ badok.eus ni Apple Music) y opcionalmente `previewUrl`/`fullTrackUrl`.
 
 ## Conciertos
 
-Array `concerts` (actualmente vacío → se muestra un empty state cuidado, nunca
-fechas inventadas). Al añadir conciertos reales, cada uno admite: `city`, `venue`,
-`date`, `time`, `status` (`upcoming` / `soldOut` / `cancelled` / `past`) y
-`ticketsUrl`.
+⚠️ Array `concerts` contiene **datos inventados** ahora mismo
+(`FAKE_PLACEHOLDER_DATA` en el comentario), publicados a petición expresa del
+grupo para revisar cómo queda la timeline visualmente. Sustituir por fechas
+reales (o vaciar `[]`) antes de considerar esto contenido definitivo. Cada
+concierto admite: `city`, `venue`, `date`, `time`, `status` (`upcoming` /
+`soldOut` / `cancelled` / `past`) y `ticketsUrl`.
 
 ## Merch
 
@@ -49,8 +51,12 @@ está pendiente de verificar con el grupo.
 
 ## Galería (fotos y vídeos)
 
-Array `media` (actualmente vacío → empty state, nunca fotos de stock). Cada
+Array `media` en `xendraContent.ts`: 19 fotos + 3 vídeos reales (zuri-beltzean
+las de `members/`; en color las de `media/`), fuente: la propia banda. Cada
 elemento: `kind` (`photo`/`video`), `thumbnailPath`, `fullPath`, `altText`.
+Los vídeos originales (varios GB, 4K) se comprimieron con `avconvert`
+(`PresetAppleM4VWiFi`) antes de publicarlos; los originales sin comprimir
+quedan en `source-photos/` (fuera del repo, ver `.gitignore`).
 
 ## Contacto y redes
 
@@ -62,8 +68,9 @@ elemento: `kind` (`photo`/`video`), `thumbnailPath`, `fullPath`, `altText`.
 
 ## Notas de implementación
 
-- Ningún nombre de integrante, fecha de concierto, letra, título de canción,
-  precio, enlace o dato de contacto ha sido inventado: todo lo que falta está
-  marcado explícitamente con `TODO_CONTENT`.
+- Ningún nombre de integrante, letra, título de canción, precio, enlace o dato
+  de contacto ha sido inventado: todo lo que falta está marcado explícitamente
+  con `TODO_CONTENT`. Única excepción: los conciertos (ver arriba), publicados
+  como datos de prueba a petición expresa del grupo.
 - Al rellenar contenido real, mantén los tipos de `src/types/content.ts` — el
   build (`npm run typecheck`) fallará si falta o sobra algún campo.
