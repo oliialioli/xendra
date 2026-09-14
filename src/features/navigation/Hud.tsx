@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSettings } from '../../app/providers/SettingsContext';
 import { useAudioPlayer } from '../audio/AudioContext';
+import { assetPath } from '../../lib/assetPath';
 import styles from './Hud.module.css';
 
 export type HudProps = {
@@ -20,7 +21,7 @@ export function Hud({ nearestLabel, onOpenMenu, onInteract, interactionHidden = 
     <>
       <div className={styles.topBar}>
         <span className={styles.logo}>
-          <img src="/assets/brand/xendra-logo.svg" alt="Xendra" className={styles.logoImage} />
+          <img src={assetPath('/assets/brand/xendra-logo.svg')} alt="Xendra" className={styles.logoImage} />
         </span>
         <div className="xnd-control-module">
           <button

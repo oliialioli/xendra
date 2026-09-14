@@ -26,6 +26,7 @@ import { Snail, SNAIL_SPEED } from '../entities/Snail';
 import { findNearestLandmark } from '../systems/proximity';
 import { AmbientEffectsSystem } from '../systems/ambient';
 import type { GameEventBus } from '../bridge/gameEvents';
+import { assetPath } from '../../lib/assetPath';
 
 type LandmarkVisual = {
   marker: Phaser.GameObjects.Image;
@@ -122,16 +123,16 @@ export class MapScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image('xendra-map', '/assets/map/xendra-map-base@2x.png');
-    this.load.svg('xendra-map-fallback', '/assets/map/placeholder-map.svg', {
+    this.load.image('xendra-map', assetPath('/assets/map/xendra-map-base@2x.png'));
+    this.load.svg('xendra-map-fallback', assetPath('/assets/map/placeholder-map.svg'), {
       width: WORLD_WIDTH,
       height: WORLD_HEIGHT,
     });
 
     Object.entries(LANDMARK_ASSET_OVERRIDES).forEach(([id, config]) => {
-      this.load.image(MapScene.landmarkAssetKey(id as LandmarkId), config.path);
+      this.load.image(MapScene.landmarkAssetKey(id as LandmarkId), assetPath(config.path));
       if (config.lightsPath) {
-        this.load.image(MapScene.landmarkLightsAssetKey(id as LandmarkId), config.lightsPath);
+        this.load.image(MapScene.landmarkLightsAssetKey(id as LandmarkId), assetPath(config.lightsPath));
       }
     });
   }
