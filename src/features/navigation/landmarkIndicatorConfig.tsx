@@ -2,7 +2,7 @@ import {
   EnvelopeSimple,
   ImagesSquare,
   MicrophoneStage,
-  NotePencil,
+  Pencil,
   Train,
   TShirt,
   UsersThree,
@@ -82,7 +82,7 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     visualHeight: 45,
   },
   fronton: {
-    icon: NotePencil,
+    icon: Pencil,
     label: 'Mezuak',
     revealRadius: LANDMARK_REVEAL_RADIUS,
     visualHeight: 65,
