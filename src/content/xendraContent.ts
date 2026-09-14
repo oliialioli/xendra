@@ -31,7 +31,7 @@ export const xendraContent: XendraContent = {
 
   album: {
     albumTitle,
-    coverPath: null,
+    coverPath: '/assets/music/bihia-azala.jpg',
     credits:
       'SIMA estudioan grabatua eta nahastua (Irunberri, Nafarroa), Ibai Osinagaren laguntzaz. Masterizazioa: Martxel Arkarazo (Garate estudioak, Andoain). 2025eko urtarrilaren 9an atera zen.',
     externalLinks: [{ label: 'Apple Music', url: 'https://music.apple.com/es/album/bihia/1785223280' }],
@@ -57,10 +57,8 @@ export const xendraContent: XendraContent = {
   concerts: [],
 
   merch: [
-    // TODO_ASSET: jarri /public/assets/merch/kamiseta-naturala.jpg (edo .png) eskuragarri dagoenean.
-    { id: 'merch-1', name: 'Kamiseta naturala', imagePath: null, priceLabel: null, available: false, ctaMode: 'comingSoon', ctaUrl: null },
-    // TODO_ASSET: jarri /public/assets/merch/kamiseta-urdina.jpg (edo .png) eskuragarri dagoenean.
-    { id: 'merch-2', name: 'Kamiseta urdin iluna', imagePath: null, priceLabel: null, available: false, ctaMode: 'comingSoon', ctaUrl: null },
+    { id: 'merch-1', name: 'Kamiseta naturala', imagePath: '/assets/merch/kamiseta-naturala.jpg', priceLabel: null, available: false, ctaMode: 'comingSoon', ctaUrl: null },
+    { id: 'merch-2', name: 'Kamiseta urdin iluna', imagePath: '/assets/merch/kamiseta-urdina.jpg', priceLabel: null, available: false, ctaMode: 'comingSoon', ctaUrl: null },
   ],
 
   history: [

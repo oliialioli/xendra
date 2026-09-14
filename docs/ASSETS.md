@@ -9,7 +9,8 @@ Tabla de referencia para sustituir cada asset placeholder por el arte final.
 | Sprite del caracol (4 direcciones) | generado en código: `src/game/utils/placeholderTextures.ts` | 128×128 por fotograma, 4–6 fotogramas por dirección | PNG/WebP con alpha | Sí | Centro del pie del caracol, igual en todos los fotogramas | Placeholder (vectorial, generado en runtime) |
 | Marcador de destino (no visitado / visitado) | generado en código | 18×18 aprox. | — | Sí | Centro del landmark | Placeholder |
 | Retratos de integrantes | referenciado por `member.photoPath` en `xendraContent.ts` | Relación 4:5 | WebP/JPG | No | — | Pendiente (`TODO_CONTENT`) |
-| Portada del disco | referenciado por `album.coverPath` | 1:1 | WebP/JPG | No | — | Pendiente (`TODO_CONTENT`) |
+| Portada del disco | `public/assets/music/bihia-azala.jpg` (referenciado por `album.coverPath`) | 1:1 | JPG | No | — | **Final** |
+| Fotos de merch | `public/assets/merch/kamiseta-naturala.jpg`, `kamiseta-urdina.jpg` (referenciado por `merch[].imagePath`) | 1:1 (recortado con `object-fit: cover`) | JPG | No | — | **Final** |
 | Miniaturas de archivo (fotos/vídeos) | referenciado por `media[].thumbnailPath` | 4:3 o 16:9 | WebP/JPG | No | — | Pendiente (`TODO_CONTENT`) |
 | Logotipo (wordmark) | `public/assets/brand/xendra-logo.svg` | 454×88 (vector, escala libre) | SVG | Sí | — | **Final** |
 | Favicon | `public/favicon.svg` | vector | SVG | Sí | — | Placeholder de marca |

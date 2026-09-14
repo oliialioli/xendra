@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Raw/original photo intake -- unpublished source material (uncompressed,
+# often includes duplicates or shots not chosen for the site). The curated,
+# web-sized picks used by the app live under public/assets/ instead.
+/source-photos/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -9,6 +9,21 @@ export function MusicPanel() {
   return (
     <div>
       <section className={shared.section}>
+        {album.coverPath && (
+          <img
+            src={album.coverPath}
+            alt={`${album.albumTitle} diskoaren azala`}
+            style={{
+              width: '100%',
+              maxWidth: 280,
+              aspectRatio: '1 / 1',
+              objectFit: 'cover',
+              borderRadius: 'var(--radius-sm)',
+              display: 'block',
+              marginBottom: 'var(--space-3)',
+            }}
+          />
+        )}
         <h3>{album.albumTitle}</h3>
         <p className={shared.lead}>{album.credits}</p>
         {album.externalLinks.length > 0 && (
