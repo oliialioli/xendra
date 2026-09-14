@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2560 1440" role="img" aria-label="Mapa provisional de la isla de Xendra">
+  <defs>
+    <style>
+      .water { fill: #6f97a0; }
+      .island { fill: #a9b98f; stroke: #7c9070; stroke-width: 6; }
+      .path { stroke: #e6d7b8; stroke-width: 34; stroke-linecap: round; fill: none; }
+      .landmark { fill: #b5654a; stroke: #3a3530; stroke-width: 3; }
+      .landmark-accent { fill: #c99a3e; stroke: #3a3530; stroke-width: 3; }
+    </style>
+  </defs>
+
+  <rect class="water" x="0" y="0" width="2560" height="1440" />
+
+  <polygon class="island" points="229,352 582,230 919,168 1301,92 1454,138 1654,214 1914,276 2144,352 2266,398 2419,505 2481,643 2450,796 2297,949 2144,1071 1990,1148 1378,1347 1148,1315 919,1254 612,1071 383,918 229,734 184,582" />
+
+  <g class="path">
+    <path d="M1240,658 L467,513" />
+    <path d="M1240,658 L773,321" />
+    <path d="M1240,658 L1623,543" />
+    <path d="M1240,658 L2159,582" />
+    <path d="M1240,658 L988,918" />
+    <path d="M1240,658 L1753,933" />
+    <path d="M1240,658 L543,781" />
+  </g>
+
+  <!-- kiosk -->
+  <rect class="landmark" x="420" y="480" width="94" height="66" rx="8" />
+  <!-- stage -->
+  <rect class="landmark" x="700" y="270" width="146" height="80" rx="6" />
+  <!-- school -->
+  <rect class="landmark" x="1520" y="460" width="206" height="130" rx="10" />
+  <!-- fountain -->
+  <circle class="landmark-accent" cx="1240" cy="658" r="46" />
+  <!-- train + campfire -->
+  <rect class="landmark" x="2100" y="555" width="120" height="46" rx="6" />
+  <circle class="landmark-accent" cx="2159" cy="540" r="22" />
+  <!-- bulletin board -->
+  <rect class="landmark" x="960" y="880" width="70" height="60" rx="6" />
+  <!-- fronton -->
+  <rect class="landmark" x="1660" y="835" width="186" height="150" rx="8" />
+  <!-- postbox -->
+  <rect class="landmark-accent" x="525" y="755" width="36" height="56" rx="6" />
+</svg>

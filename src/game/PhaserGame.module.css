@@ -1,0 +1,16 @@
+.root {
+  position: fixed;
+  inset: 0;
+  width: 100dvw;
+  height: 100dvh;
+  z-index: var(--z-map);
+  overflow: hidden;
+  background: var(--color-river);
+}
+
+.root :global(canvas) {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  touch-action: none;
+}

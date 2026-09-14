@@ -1,0 +1,21 @@
+.banner {
+  position: fixed;
+  top: var(--space-3);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  max-width: min(90vw, 560px);
+  padding: var(--space-2) var(--space-4);
+  background: #3a3530;
+  color: #f2e9d8;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  text-align: center;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
+}
+
+.banner code {
+  background: rgb(255 255 255 / 12%);
+  padding: 0 4px;
+  border-radius: 4px;
+}

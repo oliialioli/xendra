@@ -1,0 +1,157 @@
+.wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 8;
+  pointer-events: none;
+  /* Position itself is written every frame straight to this transform by
+     DiscoveryIndicators (world -> screen projection); React never re-renders
+     for it. */
+  will-change: transform;
+}
+
+.anchor {
+  /* Half the closed badge's own width (44px/2), kept a constant px value
+     (not a %) so the icon stays put while .label grows -- see the module
+     doc comment in DiscoveryIndicators.tsx for the full reasoning. */
+  transform: translate(-22px, calc(-100% - 20px));
+}
+
+.wrapper[data-flip='true'] .anchor {
+  transform: translate(calc(-100% + 22px), calc(-100% - 20px));
+}
+
+.wrapper[data-flip='true'] .badge {
+  flex-direction: row-reverse;
+  padding-right: 2px;
+  padding-left: 0;
+}
+
+.wrapper[data-flip='true'] .badge.revealed {
+  padding-left: 14px;
+  padding-right: 2px;
+}
+
+.wrapper[data-flip='true'] .label {
+  margin-left: 0;
+  margin-right: 2px;
+  transform: translateX(4px);
+}
+
+.wrapper[data-flip='true'] .badge.revealed .label {
+  transform: none;
+}
+
+.badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 44px;
+  min-height: 44px;
+  padding: 2px;
+  background: var(--landmark-surface);
+  border: 1px solid var(--landmark-border);
+  border-radius: 999px;
+  overflow: hidden;
+  cursor: pointer;
+  pointer-events: auto;
+  transition:
+    width 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 150ms ease;
+}
+
+.badge.revealed {
+  width: auto;
+  padding-right: 14px;
+}
+
+.badge.interactable {
+  border-color: var(--landmark-accent);
+}
+
+.iconCircle {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--landmark-icon);
+  transition: color 150ms ease;
+}
+
+.badge.interactable .iconCircle {
+  color: var(--landmark-accent);
+}
+
+.label {
+  display: inline-block;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(-4px);
+  white-space: nowrap;
+  margin-left: 2px;
+  font-family: var(--landmark-label-font);
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--landmark-ink);
+  transition:
+    max-width 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease,
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.badge.revealed .label {
+  max-width: 180px;
+  opacity: 1;
+  transform: none;
+}
+
+.badge:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+@keyframes landmarkFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.badge.floating {
+  animation-name: landmarkFloat;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes landmarkPulseOnce {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.14);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.iconCircle.pulse {
+  animation: landmarkPulseOnce 260ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge.floating {
+    animation: none;
+  }
+  .iconCircle.pulse {
+    animation: none;
+  }
+}

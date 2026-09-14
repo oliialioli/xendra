@@ -1,0 +1,123 @@
+/**
+ * Xendra design tokens. Change the provisional palette/fonts here only --
+ * never hardcode colors or font stacks in components.
+ */
+:root {
+  /* Palette (provisional, matte, 6-8 colors max) */
+  --color-cream: #f2e9d8;
+  --color-sand: #e6d7b8;
+  --color-moss: #7c9070;
+  --color-sage: #a9b98f;
+  --color-river: #6f97a0;
+  --color-terracotta: #b5654a;
+  --color-burgundy: #6e3f3d;
+  --color-charcoal: #3a3530;
+  --color-coral: #c98a6e;
+  --color-mustard: #c99a3e;
+  --color-postbox-yellow: #e2b53c;
+
+  --color-bg: var(--color-cream);
+  --color-surface: #fffaf0;
+  --color-text: var(--color-charcoal);
+  --color-text-muted: #6b6255;
+  --color-accent: var(--color-mustard);
+  --color-accent-strong: var(--color-postbox-yellow);
+  --color-danger: #a4463a;
+  --color-focus-ring: #2b6e6b;
+  --color-border: #d9c9a8;
+  --color-overlay-scrim: rgb(58 53 48 / 45%);
+
+  /*
+   * UI chrome palette -- editorial/cartographic, retro-analog. Separate from
+   * the --color-* world palette above (used by the map art/ambient effects):
+   * this set drives every panel, button and HUD control instead.
+   */
+  --ui-background: #f4ecd6;
+  --ui-surface: #fbf5e6;
+  --ui-ink: #232b21;
+  --ui-border: var(--ui-ink);
+  --ui-accent: #cbd35a;
+  --ui-accent-ink: #232b21;
+  --ui-secondary: #8fa3ac;
+  --ui-coral: #c97b5c;
+  --ui-danger: #a4463a;
+  --ui-shadow: rgb(35 43 33 / 32%);
+  --ui-shadow-offset: 3px;
+  --ui-radius-sm: 8px;
+  --ui-radius-md: 12px;
+  --ui-radius-lg: 14px;
+
+  /* Typography */
+  --font-ui:
+    'Xendra UI', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+  --font-mono:
+    ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', 'Courier New', monospace;
+  --font-size-root: 16px;
+
+  /* Spacing / radius */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  /* Motion */
+  --duration-fast: 120ms;
+  --duration-medium: 240ms;
+  --duration-slow: 420ms;
+  --ease-organic: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* Layout */
+  --panel-max-width: 640px;
+  --hud-touch-target: 44px;
+  --z-map: 0;
+  --z-hud: 10;
+  --z-menu: 20;
+  --z-panel: 30;
+  --z-toast: 40;
+
+  /*
+   * Landmark discovery indicators -- deliberately softer/warmer than the
+   * --ui-* chrome palette above, so badges read as part of the world rather
+   * than as interface furniture.
+   */
+  --landmark-surface: #f7f1e3;
+  --landmark-ink: #3f5043;
+  /* Lighter than --landmark-ink -- used for the badge icon specifically, so
+     it reads a touch softer than the label text next to it. */
+  --landmark-icon: #6f8073;
+  --landmark-accent: #c66f52;
+  --landmark-label-font: 'Chivo Mono', var(--font-mono);
+  --landmark-border: rgb(63 80 67 / 22%);
+  --landmark-shadow: rgb(63 80 67 / 18%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #211f1c;
+    --color-surface: #2a2723;
+    --color-text: #f2e9d8;
+    --color-text-muted: #c9bfae;
+    --color-border: #46413a;
+    --color-overlay-scrim: rgb(0 0 0 / 60%);
+
+    --ui-background: #211f1c;
+    --ui-surface: #2a2822;
+    --ui-ink: #e9e4d4;
+    --ui-border: #e9e4d4;
+    --ui-shadow: rgb(0 0 0 / 55%);
+
+    --landmark-surface: #2c352e;
+    --landmark-ink: #e3ead8;
+    --landmark-icon: #a8b6a0;
+    --landmark-accent: #d98868;
+    --landmark-border: rgb(227 234 216 / 22%);
+    --landmark-shadow: rgb(0 0 0 / 45%);
+  }
+}

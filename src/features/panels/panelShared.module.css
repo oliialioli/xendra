@@ -1,0 +1,124 @@
+.section {
+  margin-bottom: var(--space-5);
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.lead {
+  color: var(--ui-ink);
+  opacity: 0.75;
+  margin-top: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-4);
+}
+
+.card {
+  border: 2px solid var(--ui-border);
+  border-radius: var(--ui-radius-md);
+  padding: var(--space-4);
+  background: var(--ui-background);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  box-shadow: 2px 2px 0 0 var(--ui-shadow);
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.listItem {
+  border: 2px solid var(--ui-border);
+  border-radius: var(--ui-radius-md);
+  padding: var(--space-4);
+  background: var(--ui-background);
+  box-shadow: 2px 2px 0 0 var(--ui-shadow);
+}
+
+.badge {
+  composes: xnd-tag from global;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 480px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.field label {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+}
+
+.field input,
+.field textarea,
+.field select {
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--ui-border);
+  border-radius: var(--ui-radius-sm);
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+}
+
+.field input:focus-visible,
+.field textarea:focus-visible,
+.field select:focus-visible {
+  outline: 3px solid var(--ui-secondary);
+  outline-offset: 1px;
+}
+
+.errorText {
+  color: var(--ui-danger);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.primaryButton {
+  composes: xnd-btn-primary from global;
+  align-self: flex-start;
+}
+
+.secondaryLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--ui-ink);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--ui-secondary);
+}
+
+.statusText {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--ui-ink);
+  opacity: 0.7;
+}
