@@ -306,15 +306,18 @@ export class MapScene extends Phaser.Scene {
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       if (!this.controlsEnabled) return;
-      this.isDragTargeting = true;
+      // Continuous drag-to-steer (below) is a touch-only affordance -- on
+      // desktop a mouse click should only ever set a single target, never
+      // start following the cursor around.
+      this.isDragTargeting = pointer.wasTouch;
       const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
       this.setClickTarget({ x: world.x, y: world.y });
     });
 
-    // Lets a finger (or a held mouse button) drag across the map to steer
-    // continuously, rather than only being able to set one target per tap --
-    // the touch-equivalent of holding a direction key, and much more direct
-    // than re-tapping a new point every time the snail should turn.
+    // Lets a finger drag across the map to steer continuously, rather than
+    // only being able to set one target per tap -- the touch-equivalent of
+    // holding a direction key, and much more direct than re-tapping a new
+    // point every time the snail should turn.
     this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
       if (!this.controlsEnabled || !this.isDragTargeting || !pointer.isDown) return;
       const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
