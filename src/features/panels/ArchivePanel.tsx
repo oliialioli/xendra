@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { xendraContent } from '../../content/xendraContent';
 import { EmptyState } from '../../components/EmptyState';
+import { assetPath } from '../../lib/assetPath';
 import shared from './panelShared.module.css';
 
 type Filter = 'all' | 'photo' | 'video';
@@ -54,7 +55,7 @@ export function ArchivePanel() {
             aria-label={`Ireki ${item.altText}`}
           >
             {item.thumbnailPath ? (
-              <img src={item.thumbnailPath} alt={item.altText} loading="lazy" />
+              <img src={assetPath(item.thumbnailPath)} alt={item.altText} loading="lazy" />
             ) : (
               <div
                 aria-hidden="true"
@@ -85,7 +86,7 @@ export function ArchivePanel() {
           }}
         >
           <img
-            src={openItem.fullPath ?? openItem.thumbnailPath ?? ''}
+            src={assetPath(openItem.fullPath ?? openItem.thumbnailPath ?? '')}
             alt={openItem.altText}
             style={{ maxWidth: '90vw', maxHeight: '90vh' }}
           />

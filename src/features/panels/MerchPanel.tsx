@@ -1,4 +1,5 @@
 import { xendraContent } from '../../content/xendraContent';
+import { assetPath } from '../../lib/assetPath';
 import shared from './panelShared.module.css';
 
 export function MerchPanel() {
@@ -12,7 +13,7 @@ export function MerchPanel() {
           <article key={product.id} className={shared.card}>
             {product.imagePath ? (
               <img
-                src={product.imagePath}
+                src={assetPath(product.imagePath)}
                 alt={product.name}
                 style={{
                   width: '100%',

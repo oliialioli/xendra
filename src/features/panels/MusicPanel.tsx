@@ -1,5 +1,6 @@
 import { xendraContent } from '../../content/xendraContent';
 import { useAudioPlayer } from '../audio/AudioContext';
+import { assetPath } from '../../lib/assetPath';
 import shared from './panelShared.module.css';
 
 export function MusicPanel() {
@@ -11,7 +12,7 @@ export function MusicPanel() {
       <section className={shared.section}>
         {album.coverPath && (
           <img
-            src={album.coverPath}
+            src={assetPath(album.coverPath)}
             alt={`${album.albumTitle} diskoaren azala`}
             style={{
               width: '100%',
