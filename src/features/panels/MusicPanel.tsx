@@ -12,6 +12,17 @@ export function MusicPanel() {
         <h3>{album.albumTitle}</h3>
         <p className={shared.statusText}>{album.albumTitleTodo}</p>
         <p className={shared.lead}>{album.credits}</p>
+        {album.externalLinks.length > 0 && (
+          <ul className={shared.list}>
+            {album.externalLinks.map((link) => (
+              <li key={link.url}>
+                <a className={shared.secondaryLink} href={link.url} target="_blank" rel="noreferrer">
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
         {!soundEnabled && (
           <p className={shared.statusText}>
             Aktibatu soinua mapako menutik aurrebistak entzuteko.

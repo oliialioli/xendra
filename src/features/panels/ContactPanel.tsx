@@ -172,7 +172,7 @@ export function ContactPanel() {
           <ul className={shared.list}>
             {contact.socialLinks.map((link) => (
               <li key={link.url}>
-                <a className={shared.secondaryLink} href={link.url}>
+                <a className={shared.secondaryLink} href={link.url} target="_blank" rel="noreferrer">
                   {link.label}
                 </a>
               </li>

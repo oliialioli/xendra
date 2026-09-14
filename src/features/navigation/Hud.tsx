@@ -80,7 +80,7 @@ export function Hud({ nearestLabel, onOpenMenu, onInteract, interactionHidden = 
             className={`xnd-btn-primary ${styles.interactButton}`}
             onClick={onInteract}
           >
-            Elkarreragin
+            Ireki
           </button>
         </div>
       )}

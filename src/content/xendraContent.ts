@@ -17,26 +17,28 @@ export const xendraContent: XendraContent = {
     name: 'Xendra',
     originText:
       'Xendra hitza nafar euskara zaharreko hitz batetik dator, bide, senda edo bidezidor bat adierazteko.', // TODO_CONTENT: etimologia zehatza taldearekin berretsi
+    bio:
+      'Xendra Uharten (Nafarroa) sortutako sorkuntza proiektu bat da, pixkanaka osatzen joan den zazpi gazteren taldea: egunerokoan elkarrekin musika sortu eta jotzen dute. Bakoitzaren bizipenetatik abiatuta, taldeak euskarazko kantuak proposatzen ditu, ahal den heinean gai unibertsalak jorratuz.',
     tagline: 'Aurkitzeko bidea.', // TODO_CONTENT: sarrerako esaldi definitiboa
     entrySubtitle: 'Zeharkatu uhartea, aurkitu musika.', // TODO_CONTENT
   },
 
   members: [
-    { id: 'member-1', name: 'TODO_CONTENT: izena', pronouns: 'TODO_CONTENT', instrument: 'Biolina', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
-    { id: 'member-2', name: 'TODO_CONTENT: izena', pronouns: 'TODO_CONTENT', instrument: 'Biolontxeloa', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
-    { id: 'member-3', name: 'TODO_CONTENT: izena', pronouns: 'TODO_CONTENT', instrument: 'Bateria', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
-    { id: 'member-4', name: 'TODO_CONTENT: izena', pronouns: 'TODO_CONTENT', instrument: 'Gitarra akustikoa', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
-    { id: 'member-5', name: 'TODO_CONTENT: izena', pronouns: 'TODO_CONTENT', instrument: 'Gitarra elektrikoa', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
-    { id: 'member-6', name: 'TODO_CONTENT: izena', pronouns: 'TODO_CONTENT', instrument: 'Baxua', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
-    { id: 'member-7', name: 'TODO_CONTENT: izena', pronouns: 'TODO_CONTENT', instrument: 'Pianoa', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
+    { id: 'member-1', name: 'Leire Diges Izco', pronouns: 'TODO_CONTENT', instrument: 'Ahotsa eta gitarra', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
+    { id: 'member-2', name: 'Iratxo Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Gitarra eta ahotsa', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
+    { id: 'member-3', name: 'Leire Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Biolina', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
+    { id: 'member-4', name: 'Ainhoa Bandres', pronouns: 'TODO_CONTENT', instrument: 'Txeloa', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
+    { id: 'member-5', name: 'Iker Andueza Gil', pronouns: 'TODO_CONTENT', instrument: 'Baxua', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
+    { id: 'member-6', name: 'Laida Beltzunegi Landa', pronouns: 'TODO_CONTENT', instrument: 'Teklatua', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
+    { id: 'member-7', name: 'Ion Galbete Labiano', pronouns: 'TODO_CONTENT', instrument: 'Bateria eta koroak', bio: 'TODO_CONTENT: biografia laburra.', photoPath: null },
   ],
 
   album: {
     albumTitle,
     albumTitleTodo: 'TODO_CONFIRM_ALBUM_TITLE: berretsi "Bia" ala "Bihia"',
     coverPath: null,
-    credits: 'TODO_CONTENT: diskoaren kredituak.',
-    externalLinks: [],
+    credits: 'SIMA estudioan grabatua, 2024ko uztailean, Ibai Osinagaren laguntzaz.',
+    externalLinks: [{ label: 'Apple Music', url: 'https://music.apple.com/es/album/bihia/1785223280' }],
     tracks: Array.from({ length: 8 }, (_, index) => ({
       id: `track-${index + 1}`,
       index: index + 1,
@@ -56,9 +58,9 @@ export const xendraContent: XendraContent = {
   ],
 
   history: [
-    { id: 'history-1', year: 'TODO_CONTENT', title: 'TODO_CONTENT: taldearen jatorria', description: 'TODO_CONTENT: Xendra nola sortu zen.' },
-    { id: 'history-2', year: 'TODO_CONTENT', title: 'TODO_CONTENT: lehen abestiak', description: 'TODO_CONTENT.' },
-    { id: 'history-3', year: 'TODO_CONTENT', title: `TODO_CONTENT: diskoaren grabaketa`, description: 'TODO_CONTENT.' },
+    { id: 'history-1', year: 'TODO_CONTENT', title: 'Xendraren sorrera', description: 'Uharten (Nafarroa) sortutako sorkuntza proiektua, pixkanaka osatzen joan den zazpi gazteren taldea.' },
+    { id: 'history-2', year: 'TODO_CONTENT', title: 'Abestiak prestatzen', description: 'Urtebete inguru eman zuten elkarrekin kantuak sortzen eta lantzen, diskoa grabatu aurretik.' },
+    { id: 'history-3', year: '2024', title: `"${albumTitle}" diskoaren grabaketa`, description: `2024ko uztailean grabatu zuten beraien lehen diskoa, "${albumTitle}" izenpean, SIMA estudioan, Ibai Osinagaren laguntzaz.` },
   ],
 
   media: [],
@@ -71,7 +73,10 @@ export const xendraContent: XendraContent = {
       { id: 'press', label: 'Prentsa' },
       { id: 'general', label: 'Beste bat' },
     ],
-    socialLinks: [], // TODO_CONTENT: benetako sare sozialen estekak
+    socialLinks: [
+      { label: 'Instagram', url: 'https://www.instagram.com/_xendra_/' },
+      { label: 'YouTube', url: 'https://www.youtube.com/channel/UCjGkN3mEifFsobvw9fztmaQ' },
+    ],
   },
 
   kiosk: {
