@@ -31,12 +31,12 @@ badok.eus ni Apple Music) y opcionalmente `previewUrl`/`fullTrackUrl`.
 
 ## Conciertos
 
-⚠️ Array `concerts` contiene **datos inventados** ahora mismo
-(`FAKE_PLACEHOLDER_DATA` en el comentario), publicados a petición expresa del
-grupo para revisar cómo queda la timeline visualmente. Sustituir por fechas
-reales (o vaciar `[]`) antes de considerar esto contenido definitivo. Cada
-concierto admite: `city`, `venue`, `date`, `time`, `status` (`upcoming` /
-`soldOut` / `cancelled` / `past`) y `ticketsUrl`.
+Array `concerts` en `xendraContent.ts`: 2 hurrengo kontzertu eta 15 iraganeko
+kontzertu erreal, taldeak berak emandakoak. `venue` hutsik dago leku askotan
+(taldeak herriaren izena bakarrik eman zuen, aretoarena ez); `time` eta
+`ticketsUrl` ere hutsik daude oraindik. Kontzertu bakoitzak: `city`, `venue`,
+`date`, `time`, `status` (`upcoming` / `soldOut` / `cancelled` / `past`) eta
+`ticketsUrl`.
 
 ## Merch
 
@@ -68,9 +68,8 @@ quedan en `source-photos/` (fuera del repo, ver `.gitignore`).
 
 ## Notas de implementación
 
-- Ningún nombre de integrante, letra, título de canción, precio, enlace o dato
-  de contacto ha sido inventado: todo lo que falta está marcado explícitamente
-  con `TODO_CONTENT`. Única excepción: los conciertos (ver arriba), publicados
-  como datos de prueba a petición expresa del grupo.
+- Ningún nombre de integrante, fecha de concierto, letra, título de canción,
+  precio, enlace o dato de contacto ha sido inventado: todo lo que falta está
+  marcado explícitamente con `TODO_CONTENT`.
 - Al rellenar contenido real, mantén los tipos de `src/types/content.ts` — el
   build (`npm run typecheck`) fallará si falta o sobra algún campo.

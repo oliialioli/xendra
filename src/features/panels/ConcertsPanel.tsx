@@ -17,7 +17,7 @@ function ConcertNode({ concert, past }: { concert: Concert; past: boolean }) {
       <span className={styles.dot} aria-hidden="true" />
       <span className={shared.badge}>{STATUS_LABEL[concert.status] ?? concert.status}</span>
       <h3 className={styles.title}>{concert.city}</h3>
-      <p className={shared.lead}>{concert.venue}</p>
+      {concert.venue && <p className={shared.lead}>{concert.venue}</p>}
       <p className={shared.statusText}>
         {concert.date ?? 'Data zehazteke'}
         {concert.time ? ` · ${concert.time}` : ''}

@@ -54,14 +54,24 @@ export const xendraContent: XendraContent = {
     })),
   },
 
-  // FAKE_PLACEHOLDER_DATA -- taldeak eskatuta, diseinua ikusteko soilik.
-  // Ordeztu benetako kontzertuekin (edo hustu [] arte) inoiz argitaratu aurretik.
   concerts: [
-    { id: 'fake-c1', city: 'Uharte', venue: 'Kultur Etxea', date: '2026-11-14', time: '21:00', status: 'upcoming', ticketsUrl: 'https://example.com/sarrerak' },
-    { id: 'fake-c2', city: 'Iruña', venue: 'Zentroa', date: '2026-12-05', time: '20:30', status: 'soldOut', ticketsUrl: null },
-    { id: 'fake-c3', city: 'Lizarra', venue: 'Gazteszena', date: '2027-01-17', time: null, status: 'upcoming', ticketsUrl: null },
-    { id: 'fake-c4', city: 'Artzi', venue: 'Jauregia', date: '2026-05-16', time: '19:30', status: 'past', ticketsUrl: null },
-    { id: 'fake-c5', city: 'Tafalla', venue: 'Kultur Etxea', date: '2025-11-02', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2026-09-24', city: 'Uharte', venue: 'Berdintasuna', date: '2026-09-24', time: null, status: 'upcoming', ticketsUrl: null },
+    { id: 'concert-2026-09-26', city: 'Barakaldo', venue: '', date: '2026-09-26', time: null, status: 'upcoming', ticketsUrl: null },
+    { id: 'concert-2026-08-16', city: 'Tafalla', venue: '', date: '2026-08-16', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2026-08-14', city: 'Erronkari', venue: '', date: '2026-08-14', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2026-08-13', city: 'Amurrio', venue: '', date: '2026-08-13', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2026-05-16', city: 'Artzibar', venue: '', date: '2026-05-16', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2026-03-28', city: 'Laudio', venue: '', date: '2026-03-28', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2026-03-25', city: 'Iruñea', venue: 'Herriko Taberna', date: '2026-03-25', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2026-02-06', city: 'Geltoki', venue: '', date: '2026-02-06', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2025-08-22', city: 'Hiriberri', venue: '', date: '2025-08-22', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2025-06-27', city: 'Lekeitio', venue: '', date: '2025-06-27', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2025-06-26', city: 'Oñati', venue: '', date: '2025-06-26', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2025-06-19', city: 'Erraldoien txokoa', venue: '', date: '2025-06-19', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2025-05-25', city: 'Arrosadia', venue: '', date: '2025-05-25', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2025-05-04', city: 'Zuia', venue: '', date: '2025-05-04', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2025-04-25', city: 'Akelarre Kultur Elkartea', venue: '', date: '2025-04-25', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2025-04-05', city: 'Uharteko kultur etxea', venue: '', date: '2025-04-05', time: null, status: 'past', ticketsUrl: null },
   ],
 
   merch: [
@@ -74,7 +84,7 @@ export const xendraContent: XendraContent = {
     { id: 'history-2', year: 'TODO_CONTENT', title: 'Abestiak prestatzen', description: 'Urtebete inguru eman zuten elkarrekin kantuak sortzen eta lantzen, diskoa grabatu aurretik.' },
     { id: 'history-3', year: '2024', title: `"${albumTitle}" diskoaren grabaketa`, description: `2024ko uztailean grabatu zuten beraien lehen diskoa, "${albumTitle}" izenpean, SIMA estudioan, Ibai Osinagaren laguntzaz.` },
     { id: 'history-4', year: '2025', title: `"${albumTitle}" diskoaren argitalpena`, description: `2025eko urtarrilaren 9an atera zuten "${albumTitle}" diskoa.` },
-    { id: 'history-5', year: '2026', title: 'Bira', description: '"Bihia" diskoa aurkezten, kontzertu bira eskaintzen dabiltza; besteak beste, Artziko Jauregian jo zuten 2026ko maiatzean.' },
+    { id: 'history-5', year: '2026', title: 'Bira', description: '"Bihia" diskoa aurkezten, kontzertu bira eskaintzen dabiltza; besteak beste, Artziko Jauregian jo zuten 2026ko maiatzaren 16an.' },
   ],
 
   media: [
