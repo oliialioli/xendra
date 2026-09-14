@@ -1,7 +1,24 @@
+/*
+ * Invisible touch-capture area, bottom-left corner. Much bigger than the
+ * visible joystick circle used to be -- a thumb no longer has to land
+ * precisely on a small target; anywhere in here plants the joystick right
+ * under the finger (see TouchControls.tsx). Sits above the game canvas but
+ * below landmark discovery badges (z-index 8, see LandmarkIndicator.module.css)
+ * so a badge that happens to render in this corner still gets the tap.
+ */
+.zone {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 5;
+  width: min(58vw, 300px);
+  height: min(46vh, 320px);
+  touch-action: none;
+  display: none;
+}
+
 .joystickBase {
   position: fixed;
-  left: max(var(--space-5), env(safe-area-inset-left));
-  bottom: max(var(--space-5), env(safe-area-inset-bottom));
   z-index: var(--z-hud);
   width: 108px;
   height: 108px;
@@ -10,8 +27,8 @@
   opacity: 0.85;
   border: 2px solid var(--ui-border);
   box-shadow: var(--ui-shadow-offset) var(--ui-shadow-offset) 0 0 var(--ui-shadow);
-  touch-action: none;
-  display: none;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 
 .joystickKnob {
@@ -28,7 +45,7 @@
 }
 
 @media (pointer: coarse), (max-width: 720px) {
-  .joystickBase {
+  .zone {
     display: block;
   }
 }

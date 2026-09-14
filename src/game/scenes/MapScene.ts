@@ -103,6 +103,7 @@ export class MapScene extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private wasd!: WasdKeys;
   private clickTarget: Vector2Like | null = null;
+  private isDragTargeting = false;
   private joystickVector: Vector2Like = { x: 0, y: 0 };
   private nearestId: LandmarkId | null = null;
 
@@ -290,8 +291,23 @@ export class MapScene extends Phaser.Scene {
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       if (!this.controlsEnabled) return;
+      this.isDragTargeting = true;
       const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
       this.setClickTarget({ x: world.x, y: world.y });
+    });
+
+    // Lets a finger (or a held mouse button) drag across the map to steer
+    // continuously, rather than only being able to set one target per tap --
+    // the touch-equivalent of holding a direction key, and much more direct
+    // than re-tapping a new point every time the snail should turn.
+    this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+      if (!this.controlsEnabled || !this.isDragTargeting || !pointer.isDown) return;
+      const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+      this.setClickTarget({ x: world.x, y: world.y });
+    });
+
+    this.input.on('pointerup', () => {
+      this.isDragTargeting = false;
     });
   }
 
@@ -459,6 +475,7 @@ export class MapScene extends Phaser.Scene {
     } else {
       keyboard.disableGlobalCapture();
       this.clickTarget = null;
+      this.isDragTargeting = false;
     }
   }
 
