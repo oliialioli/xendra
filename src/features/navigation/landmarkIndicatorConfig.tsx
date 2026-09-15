@@ -63,7 +63,7 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     revealRadius: LANDMARK_REVEAL_RADIUS,
     // Matches escuela-musica-xendra-default.png's own analyzed height (roof
     // to anchor), so the badge clears the roofline entirely.
-    visualHeight: 200,
+    visualHeight: 260,
   },
   fountain: {
     icon: UsersThree,

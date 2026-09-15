@@ -152,7 +152,7 @@ export const OBSTACLE_RECTS: ObstacleRect[] = [
   // below), inset slightly from the analyzed silhouette so its roof's own
   // edge lip stays walkable-adjacent, with its bottom edge a little above
   // the anchor point (the entrance) so the player can approach from the front.
-  { id: 'school-building', x: 1529, y: 405, width: 219, height: 172 },
+  { id: 'school-building', x: 1496, y: 350, width: 286, height: 223 },
 ];
 
 /** Small round obstacles. Empty for now -- see the OBSTACLE_RECTS comment above. */
@@ -232,7 +232,7 @@ export const SCHOOL_CONFIG = {
    * building* silhouette only -- not the PNG's full canvas width, which
    * includes transparent padding.
    */
-  widthPercent: 9.96,
+  widthPercent: 12.948,
 };
 
 export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
