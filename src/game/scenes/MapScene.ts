@@ -696,6 +696,7 @@ export class MapScene extends Phaser.Scene {
       scrollX: camera.scrollX,
       scrollY: camera.scrollY,
       zoom: camera.zoom,
+      viewportWidth: this.scale.gameSize.width,
       snailX: this.snail.position.x,
       snailY: this.snail.position.y,
     });

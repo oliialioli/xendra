@@ -14,7 +14,15 @@ export type GameToAppEvents = {
    * should write straight to element styles (refs), not React state, to
    * avoid a 60fps re-render.
    */
-  'camera:frame': { scrollX: number; scrollY: number; zoom: number; snailX: number; snailY: number };
+  'camera:frame': {
+    scrollX: number;
+    scrollY: number;
+    zoom: number;
+    /** Phaser's own tracked game/canvas width (Scale.gameSize.width) -- the same value the camera's own zoom math is built around, so DOM overlays never need a separate window.innerWidth read that could diverge from it. */
+    viewportWidth: number;
+    snailX: number;
+    snailY: number;
+  };
 };
 
 /** Events React sends down into the Phaser world. */

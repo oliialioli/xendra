@@ -70,8 +70,14 @@ export function DiscoveryIndicators({
   useEffect(() => {
     if (suppressed) return undefined;
 
-    const handleFrame = ({ scrollX, scrollY, zoom, snailX, snailY }: BridgeEvents['camera:frame']) => {
-      const viewportWidth = window.innerWidth;
+    const handleFrame = ({
+      scrollX,
+      scrollY,
+      zoom,
+      viewportWidth,
+      snailX,
+      snailY,
+    }: BridgeEvents['camera:frame']) => {
       let nearestRevealId: LandmarkId | null = null;
       let nearestRevealDist = Infinity;
 
