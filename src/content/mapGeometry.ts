@@ -155,8 +155,18 @@ export const OBSTACLE_RECTS: ObstacleRect[] = [
   { id: 'school-building', x: 1496, y: 350, width: 286, height: 223 },
 ];
 
-/** Small round obstacles. Empty for now -- see the OBSTACLE_RECTS comment above. */
-export const OBSTACLE_CIRCLES: ObstacleCircle[] = [];
+/**
+ * Small round obstacles -- currently just the fountain's own outer basin
+ * (see FOUNTAIN_CONFIG below), centered on the same plaza-center point as
+ * LANDMARK_POSITIONS.fountain. Arcade physics only supports circular
+ * bodies, so this can't match the basin's slightly elliptical isometric
+ * footprint exactly; the radius favors the basin's shorter (vertical) extent
+ * so the snail can never visually overlap the front/back rim, at the cost of
+ * a little unused walkable slack at the basin's left/right.
+ */
+export const OBSTACLE_CIRCLES: ObstacleCircle[] = [
+  { id: 'fountain-basin', x: 1235, y: 692, radius: 85 },
+];
 
 export const SPAWN_POINT: Vector2Like = { x: 1150, y: 780 };
 
@@ -235,11 +245,48 @@ export const SCHOOL_CONFIG = {
   widthPercent: 12.948,
 };
 
+/**
+ * Editable placement for the fountain, same pattern as KIOSK_CONFIG /
+ * STAGE_CONFIG / SCHOOL_CONFIG above, with one difference: the fountain is a
+ * free-standing round object, not a building standing on a ground line, so
+ * its own visual anchor is its analyzed *center* (see `anchorMode: 'center'`
+ * on its LANDMARK_ASSET_OVERRIDES entry below), not a bottom-center
+ * ground-contact point.
+ *
+ * xPercent/yPercent land on the plaza's own geometric center -- found by
+ * sampling xendra-map-base.png's paved/grass boundary around the plaza from
+ * several directions and fitting an ellipse to those edges, the same
+ * approach used to place the music school -- not the raw center of the
+ * fountain PNG's canvas, which has uneven transparent padding.
+ */
+export const FOUNTAIN_CONFIG = {
+  /** Horizontal position, 0-100, percentage of WORLD_WIDTH -- the plaza's own center. */
+  xPercent: 48.24,
+  /** Vertical position, 0-100, percentage of WORLD_HEIGHT -- the plaza's own center. */
+  yPercent: 48.06,
+  /**
+   * Approved on-screen width (percentage of WORLD_WIDTH) of the *visible
+   * basin* silhouette only -- not the PNG's full canvas width, which
+   * includes transparent padding. Leaves comfortable walking room around the
+   * fountain within the plaza on every side.
+   */
+  widthPercent: 7.0,
+  /**
+   * Visual-only nudge (world units) applied on top of {xPercent, yPercent}
+   * when placing the artwork, in case the asset's own analyzed center needs
+   * a small manual correction to sit exactly on the plaza's circle. The
+   * interaction/collision anchor (LANDMARK_POSITIONS.fountain) is derived
+   * from {xPercent, yPercent} alone and is untouched by this.
+   */
+  offsetX: 0,
+  offsetY: 0,
+};
+
 export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   kiosk: { x: (KIOSK_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (KIOSK_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   stage: { x: (STAGE_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (STAGE_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   school: { x: (SCHOOL_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (SCHOOL_CONFIG.yPercent / 100) * WORLD_HEIGHT },
-  fountain: { x: 1240, y: 658 },
+  fountain: { x: (FOUNTAIN_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (FOUNTAIN_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   trainHistory: { x: 2159, y: 582 },
   bulletinBoard: { x: 988, y: 918 },
   fronton: { x: 1753, y: 933 },
@@ -247,6 +294,14 @@ export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
 };
 
 export const LANDMARK_INTERACTION_RADIUS = 110;
+
+/**
+ * The fountain's own interaction radius -- a comfortable margin larger than
+ * its OBSTACLE_CIRCLES collision radius above (85), so the interact prompt
+ * reaches just past the rim itself rather than requiring the snail to
+ * already be touching the stone.
+ */
+export const FOUNTAIN_INTERACTION_RADIUS = 130;
 
 /**
  * World-unit distance at which a landmark's discovery badge auto-expands
@@ -288,6 +343,21 @@ export type LandmarkAssetConfig = {
    * point lands exactly on LANDMARK_POSITIONS[id].
    */
   renderOffset: Vector2Like;
+  /**
+   * Where in the analyzed opaque bounding box the sprite's origin lands --
+   * `'bottom-center'` (default when omitted) for anything standing on the
+   * ground, `'center'` for a free-standing round object whose own visual
+   * center is the meaningful anchor (currently just the fountain).
+   */
+  anchorMode?: 'bottom-center' | 'center';
+  /**
+   * Opts this sprite into a subtle proximity "glow" pulse (see
+   * MapScene.updateLandmarkGlow) instead of a full second lit-state artwork
+   * (LandmarkAssetConfig.lightsPath) -- for a landmark with only one PNG that
+   * should still react faintly (brighter highlights) as the snail
+   * approaches. Reuses the base sprite itself; no second asset needed.
+   */
+  proximityGlow?: boolean;
 };
 
 /**
@@ -323,5 +393,12 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
     path: '/assets/landmarks/escuela-musica-xendra-default.png',
     approvedBuildingWidth: (SCHOOL_CONFIG.widthPercent / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
+  },
+  fountain: {
+    path: '/assets/landmarks/fuente-xendra.png',
+    approvedBuildingWidth: (FOUNTAIN_CONFIG.widthPercent / 100) * WORLD_WIDTH,
+    renderOffset: { x: FOUNTAIN_CONFIG.offsetX, y: FOUNTAIN_CONFIG.offsetY },
+    anchorMode: 'center',
+    proximityGlow: true,
   },
 };

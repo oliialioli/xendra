@@ -30,8 +30,17 @@ export type OpaqueBounds = {
  * the flood fill just stays within the building's own bottom-right corner
  * pixels, which get excluded from a tight opaque bbox anyway only if they
  * happen to be perfectly flat-colored (rare for painted architecture).
+ *
+ * `anchorMode` picks where in that bbox the returned origin lands:
+ * `'bottom-center'` (default) for anything that stands on the ground like a
+ * building, or `'center'` for a free-standing round object (e.g. a fountain
+ * basin) whose own visual center -- not its ground-contact line -- is the
+ * meaningful anchor.
  */
-export function analyzeOpaqueBuildingBounds(image: HTMLImageElement | HTMLCanvasElement): OpaqueBounds {
+export function analyzeOpaqueBuildingBounds(
+  image: HTMLImageElement | HTMLCanvasElement,
+  anchorMode: 'bottom-center' | 'center' = 'bottom-center',
+): OpaqueBounds {
   const width = 'naturalWidth' in image ? image.naturalWidth || image.width : image.width;
   const height = 'naturalHeight' in image ? image.naturalHeight || image.height : image.height;
 
@@ -157,7 +166,7 @@ export function analyzeOpaqueBuildingBounds(image: HTMLImageElement | HTMLCanvas
   }
 
   const anchorX = (x0 + x1) / 2;
-  const anchorY = y1;
+  const anchorY = anchorMode === 'center' ? (y0 + y1) / 2 : y1;
 
   return {
     bbox: { x0, y0, x1, y1 },

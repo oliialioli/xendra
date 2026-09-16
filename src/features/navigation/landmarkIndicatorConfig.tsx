@@ -69,7 +69,12 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     icon: UsersThree,
     label: 'Taldea',
     revealRadius: LANDMARK_REVEAL_RADIUS,
-    visualHeight: 40,
+    // The fountain's own anchor is its analyzed *center* (see
+    // LANDMARK_ASSET_OVERRIDES.fountain's anchorMode), not a ground-contact
+    // point -- so this is half fuente-xendra.png's own analyzed height (to
+    // clear the top of its central column) plus a small margin, rather than
+    // a full building height measured from the ground up.
+    visualHeight: 85,
   },
   trainHistory: {
     icon: Train,

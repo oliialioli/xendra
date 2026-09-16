@@ -1,5 +1,5 @@
 import type { XendraContent } from '../types/content';
-import { LANDMARK_INTERACTION_RADIUS, LANDMARK_POSITIONS } from './mapGeometry';
+import { FOUNTAIN_INTERACTION_RADIUS, LANDMARK_INTERACTION_RADIUS, LANDMARK_POSITIONS } from './mapGeometry';
 
 /**
  * Single source of truth for every editable string in the experience.
@@ -173,7 +173,7 @@ export const xendraContent: XendraContent = {
       shortLabel: 'Taldea',
       description: 'Xendraren zazpi kideak, plazan bilduta.',
       position: LANDMARK_POSITIONS.fountain,
-      interactionRadius: LANDMARK_INTERACTION_RADIUS,
+      interactionRadius: FOUNTAIN_INTERACTION_RADIUS,
     },
     {
       id: 'trainHistory',

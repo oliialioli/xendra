@@ -98,3 +98,25 @@ export function generateLandmarkMarkerTextures(scene: Phaser.Scene): void {
   draw('landmark-marker', 0xe2b53c);
   draw('landmark-marker-visited', 0x7c9070);
 }
+
+/**
+ * Soft white radial gradient, fully transparent at its edge. Used as a
+ * proximity "glow" overlay (see LandmarkAssetConfig.proximityGlow /
+ * MapScene.updateLandmarkGlow) that additively brightens a single-artwork
+ * landmark as the snail approaches, without needing a second lit-state PNG.
+ */
+export function generateGlowTexture(scene: Phaser.Scene, key: string, size = 256): void {
+  if (scene.textures.exists(key)) return;
+  const canvasTexture = scene.textures.createCanvas(key, size, size);
+  if (!canvasTexture) return;
+  const ctx = canvasTexture.getContext();
+  const cx = size / 2;
+  const cy = size / 2;
+  const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, size / 2);
+  gradient.addColorStop(0, 'rgba(255,255,255,1)');
+  gradient.addColorStop(0.55, 'rgba(255,255,255,0.35)');
+  gradient.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+  canvasTexture.refresh();
+}

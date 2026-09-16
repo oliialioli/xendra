@@ -18,6 +18,7 @@ import {
   normalizeVector,
 } from '../utils/geometry';
 import {
+  generateGlowTexture,
   generateLandmarkMarkerTextures,
   generateSnailTextures,
 } from '../utils/placeholderTextures';
@@ -53,6 +54,18 @@ type LandmarkSpriteRenderInfo = {
  * react on an actual enter/exit transition, never mid-tween.
  */
 type LandmarkLightState = {
+  sprite: Phaser.GameObjects.Image;
+  landmark: Landmark;
+  isLit: boolean;
+};
+
+/**
+ * Tracks a landmark's optional proximity-glow overlay (see
+ * LandmarkAssetConfig.proximityGlow) -- the same enter/exit-edge tween
+ * pattern as LandmarkLightState above, but driving a synthetic soft-glow
+ * sprite's alpha instead of a second real artwork's.
+ */
+type LandmarkGlowState = {
   sprite: Phaser.GameObjects.Image;
   landmark: Landmark;
   isLit: boolean;
@@ -111,6 +124,7 @@ export class MapScene extends Phaser.Scene {
   private landmarkVisuals = new Map<LandmarkId, LandmarkVisual>();
   private landmarkSpriteRenderInfo = new Map<LandmarkId, LandmarkSpriteRenderInfo>();
   private landmarkLights = new Map<LandmarkId, LandmarkLightState>();
+  private landmarkGlow = new Map<LandmarkId, LandmarkGlowState>();
   private ambient!: AmbientEffectsSystem;
 
   private keyD!: Phaser.Input.Keyboard.Key;
@@ -151,6 +165,7 @@ export class MapScene extends Phaser.Scene {
     this.setUpMapImage();
     generateSnailTextures(this);
     generateLandmarkMarkerTextures(this);
+    generateGlowTexture(this, 'landmark-glow');
 
     this.setUpObstacles();
     this.setUpSnail();
@@ -197,6 +212,7 @@ export class MapScene extends Phaser.Scene {
 
   update(_time: number, delta: number): void {
     this.updateLandmarkLights();
+    this.updateLandmarkGlow();
 
     if (!this.controlsEnabled) {
       this.snail.setVelocity(0, 0);
@@ -366,7 +382,10 @@ export class MapScene extends Phaser.Scene {
 
       const key = MapScene.landmarkAssetKey(landmark.id);
       const source = this.textures.get(key).source[0];
-      const analysis = analyzeOpaqueBuildingBounds(source.image as HTMLImageElement | HTMLCanvasElement);
+      const analysis = analyzeOpaqueBuildingBounds(
+        source.image as HTMLImageElement | HTMLCanvasElement,
+        config.anchorMode ?? 'bottom-center',
+      );
 
       const buildingPixelWidth = analysis.bbox.x1 - analysis.bbox.x0 + 1;
       const displayWidth = config.approvedBuildingWidth * (analysis.imageWidth / buildingPixelWidth);
@@ -398,6 +417,19 @@ export class MapScene extends Phaser.Scene {
         lightsSprite.setAlpha(0);
 
         this.landmarkLights.set(landmark.id, { sprite: lightsSprite, landmark, isLit: false });
+      }
+
+      if (config.proximityGlow) {
+        // Centered on the sprite's own render point (not offset by its
+        // ground/bottom origin) since this is a soft round highlight, not a
+        // second copy of the artwork -- see generateGlowTexture().
+        const glowSprite = this.add.image(renderX, renderY, 'landmark-glow');
+        glowSprite.setDisplaySize(displayWidth * 0.85, displayWidth * 0.85);
+        glowSprite.setDepth(renderY + 0.5);
+        glowSprite.setBlendMode(Phaser.BlendModes.ADD);
+        glowSprite.setAlpha(0);
+
+        this.landmarkGlow.set(landmark.id, { sprite: glowSprite, landmark, isLit: false });
       }
     });
   }
@@ -472,6 +504,44 @@ export class MapScene extends Phaser.Scene {
         }
       } else {
         this.tweens.add({ targets: state.sprite, alpha: 0, duration: 400, ease: 'Sine.easeOut' });
+      }
+    });
+  }
+
+  /**
+   * Drives each landmark's optional proximity-glow sprite (see
+   * LandmarkAssetConfig.proximityGlow) -- same enter/exit-edge pattern as
+   * updateLandmarkLights() above, but capped to a low peak alpha (this is an
+   * additive soft highlight, not a second full-brightness artwork) so it
+   * reads as "the water catching a little more light", never a flash.
+   */
+  private updateLandmarkGlow(): void {
+    this.landmarkGlow.forEach((state) => {
+      const distance = Math.hypot(
+        this.snail.position.x - state.landmark.position.x,
+        this.snail.position.y - state.landmark.position.y,
+      );
+      const withinRange = distance <= LANDMARK_REVEAL_RADIUS;
+      if (withinRange === state.isLit) return;
+
+      state.isLit = withinRange;
+      this.tweens.killTweensOf(state.sprite);
+
+      if (withinRange) {
+        if (this.reducedMotion) {
+          this.tweens.add({ targets: state.sprite, alpha: 0.16, duration: 260, ease: 'Sine.easeOut' });
+        } else {
+          this.tweens.chain({
+            targets: state.sprite,
+            tweens: [
+              { alpha: 0.14, duration: 260, ease: 'Sine.easeOut' },
+              { alpha: 0.08, duration: 200, ease: 'Sine.easeInOut' },
+              { alpha: 0.18, duration: 380, ease: 'Sine.easeIn' },
+            ],
+          });
+        }
+      } else {
+        this.tweens.add({ targets: state.sprite, alpha: 0, duration: 450, ease: 'Sine.easeOut' });
       }
     });
   }
