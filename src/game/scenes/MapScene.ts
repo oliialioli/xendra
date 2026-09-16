@@ -138,7 +138,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image('xendra-map', assetPath('/assets/map/xendra-map-base@2x.png'));
+    this.load.image('xendra-map', assetPath('/assets/map/xendra-map-base-v7-4k.png'));
     this.load.svg('xendra-map-fallback', assetPath('/assets/map/placeholder-map.svg'), {
       width: WORLD_WIDTH,
       height: WORLD_HEIGHT,
