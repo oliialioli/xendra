@@ -1,0 +1,133 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: 100%;
+  min-height: 0;
+}
+
+.canvasWrap {
+  position: relative;
+  flex: 1;
+  min-height: 220px;
+  border: 2px solid var(--ui-border);
+  border-radius: var(--ui-radius-md);
+  background: var(--ui-surface);
+  overflow: hidden;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Only the canvas itself blocks the browser's own touch gestures (scroll/zoom) -- see prompt maestro. */
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.canvas[data-tool='eraser'] {
+  cursor: cell;
+}
+
+.emptyHint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  color: var(--ui-ink);
+  opacity: 0.4;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  pointer-events: none;
+  user-select: none;
+}
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.swatches {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.swatch {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  min-height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--ui-border);
+  box-shadow: 1px 1px 0 0 var(--ui-shadow);
+  padding: 0;
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-organic);
+}
+
+.swatch[data-selected='true'] {
+  outline: 3px solid var(--ui-accent);
+  outline-offset: 2px;
+  transform: scale(1.08);
+}
+
+.swatch:hover {
+  transform: scale(1.05);
+}
+
+.sizes {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.sizeButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: var(--space-1) var(--space-2);
+  background: var(--ui-surface);
+  border: 2px solid var(--ui-border);
+  border-radius: var(--ui-radius-sm);
+  color: var(--ui-ink);
+  cursor: pointer;
+}
+
+.sizeButton[data-selected='true'] {
+  background: var(--ui-accent);
+  color: var(--ui-accent-ink);
+}
+
+.sizeDot {
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.sizeLabel {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
+@media (max-width: 640px) {
+  .actions {
+    margin-left: 0;
+  }
+
+  .tools {
+    justify-content: space-between;
+  }
+}

@@ -10,7 +10,13 @@ export type LandmarkId =
   | 'fountain'
   | 'trainHistory'
   | 'bulletinBoard'
-  | 'fronton'
+  /**
+   * Community message-boats dock. Reuses the exact spot/interaction radius
+   * the old `fronton` (frontoi/notes) landmark used -- see dockConfig.ts --
+   * provisionally shown with a pencil icon until the real dock/pier artwork
+   * exists (see dockAssetConfig in dockConfig.ts).
+   */
+  | 'dockMessages'
   | 'postbox';
 
 export type Vector2Like = { x: number; y: number };

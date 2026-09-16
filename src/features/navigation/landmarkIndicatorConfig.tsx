@@ -88,7 +88,9 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     revealRadius: LANDMARK_REVEAL_RADIUS,
     visualHeight: 45,
   },
-  fronton: {
+  // Provisional pencil icon until the real dock/pier artwork exists -- see
+  // dockAssetConfig in content/dockConfig.ts.
+  dockMessages: {
     icon: Pencil,
     label: 'Mezuak',
     revealRadius: LANDMARK_REVEAL_RADIUS,

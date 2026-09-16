@@ -1,0 +1,61 @@
+/*
+ * Same imperative-transform-overlay pattern as DiscoveryIndicators.module.css:
+ * .root never intercepts pointer events (the map underneath stays fully
+ * interactive), each boat's own hit area opts back in individually.
+ */
+.root {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.outer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* transform-origin stays the default (50% 50%) so the translate(-50%,-50%)
+     BoatFleet.tsx includes in its own written transform, plus rotate/scale
+     after it in the same transform list, all pivot around the box's own
+     center -- the standard "position + center + rotate" composition. */
+  will-change: transform;
+}
+
+.outer[data-selected='true'] .image {
+  filter: drop-shadow(0 0 6px var(--ui-accent)) drop-shadow(0 0 2px var(--ui-accent));
+}
+
+.inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hitArea {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.hitArea:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+  border-radius: 50%;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}

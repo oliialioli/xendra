@@ -6,7 +6,7 @@ import { GroupPanel } from '../features/panels/GroupPanel';
 import { HistoryPanel } from '../features/panels/HistoryPanel';
 import { MerchPanel } from '../features/panels/MerchPanel';
 import { ArchivePanel } from '../features/panels/ArchivePanel';
-import { NotesPanel } from '../features/publicNotes/NotesPanel';
+import { BoatCreator } from '../features/boats/BoatCreator';
 import { ContactPanel } from '../features/panels/ContactPanel';
 
 export const MAP_ROUTE = '/mapa';
@@ -76,10 +76,15 @@ export const PANEL_ROUTES: PanelRouteConfig[] = [
     icon: '▣',
   },
   {
-    route: '/notas',
-    landmarkId: 'fronton',
-    title: 'Jendearen oharrak',
-    Component: NotesPanel,
+    // Rendered directly by MapLayout as a centered/fullscreen modal instead
+    // of the generic right-anchored <Panel> shell every other entry here
+    // uses (see MapLayout's own special case for landmarkId === 'dockMessages') --
+    // Component/icon/title below stay only so this entry still type-checks
+    // and still lists correctly in the menu drawer.
+    route: '/mezuak',
+    landmarkId: 'dockMessages',
+    title: 'Mezuen kaia',
+    Component: BoatCreator,
     icon: '✎',
   },
   {

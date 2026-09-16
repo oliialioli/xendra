@@ -1,0 +1,29 @@
+.title {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.counterRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.counter {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ui-ink);
+  opacity: 0.6;
+}
+
+.counter[data-over='true'] {
+  color: var(--ui-danger);
+  opacity: 1;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-2);
+}

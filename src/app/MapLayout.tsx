@@ -10,6 +10,10 @@ import { IntroScreen } from '../features/intro/IntroScreen';
 import { Panel } from '../components/Panel';
 import { LiveRegion } from '../components/LiveRegion';
 import { DevWarningBanner } from '../components/DevWarningBanner';
+import { Toast } from '../components/Toast';
+import { BoatFleet } from '../features/boats/BoatFleet';
+import { BoatCreator } from '../features/boats/BoatCreator';
+import { useBoatFleet } from '../features/boats/useBoatFleet';
 import { useGameBridge } from './providers/GameBridgeContext';
 import { useSettings } from './providers/SettingsContext';
 import { useProgress } from './providers/ProgressContext';
@@ -30,6 +34,9 @@ export function MapLayout() {
   const [usingFallbackMap, setUsingFallbackMap] = useState(false);
   const [liveMessage, setLiveMessage] = useState('');
   const [navigationHintOpen, setNavigationHintOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const fleet = useBoatFleet();
 
   // Captured once: the game reads later updates via the 'visited:hydrate' bridge event.
   const [initialVisitedIds] = useState<LandmarkId[]>(() => Array.from(progress.visited));
@@ -113,6 +120,12 @@ export function MapLayout() {
     bus.emit('visited:hydrate', { ids: Array.from(progress.visited) });
   }, [progress.visited, bus]);
 
+  useEffect(() => {
+    if (!toastMessage) return undefined;
+    const timeout = window.setTimeout(() => setToastMessage(null), 3200);
+    return () => window.clearTimeout(timeout);
+  }, [toastMessage]);
+
   // Opening a panel from the menu or a direct URL counts as visiting it too,
   // not just proximity discovery on the map.
   useEffect(() => {
@@ -158,6 +171,13 @@ export function MapLayout() {
 
       <TouchControls bus={bus} hidden={controlsBlocked} />
 
+      <BoatFleet
+        bus={bus}
+        boats={fleet.boats}
+        reducedMotion={settings.effectiveReducedMotion}
+        suppressed={controlsBlocked}
+      />
+
       {/*
         Also suppressed (not just controlled by navigationHintOpen) while a
         landmark's own interact prompt is showing (Hud's proximityBar) --
@@ -171,6 +191,7 @@ export function MapLayout() {
       <NavigationHint open={navigationHintOpen && !nearestId} onDismiss={dismissNavigationHint} />
 
       <LiveRegion message={liveMessage} />
+      <Toast message={toastMessage} />
 
       {showIntro && (
         <IntroScreen
@@ -184,15 +205,25 @@ export function MapLayout() {
 
       {menuOpen && <MenuDrawer onClose={() => setMenuOpen(false)} />}
 
-      {panelEntry && (
-        <Panel
-          title={panelEntry.title}
-          variant={panelEntry.variant}
-          icon={panelEntry.icon}
+      {panelEntry && panelEntry.landmarkId === 'dockMessages' ? (
+        <BoatCreator
           onClose={() => navigate(MAP_ROUTE)}
-        >
-          <panelEntry.Component />
-        </Panel>
+          onBoatCreated={(boat) => {
+            fleet.addBoat(boat);
+            setToastMessage('Zure ontzia jada nabigatzen ari da');
+          }}
+        />
+      ) : (
+        panelEntry && (
+          <Panel
+            title={panelEntry.title}
+            variant={panelEntry.variant}
+            icon={panelEntry.icon}
+            onClose={() => navigate(MAP_ROUTE)}
+          >
+            <panelEntry.Component />
+          </Panel>
+        )
       )}
 
       {isUnknownRoute && (

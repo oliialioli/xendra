@@ -1,0 +1,131 @@
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-panel);
+  background: var(--color-overlay-scrim);
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: var(--z-panel);
+  display: flex;
+  flex-direction: column;
+  width: min(560px, calc(100vw - var(--space-5) * 2));
+  height: min(640px, calc(100vh - var(--space-5) * 2));
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  border: 2px solid var(--ui-border);
+  border-radius: var(--ui-radius-lg);
+  box-shadow: 6px 6px 0 0 var(--ui-shadow);
+  animation: modalIn var(--duration-medium) var(--ease-organic);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 2px solid var(--ui-border);
+  flex-shrink: 0;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  padding: var(--space-5);
+  overflow-y: auto;
+}
+
+.drawStep {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: 100%;
+  min-height: 0;
+}
+
+.helpText {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ui-ink);
+  opacity: 0.75;
+}
+
+.canvasArea {
+  flex: 1;
+  min-height: 260px;
+}
+
+.errorText {
+  margin: 0;
+  color: var(--ui-danger);
+  font-size: 0.85rem;
+}
+
+.drawFooter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.drawFooter :global(.xnd-btn-primary) {
+  margin-left: auto;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .modal {
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .body {
+    padding: var(--space-4);
+  }
+
+  @keyframes modalIn {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal {
+    animation: none;
+  }
+}

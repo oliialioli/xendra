@@ -1,5 +1,6 @@
 import type { XendraContent } from '../types/content';
 import { FOUNTAIN_INTERACTION_RADIUS, LANDMARK_INTERACTION_RADIUS, LANDMARK_POSITIONS } from './mapGeometry';
+import { dockConfig } from './dockConfig';
 
 /**
  * Single source of truth for every editable string in the experience.
@@ -194,13 +195,13 @@ export const xendraContent: XendraContent = {
       interactionRadius: LANDMARK_INTERACTION_RADIUS,
     },
     {
-      id: 'fronton',
-      route: '/notas',
-      title: 'Frontoiaren atea',
-      shortLabel: 'Oharrak',
-      description: 'Uhartea bisitatzen dutenek utzitako ohar laburrak.',
-      position: LANDMARK_POSITIONS.fronton,
-      interactionRadius: LANDMARK_INTERACTION_RADIUS,
+      id: 'dockMessages',
+      route: '/mezuak',
+      title: 'Mezuen kaia',
+      shortLabel: 'Mezuak',
+      description: 'Idatzi mezu bat, marraztu zure ontzia eta bota ibaira.',
+      position: LANDMARK_POSITIONS.dockMessages,
+      interactionRadius: dockConfig.interactionRadius,
     },
     {
       id: 'postbox',

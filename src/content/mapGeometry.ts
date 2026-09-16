@@ -289,7 +289,10 @@ export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   fountain: { x: (FOUNTAIN_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (FOUNTAIN_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   trainHistory: { x: 2159, y: 582 },
   bulletinBoard: { x: 988, y: 918 },
-  fronton: { x: 1753, y: 933 },
+  // dockMessages' own position lives in dockConfig.ts (dockPosition) --
+  // kept there, not here, since it needs to be shared with the boat
+  // launch/river-entry logic without this file importing that one.
+  dockMessages: { x: 1753, y: 933 },
   postbox: { x: 543, y: 781 },
 };
 

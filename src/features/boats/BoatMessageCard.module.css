@@ -1,0 +1,87 @@
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-panel);
+  background: transparent;
+}
+
+.card {
+  position: fixed;
+  left: var(--card-left, 50%);
+  top: var(--card-top, 50%);
+  z-index: var(--z-panel);
+  width: 280px;
+  max-width: calc(100vw - 24px);
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  border: 2px solid var(--ui-border);
+  border-radius: var(--ui-radius-lg);
+  box-shadow: var(--ui-shadow-offset) var(--ui-shadow-offset) 0 0 var(--ui-shadow);
+  padding: var(--space-4);
+  animation: cardIn var(--duration-fast) var(--ease-organic);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.message {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile/touch: a bottom sheet instead of a near-boat popover, keeping the anchor positioning irrelevant. */
+@media (pointer: coarse), (max-width: 720px) {
+  .card {
+    left: 50%;
+    top: auto;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: none;
+    border-radius: var(--ui-radius-lg) var(--ui-radius-lg) 0 0;
+    padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+    animation: sheetIn var(--duration-medium) var(--ease-organic);
+  }
+}
+
+@keyframes sheetIn {
+  from {
+    transform: translate(-50%, 100%);
+  }
+  to {
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+  }
+}
