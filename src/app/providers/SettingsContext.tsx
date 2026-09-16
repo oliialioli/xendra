@@ -8,6 +8,7 @@ type SettingsState = {
   extraReducedMotion: boolean;
   effectiveReducedMotion: boolean;
   hasSeenIntro: boolean;
+  hasSeenNavigationHint: boolean;
 };
 
 type SettingsActions = {
@@ -15,6 +16,7 @@ type SettingsActions = {
   setVolume: (volume: number) => void;
   setExtraReducedMotion: (enabled: boolean) => void;
   markIntroSeen: () => void;
+  markNavigationHintSeen: () => void;
 };
 
 type SettingsContextValue = SettingsState & SettingsActions;
@@ -25,6 +27,7 @@ const SOUND_KEY = storageKey('sound');
 const VOLUME_KEY = storageKey('volume');
 const MOTION_KEY = storageKey('reducedMotionExtra');
 const INTRO_KEY = storageKey('seenIntro');
+const NAVIGATION_HINT_KEY = storageKey('seenNavigationHint');
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const systemReducedMotion = useSystemReducedMotion();
@@ -35,6 +38,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     readJSON(MOTION_KEY, false),
   );
   const [hasSeenIntro, setHasSeenIntro] = useState(() => readJSON(INTRO_KEY, false));
+  const [hasSeenNavigationHint, setHasSeenNavigationHint] = useState(() =>
+    readJSON(NAVIGATION_HINT_KEY, false),
+  );
 
   useEffect(() => {
     writeJSON(SOUND_KEY, soundEnabled);
@@ -55,6 +61,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       extraReducedMotion,
       effectiveReducedMotion: systemReducedMotion || extraReducedMotion,
       hasSeenIntro,
+      hasSeenNavigationHint,
       setSoundEnabled: setSoundEnabledState,
       setVolume: setVolumeState,
       setExtraReducedMotion: setExtraReducedMotionState,
@@ -62,8 +69,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         setHasSeenIntro(true);
         writeJSON(INTRO_KEY, true);
       },
+      markNavigationHintSeen: () => {
+        setHasSeenNavigationHint(true);
+        writeJSON(NAVIGATION_HINT_KEY, true);
+      },
     }),
-    [soundEnabled, volume, extraReducedMotion, systemReducedMotion, hasSeenIntro],
+    [soundEnabled, volume, extraReducedMotion, systemReducedMotion, hasSeenIntro, hasSeenNavigationHint],
   );
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;

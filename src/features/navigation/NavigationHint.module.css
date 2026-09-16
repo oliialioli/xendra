@@ -1,0 +1,164 @@
+/*
+ * Bottom-center floating hint, same editorial/cartographic language as the
+ * rest of the chrome (Hud.module.css's .proximityBar is the closest sibling
+ * -- flat surface, thin ink border, solid offset shadow, no blur/gradients).
+ * Always mounted; visibility/opacity/pointer-events are what actually show
+ * or hide it, so it can play an exit transition instead of vanishing
+ * instantly, while never intercepting a click/tap/key while hidden.
+ */
+.panel {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+  z-index: var(--z-hud);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: min(500px, calc(100vw - var(--space-6) * 2));
+  padding: var(--space-4);
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  border: 2px solid var(--ui-border);
+  border-radius: var(--ui-radius-lg);
+  box-shadow: var(--ui-shadow-offset) var(--ui-shadow-offset) 0 0 var(--ui-shadow);
+  font-family: var(--font-mono);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 10px);
+  transition:
+    opacity var(--duration-medium) var(--ease-organic),
+    transform var(--duration-medium) var(--ease-organic),
+    visibility 0s var(--duration-medium);
+}
+
+.panel[data-visible='true'] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+  transition:
+    opacity var(--duration-medium) var(--ease-organic),
+    transform var(--duration-medium) var(--ease-organic),
+    visibility 0s 0s;
+}
+
+/* Physical keycaps: [empty][up][empty] over [left][down][right]. Desktop only. */
+.keycaps {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 32px);
+  grid-template-rows: repeat(2, 32px);
+  gap: 4px;
+}
+
+.key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ui-surface);
+  border: 2px solid var(--ui-border);
+  border-radius: var(--ui-radius-sm);
+  /* Subtle inner bezel -- reads as a raised physical key, not a flat tile. */
+  box-shadow: inset 0 -2px 0 0 var(--ui-shadow);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--ui-ink);
+}
+
+.keyUp {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.keyLeft {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.keyDown {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.keyRight {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+/* Touch-gesture icon, swapped in for the keycaps on touch/narrow viewports. */
+.gesture {
+  flex-shrink: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--ui-ink);
+  background: var(--ui-surface);
+  border: 2px solid var(--ui-border);
+  border-radius: var(--ui-radius-sm);
+  box-shadow: inset 0 -2px 0 0 var(--ui-shadow);
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  margin: 0 0 2px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--ui-ink);
+  opacity: 0.75;
+}
+
+.subtitleTouch {
+  display: none;
+}
+
+.closeButton {
+  flex-shrink: 0;
+  border-radius: 999px;
+}
+
+@media (pointer: coarse), (max-width: 720px) {
+  .panel {
+    left: 50%;
+    width: calc(100% - 32px);
+    max-width: 360px;
+  }
+
+  .keycaps {
+    display: none;
+  }
+
+  .gesture {
+    display: flex;
+  }
+
+  .subtitleDesktop {
+    display: none;
+  }
+
+  .subtitleTouch {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    transition: none;
+  }
+}
