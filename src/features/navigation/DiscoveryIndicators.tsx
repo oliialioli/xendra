@@ -71,8 +71,8 @@ export function DiscoveryIndicators({
     if (suppressed) return undefined;
 
     const handleFrame = ({
-      scrollX,
-      scrollY,
+      worldViewX,
+      worldViewY,
       zoom,
       viewportWidth,
       snailX,
@@ -87,8 +87,8 @@ export function DiscoveryIndicators({
         // approximate visual height, so the badge floats above a roofline
         // instead of the bare ground point -- see landmarkIndicatorConfig.ts.
         const worldAnchorY = landmark.position.y - config.visualHeight;
-        const screenX = (landmark.position.x - scrollX) * zoom;
-        const screenY = (worldAnchorY - scrollY) * zoom;
+        const screenX = (landmark.position.x - worldViewX) * zoom;
+        const screenY = (worldAnchorY - worldViewY) * zoom;
 
         const el = elementRefs.current[landmark.id];
         if (el) {

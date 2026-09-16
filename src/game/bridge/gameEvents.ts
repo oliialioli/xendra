@@ -15,8 +15,18 @@ export type GameToAppEvents = {
    * avoid a 60fps re-render.
    */
   'camera:frame': {
-    scrollX: number;
-    scrollY: number;
+    /**
+     * World coordinate at the camera viewport's top-left corner -- i.e.
+     * `camera.worldView.x/y`, NOT `camera.scrollX/scrollY`. Phaser's zoom is
+     * applied around the camera's own center, so scrollX only equals
+     * worldView.x when zoom is exactly 1; at any other zoom they diverge by
+     * `(width/2) * (1 - 1/zoom)`, which silently pulled every badge sideways
+     * off its landmark at any zoom level other than 1. worldView already
+     * accounts for zoom (and rotation, were it ever used) correctly, so
+     * consumers can do a plain `(worldX - worldViewX) * zoom` projection.
+     */
+    worldViewX: number;
+    worldViewY: number;
     zoom: number;
     /** Phaser's own tracked game/canvas width (Scale.gameSize.width) -- the same value the camera's own zoom math is built around, so DOM overlays never need a separate window.innerWidth read that could diverge from it. */
     viewportWidth: number;

@@ -763,8 +763,10 @@ export class MapScene extends Phaser.Scene {
   private emitCameraFrame(): void {
     const camera = this.cameras.main;
     this.bus.emit('camera:frame', {
-      scrollX: camera.scrollX,
-      scrollY: camera.scrollY,
+      // worldView.x/y, not scrollX/scrollY -- see the field doc in
+      // gameEvents.ts for why the two diverge at any zoom other than 1.
+      worldViewX: camera.worldView.x,
+      worldViewY: camera.worldView.y,
       zoom: camera.zoom,
       viewportWidth: this.scale.gameSize.width,
       snailX: this.snail.position.x,
