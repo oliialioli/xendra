@@ -378,7 +378,11 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
     path: '/assets/landmarks/kiosco-xendra.png',
     approvedBuildingWidth: (KIOSK_CONFIG.widthPercent / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
+    proximityGlow: true,
   },
+  // Stage gets its own dedicated lit-state artwork (lightsPath) instead of
+  // proximityGlow -- a real "lamps turning on" image reads better than a
+  // generic highlight for a landmark that's specifically about its lights.
   stage: {
     path: '/assets/landmarks/escenario-xendra.png',
     lightsPath: '/assets/landmarks/escenario-xendra-luces.png',
@@ -393,6 +397,7 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
     path: '/assets/landmarks/escuela-musica-xendra-default.png',
     approvedBuildingWidth: (SCHOOL_CONFIG.widthPercent / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
+    proximityGlow: true,
   },
   fountain: {
     path: '/assets/landmarks/fuente-xendra.png',
