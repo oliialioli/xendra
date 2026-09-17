@@ -35,6 +35,15 @@ function easeOutCubic(t: number): number {
   return 1 - (1 - t) ** 3;
 }
 
+/** Interpolates from angle `a` to `b` (radians) via the shorter of the two arcs around the circle, instead of always sweeping the "positive" way. */
+function lerpAngle(a: number, b: number, t: number): number {
+  const twoPi = Math.PI * 2;
+  let diff = (b - a) % twoPi;
+  if (diff < -Math.PI) diff += twoPi;
+  if (diff > Math.PI) diff -= twoPi;
+  return a + diff * t;
+}
+
 /**
  * Renders every boat as a DOM overlay above the Phaser canvas -- the same
  * pattern DiscoveryIndicators uses for landmark badges (imperative
@@ -130,6 +139,15 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed }: BoatFleetPr
       const now = performance.now();
       const { worldViewX, worldViewY, zoom } = cameraRef.current;
 
+      // Shared by every currently-launching boat, so computed once per
+      // frame rather than per boat -- see the launch branch below for why.
+      const launchStartFacing = Math.atan2(
+        dockConfig.riverEntryPoint.y - dockConfig.launchPoint.y,
+        dockConfig.riverEntryPoint.x - dockConfig.launchPoint.x,
+      );
+      const launchHandoffSample = samplePathAtProgress(boatPathConfig.launchProgress);
+      const launchHandoffFacing = launchHandoffSample.angleRad + (boatPathConfig.direction < 0 ? Math.PI : 0);
+
       runtimeRef.current.forEach((state, boatId) => {
         const el = elementRefs.current.get(boatId);
         const inner = innerRefs.current.get(boatId);
@@ -152,10 +170,16 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed }: BoatFleetPr
           const t = easeOutCubic(launchElapsed / LAUNCH_DURATION_MS);
           worldX = dockConfig.launchPoint.x + (dockConfig.riverEntryPoint.x - dockConfig.launchPoint.x) * t;
           worldY = dockConfig.launchPoint.y + (dockConfig.riverEntryPoint.y - dockConfig.launchPoint.y) * t;
-          angleRad = Math.atan2(
-            dockConfig.riverEntryPoint.y - dockConfig.launchPoint.y,
-            dockConfig.riverEntryPoint.x - dockConfig.launchPoint.x,
-          );
+          // Eases from "facing straight toward the river entry point" (t=0,
+          // just leaving the dock) to whatever heading the boat needs the
+          // instant it joins the loop (t=1) -- these two angles aren't the
+          // same (the loop's own tangent at the entry point rarely matches
+          // the dock's straight departure line, more so since
+          // boatPathConfig.direction can flip the loop's facing entirely),
+          // so holding the departure angle fixed for the whole animation
+          // made the boat visibly snap to a new heading the moment it
+          // started sailing. Lerping removes that pop.
+          angleRad = lerpAngle(launchStartFacing, launchHandoffFacing, t);
           opacity = Math.min(1, launchElapsed / LAUNCH_FADE_MS);
         } else {
           const sailingStart =

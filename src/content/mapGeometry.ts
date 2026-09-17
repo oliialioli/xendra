@@ -304,7 +304,7 @@ export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   // dockMessages' own position lives in dockConfig.ts (dockPosition) --
   // kept there, not here, since it needs to be shared with the boat
   // launch/river-entry logic without this file importing that one.
-  dockMessages: { x: 1800, y: 965 },
+  dockMessages: { x: 1800, y: 1025 },
   postbox: { x: 543, y: 781 },
 };
 

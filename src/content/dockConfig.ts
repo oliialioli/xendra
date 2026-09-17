@@ -27,15 +27,20 @@ export const dockConfig = {
   /**
    * Horizontal position, 0-100, percentage of WORLD_WIDTH -- the house's own
    * ground-contact point, re-centered on the pre-existing clearing (the old
-   * `fronton` plaza baked into xendra-map-base-v7-4k.png) after the original
-   * value sat too close to the clearing's back-left edge; verified against a
-   * composite of the real map crop, not eyeballed from a screenshot alone.
+   * `fronton` plaza baked into xendra-map-base-v7-4k.png). The clearing's
+   * geometric center is (1800, 965) world units, but a bottom-anchored
+   * sprite only ever extends *upward* from its anchor (never below/in front
+   * of it -- same convention every other landmark uses), so anchoring
+   * exactly at that center leaves the whole visible house sitting in the
+   * clearing's back half. Nudged further toward the front (larger y) than
+   * the raw geometric center to compensate, verified live against the
+   * actual rendered sprite, not just the patch's own shape.
    */
   xPercent: 70.31,
   /** Vertical position, 0-100, percentage of WORLD_HEIGHT -- see xPercent. */
-  yPercent: 67.01,
+  yPercent: 71.18,
   interactionRadius: LANDMARK_INTERACTION_RADIUS,
-  launchPoint: { x: 1800, y: 965 } as Vector2Like,
+  launchPoint: { x: 1800, y: 1025 } as Vector2Like,
   riverEntryPoint: { x: 1811, y: 1263 } as Vector2Like,
 };
 
