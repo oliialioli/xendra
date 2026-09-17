@@ -153,6 +153,12 @@ export const OBSTACLE_RECTS: ObstacleRect[] = [
   // edge lip stays walkable-adjacent, with its bottom edge a little above
   // the anchor point (the entrance) so the player can approach from the front.
   { id: 'school-building', x: 1496, y: 350, width: 286, height: 223 },
+  // Sized to the ruined castle's wall footprint (see castleConfig.ts, kept
+  // in sync by hand -- this file can't import that one without a circular
+  // import), not its full jagged silhouette (the tallest corner tower rises
+  // well past any wall the snail could actually be blocked by). Bottom edge
+  // sits at the sprite's own anchor point, same convention as every rect above.
+  { id: 'castle-ruins', x: 1400, y: 120, width: 200, height: 110 },
 ];
 
 /**

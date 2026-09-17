@@ -4,7 +4,7 @@ import type { Boat } from './boatTypes';
 import { boatPathConfig } from '../../content/boatPathConfig';
 import { dockConfig, waterfallConfig } from '../../content/dockConfig';
 import { computeBoatMotionParams } from './boatHash';
-import { samplePathAtProgress, offsetPerpendicular, isWithinSegment, segmentFraction } from './boatPath';
+import { samplePathAtProgress, offsetPerpendicular, segmentFraction } from './boatPath';
 import { getBoatBitmapDataUrl } from './boatBitmap';
 import { BoatMessageCard } from './BoatMessageCard';
 import styles from './BoatFleet.module.css';
@@ -226,8 +226,20 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed }: BoatFleetPr
             angleRad += ((waterfallConfig.tilt * Math.PI) / 180) * waterfallEnvelope;
           }
 
-          if (boatPathConfig.occlusionSegments.some((segment) => isWithinSegment(sample.progress, segment))) {
-            opacity = OCCLUDED_OPACITY;
+          // Smooth fade toward each segment's own center (same envelope
+          // shape as the waterfall above) instead of a hard on/off cut, so
+          // a boat crossing under a bridge deck reads as passing beneath it
+          // rather than blinking out and back. When segments overlap, the
+          // deepest fade wins.
+          let occlusionEnvelope = 0;
+          boatPathConfig.occlusionSegments.forEach((segment) => {
+            const fraction = segmentFraction(sample.progress, segment);
+            if (fraction === null) return;
+            const env = Math.sin(fraction * Math.PI);
+            if (env > occlusionEnvelope) occlusionEnvelope = env;
+          });
+          if (occlusionEnvelope > 0) {
+            opacity = 1 - occlusionEnvelope * (1 - OCCLUDED_OPACITY);
           }
 
           if (!reducedMotion) {

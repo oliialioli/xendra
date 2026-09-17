@@ -108,23 +108,32 @@ export const boatPathConfig = {
    */
   launchProgress: 0.8504,
   /**
-   * Progress ranges (0-1) where a boat should hide/fade because the route
+   * Progress ranges (0-1) where a boat should fade out because the route
    * passes under a bridge deck, or visually behind a solid obstruction like
-   * the waterfall's rock cluster, at that point on the real map.
+   * the waterfall's rock cluster, at that point on the real map. BoatFleet
+   * fades smoothly (not a hard cut) toward the segment's center via
+   * boatPath's segmentFraction, so a boat reads as sailing *under* the deck
+   * rather than blinking away.
    *
-   * The two actual bridge crossings aren't at a known progress range yet --
-   * deliberately not guessed from a screenshot; add {start, end} entries
-   * for them once each one's actual progress range is located (e.g. via
-   * MapScene's debug overlay, extended to draw this path) against the live map.
+   * Each bridge entry's center is the nearest path progress to that
+   * bridge's own world position (found by sampling boatPath's own
+   * samplePathAtProgress against the bridge's coordinates on
+   * xendra-map-base-v7-4k.png, not guessed from a screenshot), with a
+   * half-width covering that bridge's actual deck span.
    *
-   * The one entry below is the waterfall's rock cluster -- narrower than
+   * The last entry is the waterfall's rock cluster -- narrower than
    * dockConfig.waterfallConfig's own segmentStart/segmentEnd (which also
    * drives the tilt/speed/drop effect over a wider approach+exit window),
    * kept here rather than imported from dockConfig.ts to avoid a circular
    * import (dockConfig.ts already imports from this file's sibling,
    * mapGeometry.ts); update both by hand together if the falls ever move.
    */
-  occlusionSegments: [{ start: 0.8434, end: 0.8574 }] as OcclusionSegment[],
+  occlusionSegments: [
+    { start: 0.0717, end: 0.1157 }, // railway bridge (top-right)
+    { start: 0.3537, end: 0.3977 }, // stone arched bridge (top-left)
+    { start: 0.7438, end: 0.7878 }, // straight causeway bridge (south)
+    { start: 0.8434, end: 0.8574 }, // waterfall rock cluster
+  ] as OcclusionSegment[],
   /**
    * Progress range handed to waterfallConfig's tilt/speed/drop/splash
    * effect -- informational only (BoatFleet reads dockConfig.waterfallConfig's
