@@ -12,9 +12,10 @@ export type LandmarkId =
   | 'bulletinBoard'
   /**
    * Community message-boats dock. Reuses the exact spot/interaction radius
-   * the old `fronton` (frontoi/notes) landmark used -- see dockConfig.ts --
-   * provisionally shown with a pencil icon until the real dock/pier artwork
-   * exists (see dockAssetConfig in dockConfig.ts).
+   * the old `fronton` (frontoi/notes) landmark used -- see dockConfig.ts.
+   * Its real artwork is a small house (see LANDMARK_ASSET_OVERRIDES.dockMessages
+   * in mapGeometry.ts); the discovery badge still shows a provisional pencil
+   * icon (see landmarkIndicatorConfig.tsx) until a definitive icon exists.
    */
   | 'dockMessages'
   | 'postbox';

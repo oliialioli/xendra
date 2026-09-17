@@ -282,6 +282,18 @@ export const FOUNTAIN_CONFIG = {
   offsetY: 0,
 };
 
+/**
+ * Approved on-screen width (percentage of WORLD_WIDTH) of the messages-dock
+ * house's *visible building* silhouette only -- same convention as
+ * KIOSK_CONFIG/SCHOOL_CONFIG/FOUNTAIN_CONFIG's own widthPercent above. Not a
+ * full *_CONFIG object like those: the house's position is
+ * LANDMARK_POSITIONS.dockMessages (== dockConfig.dockPosition) directly,
+ * already the single source of truth for that landmark's interaction
+ * hotspot -- this constant only sizes the artwork, it doesn't duplicate the
+ * position.
+ */
+export const HOUSE_WIDTH_PERCENT = 5.86;
+
 export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   kiosk: { x: (KIOSK_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (KIOSK_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   stage: { x: (STAGE_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (STAGE_CONFIG.yPercent / 100) * WORLD_HEIGHT },
@@ -407,6 +419,17 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
     approvedBuildingWidth: (FOUNTAIN_CONFIG.widthPercent / 100) * WORLD_WIDTH,
     renderOffset: { x: FOUNTAIN_CONFIG.offsetX, y: FOUNTAIN_CONFIG.offsetY },
     anchorMode: 'center',
+    proximityGlow: true,
+  },
+  // The messages-dock's house, replacing the provisional bare pencil badge
+  // with a real building -- same bottom-center-anchor pattern as every
+  // other landmark here. Position comes from LANDMARK_POSITIONS.dockMessages
+  // (== dockConfig.dockPosition), verified against the actual river-bend
+  // clearing on xendra-map-base-v7-4k.png, not guessed from a reference image.
+  dockMessages: {
+    path: '/assets/landmarks/casa_rio.png',
+    approvedBuildingWidth: (HOUSE_WIDTH_PERCENT / 100) * WORLD_WIDTH,
+    renderOffset: { x: 0, y: 0 },
     proximityGlow: true,
   },
 };

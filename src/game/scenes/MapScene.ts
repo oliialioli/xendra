@@ -12,6 +12,7 @@ import {
   WORLD_HEIGHT,
   WORLD_WIDTH,
 } from '../../content/mapGeometry';
+import { waterfallConfig } from '../../content/dockConfig';
 import {
   clampTargetToWalkable,
   isInsideWithMargin,
@@ -150,6 +151,10 @@ export class MapScene extends Phaser.Scene {
         this.load.image(MapScene.landmarkLightsAssetKey(id as LandmarkId), assetPath(config.lightsPath));
       }
     });
+
+    if (waterfallConfig.enabled && waterfallConfig.assetSrc) {
+      this.load.image(MapScene.waterfallAssetKey(), assetPath(waterfallConfig.assetSrc));
+    }
   }
 
   create(): void {
@@ -173,6 +178,7 @@ export class MapScene extends Phaser.Scene {
     this.setUpInput();
     this.setUpLandmarkVisuals();
     this.setUpLandmarkAssetSprites();
+    this.setUpWaterfallAsset();
 
     this.ambient = new AmbientEffectsSystem(this, {
       reducedMotion: this.reducedMotion,
@@ -432,6 +438,29 @@ export class MapScene extends Phaser.Scene {
         this.landmarkGlow.set(landmark.id, { sprite: glowSprite, landmark, isLit: false });
       }
     });
+  }
+
+  private static waterfallAssetKey(): string {
+    return 'waterfall-asset';
+  }
+
+  /**
+   * Overlays the waterfall/rock-cluster artwork on top of the base map (see
+   * dockConfig's waterfallConfig) -- purely decorative, not a landmark: no
+   * interaction, no proximity, no collision. A no-op while `enabled` is
+   * false, so nothing (no broken image, no reserved space) shows up before
+   * the asset/position are ready.
+   */
+  private setUpWaterfallAsset(): void {
+    if (!waterfallConfig.enabled || !waterfallConfig.assetSrc) return;
+
+    const sprite = this.add.image(waterfallConfig.x, waterfallConfig.y, MapScene.waterfallAssetKey());
+    sprite.setOrigin(waterfallConfig.anchorX, waterfallConfig.anchorY);
+    sprite.setScale(waterfallConfig.scale);
+    sprite.setAngle(waterfallConfig.rotation);
+    // Sorted by its own anchor point, like every other landmark sprite, so
+    // it draws correctly relative to anything else keyed off ground position.
+    sprite.setDepth(waterfallConfig.y);
   }
 
   private setUpBridgeListeners(): void {

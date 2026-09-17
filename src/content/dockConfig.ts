@@ -39,56 +39,50 @@ export const dockPosition: Vector2Like = {
 };
 
 /**
- * Future dock/pier/rocks/weir/waterfall artwork, overlaid the same way
- * LANDMARK_ASSET_OVERRIDES places real landmark art (see MapScene's
- * setUpDockAsset) -- but kept fully separate from that system since this
- * asset's anchor is meant to be placed by hand (x/y/scale/anchor), not
- * derived from analyzing the image's own opaque bounds like a building.
+ * The waterfall/weir crossing the river just downstream of the dock,
+ * rendered by MapScene's setUpWaterfallAsset() the same way a landmark's
+ * real artwork is overlaid on the base map (see LANDMARK_ASSET_OVERRIDES in
+ * mapGeometry.ts) -- but kept fully separate from that system since this
+ * asset isn't a "landmark" (no interaction/proximity) and its anchor is
+ * placed by hand (x/y/scale/rotation/anchor), not derived from analyzing
+ * the image's own opaque bounds like a building.
  *
- * While `enabled` is false (the only state right now, since no asset
- * exists yet) MapScene's setUpDockAsset() is a no-op: no broken image, no
- * placeholder, no reserved layout space. The boat launch/river-entry
- * experience never depends on this being enabled.
+ * `x`/`y` reuse dockConfig.riverEntryPoint directly rather than a second
+ * hand-picked point: that's already the river-path progress nearest the
+ * dock (see boatPathConfig's own `launchProgress`), verified to fall on a
+ * clean, bridge-free stretch of xendra-map-base-v7-4k.png's river -- not
+ * guessed from the Figma composition reference, which was used only to
+ * find *which* stretch of river to target, never for literal coordinates.
  *
- * To activate once the real PNG/WebP exists:
- * 1. Drop the file under public/assets/landmarks/ (or public/assets/map/).
- * 2. Set `src` to its /assets/... path.
- * 3. Set `x`/`y` (world units) to where its anchor point should land --
- *    dockPosition above is a reasonable starting point.
- * 4. Set `scale` (1 = the image's natural pixel size in world units).
- * 5. Set `anchorX`/`anchorY` (0-1 fraction of the image itself) to its own
- *    visual ground-contact point.
- * 6. Set `enabled: true`.
- * No other file needs to change.
- */
-export const dockAssetConfig = {
-  enabled: false,
-  src: null as string | null,
-  x: 0,
-  y: 0,
-  scale: 1,
-  anchorX: 0.5,
-  anchorY: 1,
-};
-
-/**
- * The future waterfall/weir crossing the river, downstream of the dock.
- * Stays fully inert while `enabled` is false: boats cross `segmentStart`..
- * `segmentEnd` (boatPathConfig progress values) with completely normal
- * movement, no tilt/speed/drop/splash. See boatPathConfig's
- * `waterfallSegment` for how a boat's per-frame progress is checked against
- * this. Do not set real segment values from a screenshot alone -- confirm
- * against the actual river art once it exists, the same way the dock's own
- * position was confirmed against the live map rather than a reference image.
+ * `segmentStart`/`segmentEnd` are boatPathConfig progress values (0-1)
+ * bracketing the same stretch, derived from how far a fixed world-unit
+ * distance corresponds to in path progress right here (~7.2 world units of
+ * river per 0.001 progress) -- see BoatFleet's tick loop for how a boat's
+ * per-frame progress is compared against this range through a smooth 0->1->0
+ * envelope (Math.sin), not a hard on/off step, so crossing the falls never
+ * visibly pops. `boatPathConfig.occlusionSegments` has a matching (narrower)
+ * entry for fading a boat while it's visually behind the rock cluster.
+ *
+ * If the asset, its scale, or the river art itself ever changes, re-verify
+ * `x`/`y`/`scale`/`segmentStart`/`segmentEnd` against the live map (e.g. via
+ * MapScene's debug overlay, press `D`) rather than adjusting them from a
+ * screenshot alone.
  */
 export const waterfallConfig = {
-  enabled: false,
-  segmentStart: 0,
-  segmentEnd: 0,
-  /** Degrees the boat's outer container tilts while inside the segment. */
-  tilt: 0,
-  speedMultiplier: 1,
-  /** World units the boat visually drops while inside the segment. */
-  dropDistance: 0,
-  splashEnabled: false,
+  enabled: true,
+  assetSrc: '/assets/landmarks/cascada.png',
+  x: dockConfig.riverEntryPoint.x,
+  y: dockConfig.riverEntryPoint.y,
+  scale: 0.32,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.5,
+  segmentStart: 0.8354,
+  segmentEnd: 0.8654,
+  /** Degrees the boat's outer container tilts at the peak of the crossing envelope. */
+  tilt: 8,
+  speedMultiplier: 1.18,
+  /** World units the boat visually drops at the peak of the crossing envelope. */
+  dropDistance: 14,
+  splashEnabled: true,
 };

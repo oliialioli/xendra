@@ -88,8 +88,9 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     revealRadius: LANDMARK_REVEAL_RADIUS,
     visualHeight: 45,
   },
-  // Provisional pencil icon until the real dock/pier artwork exists -- see
-  // dockAssetConfig in content/dockConfig.ts.
+  // Provisional pencil badge icon until a definitive one exists -- the
+  // landmark's real artwork (a house) is set up separately, see
+  // LANDMARK_ASSET_OVERRIDES.dockMessages in content/mapGeometry.ts.
   dockMessages: {
     icon: Pencil,
     label: 'Mezuak',

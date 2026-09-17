@@ -6,13 +6,16 @@ island. Anyone can click a boat to read its message. See `src/features/boats/`
 for the implementation and each file's own doc comment for how the pieces
 fit together.
 
-## Provisional landmark
+## Landmark
 
 The dock reuses the old `fronton`/notes landmark's exact spot and interaction
 radius (see `types/content.ts`'s `dockMessages` doc comment) -- lower-right
 of the island, below/right of the music school, near the lower-right
-riverbank. It still shows the pencil icon (`landmarkIndicatorConfig.tsx`)
-until real dock/pier artwork exists.
+riverbank, upstream-left of the small waterfall. Its real artwork is a small
+house (`LANDMARK_ASSET_OVERRIDES.dockMessages` in `mapGeometry.ts`, using
+`public/assets/landmarks/casa_rio.png`); the discovery badge still shows a
+provisional pencil icon (`landmarkIndicatorConfig.tsx`) until a definitive
+one exists.
 
 ## Supabase setup
 
@@ -56,27 +59,26 @@ else needs to change:
 | Boat size | `features/boats/BoatFleet.tsx` | `BOAT_WORLD_SIZE` |
 | Boat speed | `features/boats/boatHash.ts` | `BASE_SPEED` / `SPEED_VARIATION` |
 | Floating bob | `features/boats/BoatFleet.tsx` | `FLOAT_AMPLITUDE_PX` / `FLOAT_SPEED` |
-| Bridge under-crossings (hide/fade a boat) | `content/boatPathConfig.ts` | `boatPathConfig.occlusionSegments` (empty today -- see below) |
-| Future dock/pier/rocks/weir art | `content/dockConfig.ts` | `dockAssetConfig` (`enabled: false` today) |
-| Future waterfall | `content/dockConfig.ts` | `waterfallConfig` (`enabled: false` today) |
+| Bridge under-crossings (hide/fade a boat) | `content/boatPathConfig.ts` | `boatPathConfig.occlusionSegments` (only the waterfall's own rock cluster today -- the two real bridges are still empty, see below) |
+| House landmark (Mensajes/Mezuak) position/size | `content/mapGeometry.ts` | position: `dockConfig.xPercent`/`yPercent` (shared with the landmark hotspot below); size: `HOUSE_WIDTH_PERCENT` |
+| Waterfall art position/scale/rotation | `content/dockConfig.ts` | `waterfallConfig.x`/`y`/`scale`/`rotation`/`anchorX`/`anchorY` |
+| Waterfall boat effect (tilt/speed/drop/splash) | `content/dockConfig.ts` | `waterfallConfig.tilt`/`speedMultiplier`/`dropDistance`/`splashEnabled`, over `segmentStart`/`segmentEnd` |
 
 ## Needs a visual pass once real assets/art exist
 
-- **`boatPathConfig.occlusionSegments`** is empty on purpose. The two
-  bridges aren't at a known progress range yet -- use the map's own debug
-  overlay (press `D` in-game) as a starting point for where the path crosses
-  a bridge deck, then add `{ start, end }` progress entries (0-1) here.
-- **`dockAssetConfig`**: drop the dock/pier/rocks PNG or WebP under
-  `public/assets/`, set `src`, then `x`/`y` (world units, `dockPosition` in
-  `dockConfig.ts` is a reasonable starting point), `scale`, `anchorX`/
-  `anchorY`, and finally `enabled: true`. Nothing else changes -- the boat
-  launch/river logic never depended on this being visible.
-- **`waterfallConfig`**: stays `enabled: false` and fully inert (boats cross
-  that stretch normally) until there's a real waterfall to align
-  `segmentStart`/`segmentEnd` against. Don't set real values from a
-  screenshot alone -- confirm against the live map, the same way the dock's
-  own position was (see `dockConfig.ts`'s comment on how `riverEntryPoint`
-  was derived from the actual coastline, not a reference image).
+- **`boatPathConfig.occlusionSegments`**'s two real bridges aren't at a
+  known progress range yet -- use the map's own debug overlay (press `D`
+  in-game) as a starting point for where the path crosses a bridge deck,
+  then add `{ start, end }` progress entries (0-1) here (the existing
+  waterfall entry is a good template).
+- **`waterfallConfig`**: the house (landmark artwork, `LANDMARK_ASSET_OVERRIDES.dockMessages`
+  in `mapGeometry.ts`) and the waterfall (`content/landmarks/cascada.png`,
+  placed via `waterfallConfig`) are both live, positioned and verified
+  against the actual river art on `xendra-map-base-v7-4k.png` (not guessed
+  from a reference image -- see `waterfallConfig`'s own comment in
+  `dockConfig.ts` for how `x`/`y` were derived). If the base map or either
+  asset ever changes, re-verify position/scale/`segmentStart`/`segmentEnd`
+  against the live map (debug overlay, `D`) rather than adjusting blind.
 - **`RIVER_PATH_MARGIN`** (`boatPathConfig.ts`) was checked visually against
   the current map at its default value; if a future map revision moves the
   riverbank, re-check the loop still reads as "in the water" all the way

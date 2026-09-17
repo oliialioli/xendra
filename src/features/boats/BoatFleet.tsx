@@ -4,7 +4,7 @@ import type { Boat } from './boatTypes';
 import { boatPathConfig } from '../../content/boatPathConfig';
 import { dockConfig, waterfallConfig } from '../../content/dockConfig';
 import { computeBoatMotionParams } from './boatHash';
-import { samplePathAtProgress, offsetPerpendicular, isWithinSegment } from './boatPath';
+import { samplePathAtProgress, offsetPerpendicular, isWithinSegment, segmentFraction } from './boatPath';
 import { getBoatBitmapDataUrl } from './boatBitmap';
 import { BoatMessageCard } from './BoatMessageCard';
 import styles from './BoatFleet.module.css';
@@ -144,6 +144,7 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed }: BoatFleetPr
         let angleRad: number;
         let opacity = 1;
         let floatOffset = 0;
+        let waterfallEnvelope = 0;
 
         const launchElapsed = state.launchStartedAt === null ? Infinity : now - state.launchStartedAt;
 
@@ -163,19 +164,42 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed }: BoatFleetPr
           const elapsedSeconds = (now - sailingStart) / 1000;
           const progress = baseOffset + elapsedSeconds * state.motionParams.speed;
 
-          const sample = samplePathAtProgress(progress);
+          // Smooth 0->1->0 envelope across the waterfall's segment (0 at
+          // both edges, peaking mid-crossing) instead of a hard on/off step,
+          // so entering/leaving the falls never visibly pops -- shared by
+          // the speed boost, tilt, drop and splash effects below.
+          const waterfallSegment = waterfallConfig.enabled
+            ? { start: waterfallConfig.segmentStart, end: waterfallConfig.segmentEnd }
+            : null;
+          const waterfallFraction = segmentFraction(progress, waterfallSegment);
+          waterfallEnvelope = waterfallFraction === null ? 0 : Math.sin(waterfallFraction * Math.PI);
+
+          let sampledProgress = progress;
+          if (waterfallEnvelope > 0 && waterfallConfig.speedMultiplier !== 1) {
+            // Peak forward nudge sized so the *average* extra distance
+            // covered across the whole segment (the sine envelope's mean is
+            // 2/pi of its peak) matches segmentSpan * (multiplier - 1) --
+            // i.e. "speedMultiplier% faster through this stretch", not an
+            // arbitrary constant.
+            const segmentSpan = waterfallConfig.segmentEnd - waterfallConfig.segmentStart;
+            const peakBoost = (segmentSpan * (waterfallConfig.speedMultiplier - 1)) / (2 / Math.PI);
+            sampledProgress = progress + waterfallEnvelope * peakBoost;
+          }
+
+          const sample = samplePathAtProgress(sampledProgress);
           const lane = boatPathConfig.lanes[state.motionParams.laneIndex] ?? 0;
           const laned = offsetPerpendicular(sample, lane);
           worldX = laned.x;
           worldY = laned.y;
           angleRad = sample.angleRad;
 
+          if (waterfallEnvelope > 0) {
+            worldY += waterfallConfig.dropDistance * waterfallEnvelope;
+            angleRad += ((waterfallConfig.tilt * Math.PI) / 180) * waterfallEnvelope;
+          }
+
           if (boatPathConfig.occlusionSegments.some((segment) => isWithinSegment(sample.progress, segment))) {
             opacity = OCCLUDED_OPACITY;
-          }
-          if (waterfallConfig.enabled && isWithinSegment(sample.progress, { start: waterfallConfig.segmentStart, end: waterfallConfig.segmentEnd })) {
-            worldY += waterfallConfig.dropDistance;
-            angleRad += (waterfallConfig.tilt * Math.PI) / 180;
           }
 
           if (!reducedMotion) {
@@ -186,7 +210,10 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed }: BoatFleetPr
         const screenX = (worldX - worldViewX) * zoom;
         const screenY = (worldY - worldViewY) * zoom;
         const angleDeg = (angleRad * 180) / Math.PI;
-        const scale = zoom * state.motionParams.scaleVariation;
+        // Subtle splash bulge at the peak of the waterfall crossing -- same
+        // shared envelope as the tilt/drop/speed effects above, no new asset.
+        const splashBoost = waterfallConfig.splashEnabled ? 1 + waterfallEnvelope * 0.12 : 1;
+        const scale = zoom * state.motionParams.scaleVariation * splashBoost;
 
         // translate(-50%,-50%) centers the box on the screen point (its own
         // top-left otherwise would); rotate/scale then pivot correctly

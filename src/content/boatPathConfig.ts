@@ -98,17 +98,27 @@ export const boatPathConfig = {
   launchProgress: 0.8504,
   /**
    * Progress ranges (0-1) where a boat should hide/fade because the route
-   * passes under a bridge deck at that point on the real map. Empty for now
-   * -- deliberately not guessed from a screenshot; add {start, end} entries
-   * here once each bridge crossing's actual progress range is located
-   * (e.g. via MapScene's debug overlay, extended to draw this path -- see
-   * dockConfig's own debug notes) against the live map.
+   * passes under a bridge deck, or visually behind a solid obstruction like
+   * the waterfall's rock cluster, at that point on the real map.
+   *
+   * The two actual bridge crossings aren't at a known progress range yet --
+   * deliberately not guessed from a screenshot; add {start, end} entries
+   * for them once each one's actual progress range is located (e.g. via
+   * MapScene's debug overlay, extended to draw this path) against the live map.
+   *
+   * The one entry below is the waterfall's rock cluster -- narrower than
+   * dockConfig.waterfallConfig's own segmentStart/segmentEnd (which also
+   * drives the tilt/speed/drop effect over a wider approach+exit window),
+   * kept here rather than imported from dockConfig.ts to avoid a circular
+   * import (dockConfig.ts already imports from this file's sibling,
+   * mapGeometry.ts); update both by hand together if the falls ever move.
    */
-  occlusionSegments: [] as OcclusionSegment[],
+  occlusionSegments: [{ start: 0.8434, end: 0.8574 }] as OcclusionSegment[],
   /**
-   * Progress range handed to waterfallConfig once a real waterfall exists.
-   * `null` today; MapScene/BoatFleet only ever consult waterfallConfig's
-   * own `enabled` flag, so this stays informational until that's turned on.
+   * Progress range handed to waterfallConfig's tilt/speed/drop/splash
+   * effect -- informational only (BoatFleet reads dockConfig.waterfallConfig's
+   * own segmentStart/segmentEnd directly), kept here in sync by hand for
+   * anyone scanning this file to see the boat-path-side picture in one place.
    */
-  waterfallSegment: null as OcclusionSegment | null,
+  waterfallSegment: { start: 0.8354, end: 0.8654 } as OcclusionSegment | null,
 };

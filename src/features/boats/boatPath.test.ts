@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getPathTotalLength, isWithinSegment, offsetPerpendicular, samplePathAtProgress } from './boatPath';
+import { getPathTotalLength, isWithinSegment, offsetPerpendicular, samplePathAtProgress, segmentFraction } from './boatPath';
 import { RIVER_PATH_POLYGON } from '../../content/boatPathConfig';
 
 describe('getPathTotalLength', () => {
@@ -65,5 +65,29 @@ describe('isWithinSegment', () => {
     expect(isWithinSegment(0.95, { start: 0.9, end: 0.1 })).toBe(true);
     expect(isWithinSegment(0.05, { start: 0.9, end: 0.1 })).toBe(true);
     expect(isWithinSegment(0.5, { start: 0.9, end: 0.1 })).toBe(false);
+  });
+});
+
+describe('segmentFraction', () => {
+  it('is null for a null segment', () => {
+    expect(segmentFraction(0.5, null)).toBeNull();
+  });
+
+  it('is null outside the segment', () => {
+    expect(segmentFraction(0.7, { start: 0.4, end: 0.6 })).toBeNull();
+  });
+
+  it('is 0 at the start, 1 at the end, 0.5 at the midpoint (non-wrapping)', () => {
+    expect(segmentFraction(0.4, { start: 0.4, end: 0.6 })).toBeCloseTo(0, 5);
+    expect(segmentFraction(0.6, { start: 0.4, end: 0.6 })).toBeCloseTo(1, 5);
+    expect(segmentFraction(0.5, { start: 0.4, end: 0.6 })).toBeCloseTo(0.5, 5);
+  });
+
+  it('handles a wrapping range (end < start) the same way as isWithinSegment', () => {
+    expect(segmentFraction(0.9, { start: 0.9, end: 0.1 })).toBeCloseTo(0, 5);
+    expect(segmentFraction(0.95, { start: 0.9, end: 0.1 })).toBeCloseTo(0.25, 5);
+    expect(segmentFraction(0.05, { start: 0.9, end: 0.1 })).toBeCloseTo(0.75, 5);
+    expect(segmentFraction(0.1, { start: 0.9, end: 0.1 })).toBeCloseTo(1, 5);
+    expect(segmentFraction(0.5, { start: 0.9, end: 0.1 })).toBeNull();
   });
 });

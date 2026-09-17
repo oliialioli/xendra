@@ -88,3 +88,30 @@ export function isWithinSegment(progress: number, segment: OcclusionSegment | nu
   if (segment.start <= segment.end) return p >= segment.start && p <= segment.end;
   return p >= segment.start || p <= segment.end;
 }
+
+/**
+ * How far `progress` (0-1) has traveled through `segment` -- 0 at its start,
+ * 1 at its end -- or null if outside it (same wrap-past-1 handling as
+ * isWithinSegment). Lets a caller build a smooth in/out envelope (e.g.
+ * `Math.sin(fraction * Math.PI)`, 0 at both edges, peaking mid-segment)
+ * instead of a hard on/off step -- see BoatFleet's waterfall crossing.
+ */
+export function segmentFraction(progress: number, segment: OcclusionSegment | null): number | null {
+  if (!segment) return null;
+  // progress - floor(progress) wraps into [0, 1) without the extra rounding
+  // error a "+1 then %1" chain can introduce right at an exact boundary
+  // value (isWithinSegment's own wrap doesn't need this precision, since it
+  // only ever compares with <=/>=, not divides by a span near that boundary).
+  const p = progress - Math.floor(progress);
+  const { start, end } = segment;
+  const span = start <= end ? end - start : 1 - start + end;
+  if (span <= 0) return null;
+
+  if (start <= end) {
+    if (p < start || p > end) return null;
+    return (p - start) / span;
+  }
+  if (p >= start) return (p - start) / span;
+  if (p <= end) return (1 - start + p) / span;
+  return null;
+}
