@@ -75,7 +75,7 @@ export const waterfallConfig = {
   enabled: true,
   assetSrc: '/assets/landmarks/cascada.png',
   x: 1811,
-  y: 1160,
+  y: 1215,
   scale: 0.32,
   rotation: 0,
   anchorX: 0.5,
