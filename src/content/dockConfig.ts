@@ -24,12 +24,18 @@ import { WORLD_WIDTH, WORLD_HEIGHT, LANDMARK_INTERACTION_RADIUS } from './mapGeo
  * Both points are in world units, independent of viewport/zoom.
  */
 export const dockConfig = {
-  /** Horizontal position, 0-100, percentage of WORLD_WIDTH. */
-  xPercent: 68.48,
-  /** Vertical position, 0-100, percentage of WORLD_HEIGHT. */
-  yPercent: 64.79,
+  /**
+   * Horizontal position, 0-100, percentage of WORLD_WIDTH -- the house's own
+   * ground-contact point, re-centered on the pre-existing clearing (the old
+   * `fronton` plaza baked into xendra-map-base-v7-4k.png) after the original
+   * value sat too close to the clearing's back-left edge; verified against a
+   * composite of the real map crop, not eyeballed from a screenshot alone.
+   */
+  xPercent: 70.31,
+  /** Vertical position, 0-100, percentage of WORLD_HEIGHT -- see xPercent. */
+  yPercent: 67.01,
   interactionRadius: LANDMARK_INTERACTION_RADIUS,
-  launchPoint: { x: 1753, y: 933 } as Vector2Like,
+  launchPoint: { x: 1800, y: 965 } as Vector2Like,
   riverEntryPoint: { x: 1811, y: 1263 } as Vector2Like,
 };
 
