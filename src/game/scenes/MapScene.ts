@@ -13,6 +13,7 @@ import {
   WORLD_WIDTH,
 } from '../../content/mapGeometry';
 import { waterfallConfig } from '../../content/dockConfig';
+import { castleConfig } from '../../content/castleConfig';
 import {
   clampTargetToWalkable,
   isInsideWithMargin,
@@ -155,6 +156,10 @@ export class MapScene extends Phaser.Scene {
     if (waterfallConfig.enabled && waterfallConfig.assetSrc) {
       this.load.image(MapScene.waterfallAssetKey(), assetPath(waterfallConfig.assetSrc));
     }
+
+    if (castleConfig.enabled && castleConfig.assetSrc) {
+      this.load.image(MapScene.castleAssetKey(), assetPath(castleConfig.assetSrc));
+    }
   }
 
   create(): void {
@@ -179,6 +184,7 @@ export class MapScene extends Phaser.Scene {
     this.setUpLandmarkVisuals();
     this.setUpLandmarkAssetSprites();
     this.setUpWaterfallAsset();
+    this.setUpCastleAsset();
 
     this.ambient = new AmbientEffectsSystem(this, {
       reducedMotion: this.reducedMotion,
@@ -461,6 +467,35 @@ export class MapScene extends Phaser.Scene {
     // Sorted by its own anchor point, like every other landmark sprite, so
     // it draws correctly relative to anything else keyed off ground position.
     sprite.setDepth(waterfallConfig.y);
+  }
+
+  private static castleAssetKey(): string {
+    return 'castle-asset';
+  }
+
+  /**
+   * Overlays the ruined-castle artwork on the island's hill (see
+   * castleConfig) -- decorative only, same pattern as setUpWaterfallAsset()
+   * above, but sized/anchored via analyzeOpaqueBuildingBounds like a real
+   * landmark building (see setUpLandmarkAssetSprites()) since this is a
+   * ground-standing structure, not a hand-placed environmental prop like the
+   * waterfall. A no-op while `enabled` is false.
+   */
+  private setUpCastleAsset(): void {
+    if (!castleConfig.enabled || !castleConfig.assetSrc) return;
+
+    const key = MapScene.castleAssetKey();
+    const source = this.textures.get(key).source[0];
+    const analysis = analyzeOpaqueBuildingBounds(source.image as HTMLImageElement | HTMLCanvasElement, 'bottom-center');
+
+    const opaqueWidth = analysis.bbox.x1 - analysis.bbox.x0 + 1;
+    const displayWidth = castleConfig.approvedWidth * (analysis.imageWidth / opaqueWidth);
+    const displayHeight = displayWidth / (analysis.imageWidth / analysis.imageHeight);
+
+    const sprite = this.add.image(castleConfig.x, castleConfig.y, key);
+    sprite.setOrigin(analysis.origin.x, analysis.origin.y);
+    sprite.setDisplaySize(displayWidth, displayHeight);
+    sprite.setDepth(castleConfig.y);
   }
 
   private setUpBridgeListeners(): void {
