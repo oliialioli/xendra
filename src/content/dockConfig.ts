@@ -47,15 +47,18 @@ export const dockPosition: Vector2Like = {
  * placed by hand (x/y/scale/rotation/anchor), not derived from analyzing
  * the image's own opaque bounds like a building.
  *
- * `x`/`y` reuse dockConfig.riverEntryPoint directly rather than a second
- * hand-picked point: that's already the river-path progress nearest the
- * dock (see boatPathConfig's own `launchProgress`), verified to fall on a
- * clean, bridge-free stretch of xendra-map-base-v7-4k.png's river -- not
- * guessed from the Figma composition reference, which was used only to
- * find *which* stretch of river to target, never for literal coordinates.
+ * `x`/`y` started out equal to dockConfig.riverEntryPoint (the river-path
+ * progress nearest the dock -- see boatPathConfig's own `launchProgress`),
+ * then were nudged upstream/bankward by hand (closer to the house, per
+ * visual review) -- both checked, at each step, against a real crop of
+ * xendra-map-base-v7-4k.png composited with these exact assets, never
+ * guessed from the Figma composition reference or a screenshot alone. The
+ * nearest point on the actual boat path barely moves for this small a nudge
+ * (~0.0012 progress, well inside segmentStart/segmentEnd's own margin
+ * below), so boats still cross through the same stretch of rocks/water.
  *
  * `segmentStart`/`segmentEnd` are boatPathConfig progress values (0-1)
- * bracketing the same stretch, derived from how far a fixed world-unit
+ * bracketing that stretch, derived from how far a fixed world-unit
  * distance corresponds to in path progress right here (~7.2 world units of
  * river per 0.001 progress) -- see BoatFleet's tick loop for how a boat's
  * per-frame progress is compared against this range through a smooth 0->1->0
@@ -71,8 +74,8 @@ export const dockPosition: Vector2Like = {
 export const waterfallConfig = {
   enabled: true,
   assetSrc: '/assets/landmarks/cascada.png',
-  x: dockConfig.riverEntryPoint.x,
-  y: dockConfig.riverEntryPoint.y,
+  x: 1811,
+  y: 1160,
   scale: 0.32,
   rotation: 0,
   anchorX: 0.5,
