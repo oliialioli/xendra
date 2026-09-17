@@ -162,7 +162,7 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed }: BoatFleetPr
             state.launchStartedAt === null ? (fleetStartTimeRef.current ?? now) : state.launchStartedAt + LAUNCH_DURATION_MS;
           const baseOffset = state.launchStartedAt === null ? state.motionParams.initialOffset : boatPathConfig.launchProgress;
           const elapsedSeconds = (now - sailingStart) / 1000;
-          const progress = baseOffset + elapsedSeconds * state.motionParams.speed;
+          const progress = baseOffset + elapsedSeconds * state.motionParams.speed * boatPathConfig.direction;
 
           // Smooth 0->1->0 envelope across the waterfall's segment (0 at
           // both edges, peaking mid-crossing) instead of a hard on/off step,
@@ -183,7 +183,7 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed }: BoatFleetPr
             // arbitrary constant.
             const segmentSpan = waterfallConfig.segmentEnd - waterfallConfig.segmentStart;
             const peakBoost = (segmentSpan * (waterfallConfig.speedMultiplier - 1)) / (2 / Math.PI);
-            sampledProgress = progress + waterfallEnvelope * peakBoost;
+            sampledProgress = progress + waterfallEnvelope * peakBoost * boatPathConfig.direction;
           }
 
           const sample = samplePathAtProgress(sampledProgress);
@@ -191,7 +191,11 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed }: BoatFleetPr
           const laned = offsetPerpendicular(sample, lane);
           worldX = laned.x;
           worldY = laned.y;
-          angleRad = sample.angleRad;
+          // samplePathAtProgress's own tangent always faces the polygon's
+          // forward point order -- flip it 180 degrees when the fleet is
+          // actually traveling that order backwards (boatPathConfig.direction
+          // === -1), so the sprite still faces the way it's really moving.
+          angleRad = sample.angleRad + (boatPathConfig.direction < 0 ? Math.PI : 0);
 
           if (waterfallEnvelope > 0) {
             worldY += waterfallConfig.dropDistance * waterfallEnvelope;

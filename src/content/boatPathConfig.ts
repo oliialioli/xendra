@@ -82,6 +82,17 @@ export const boatPathConfig = {
    */
   path: buildClosedSvgPath(RIVER_PATH_POLYGON),
   /**
+   * Which way the fleet travels around the loop: `1` follows RIVER_PATH_POLYGON's
+   * own point order (the direction every progress value below -- launchProgress,
+   * occlusionSegments, waterfallSegment -- was calibrated against); `-1` reverses
+   * it. Reversing only changes which way *time* walks through the same
+   * progress->position mapping (BoatFleet negates its elapsedSeconds*speed
+   * step and flips the displayed facing by 180 degrees), so every calibrated
+   * progress value above still lands on the exact same physical point either
+   * way -- nothing else needs to change.
+   */
+  direction: -1 as 1 | -1,
+  /**
    * Perpendicular offsets (world units, relative to the path's own tangent
    * normal at each point) for spreading the fleet across parallel lanes
    * instead of a single-file line. Index chosen deterministically per boat
