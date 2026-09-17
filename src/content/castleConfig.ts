@@ -8,13 +8,13 @@
  * padded canvas.
  *
  * `x`/`y` (world units) were checked against a composite of the real
- * xendra-map-base-v7-4k.png crop -- on the hill's own high point, just off
- * the path that crosses it, not guessed from the reference image alone.
+ * xendra-map-base-v7-4k.png crop -- nestled right against the bend the
+ * path makes crossing the hill, not guessed from the reference image alone.
  */
 export const castleConfig = {
   enabled: true,
   assetSrc: '/assets/landmarks/castillo.png',
-  x: 1650,
-  y: 280,
+  x: 1500,
+  y: 230,
   approvedWidth: 230,
 };
