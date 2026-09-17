@@ -15,6 +15,16 @@ export type BoatFleetProps = {
   reducedMotion: boolean;
   /** Hides/disarms selection, e.g. while a panel/menu/intro is open -- mirrors DiscoveryIndicators' own `suppressed`. */
   suppressed: boolean;
+  /**
+   * Fires whenever a boat's message card opens/closes. The card is
+   * non-modal by design (the map stays visible/interactive around it -- see
+   * BoatMessageCard's own doc comment), but it can render in the same
+   * screen region as a nearby landmark's own "Ireki" proximity prompt (Hud's
+   * `proximityBar`), which sits underneath and stays fully clickable since
+   * MapLayout has no visibility into this component's local selection state
+   * otherwise. MapLayout uses this to hide that prompt while a card is open.
+   */
+  onBoatCardOpenChange?: (open: boolean) => void;
 };
 
 /** World-unit footprint a boat's bitmap renders at, before the map's own zoom -- see docs/BOATS.md for how to retune. */
@@ -54,7 +64,7 @@ function lerpAngle(a: number, b: number, t: number): number {
  * (via a ref, updated as it arrives) for the current world->screen
  * projection.
  */
-export function BoatFleet({ bus, boats, reducedMotion, suppressed }: BoatFleetProps) {
+export function BoatFleet({ bus, boats, reducedMotion, suppressed, onBoatCardOpenChange }: BoatFleetProps) {
   const elementRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const innerRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const runtimeRef = useRef<Map<string, RuntimeState>>(new Map());
@@ -89,6 +99,10 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed }: BoatFleetPr
       setSelectedRect(null);
     }
   }
+
+  useEffect(() => {
+    onBoatCardOpenChange?.(selectedBoat !== null);
+  }, [selectedBoat, onBoatCardOpenChange]);
 
   useEffect(() => {
     const previousId = selectedBoatIdRef.current;
@@ -277,45 +291,57 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed }: BoatFleetPr
   }, [boats]);
 
   return (
-    <div className={styles.root}>
-      {boats.map((boat) => (
-        <div
-          key={boat.id}
-          ref={(el) => {
-            if (el) elementRefs.current.set(boat.id, el);
-            else elementRefs.current.delete(boat.id);
-          }}
-          className={styles.outer}
-          style={{ width: BOAT_WORLD_SIZE, height: BOAT_WORLD_SIZE }}
-        >
+    <>
+      <div className={styles.root}>
+        {boats.map((boat) => (
           <div
+            key={boat.id}
             ref={(el) => {
-              if (el) innerRefs.current.set(boat.id, el);
-              else innerRefs.current.delete(boat.id);
+              if (el) elementRefs.current.set(boat.id, el);
+              else elementRefs.current.delete(boat.id);
             }}
-            className={styles.inner}
+            className={styles.outer}
+            style={{ width: BOAT_WORLD_SIZE, height: BOAT_WORLD_SIZE }}
           >
-            <button
-              type="button"
-              className={styles.hitArea}
-              onClick={(event) => {
-                event.stopPropagation();
-                if (suppressed) return;
-                setSelectedRect(event.currentTarget.getBoundingClientRect());
-                setSelectedBoat(boat);
+            <div
+              ref={(el) => {
+                if (el) innerRefs.current.set(boat.id, el);
+                else innerRefs.current.delete(boat.id);
               }}
-              aria-label={`${boat.displayName ?? 'Anonimoa'}-ren mezua irakurri`}
-              tabIndex={suppressed ? -1 : 0}
+              className={styles.inner}
             >
-              <img src={bitmapUrls.get(boat.id)} alt="" className={styles.image} draggable={false} />
-            </button>
+              <button
+                type="button"
+                className={styles.hitArea}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  if (suppressed) return;
+                  setSelectedRect(event.currentTarget.getBoundingClientRect());
+                  setSelectedBoat(boat);
+                }}
+                aria-label={`${boat.displayName ?? 'Anonimoa'}-ren mezua irakurri`}
+                tabIndex={suppressed ? -1 : 0}
+              >
+                <img src={bitmapUrls.get(boat.id)} alt="" className={styles.image} draggable={false} />
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
+      {/*
+       * Rendered as a sibling of .root, not a child -- .root sets its own
+       * z-index (4, to sit between the map and the HUD/badges), which
+       * creates a stacking context that would otherwise trap this card's
+       * own z-index (--z-panel, meant to sit above everything) underneath
+       * it, no matter how high --z-panel itself is set. Real pointer clicks
+       * on the close button landed on the Phaser canvas instead of the
+       * button for exactly this reason -- confirmed via elementFromPoint
+       * during manual testing, not just a layout guess.
+       */}
       {selectedBoat && !suppressed && (
         <BoatMessageCard boat={selectedBoat} anchorRect={selectedRect} onClose={() => setSelectedBoat(null)} />
       )}
-    </div>
+    </>
   );
 }

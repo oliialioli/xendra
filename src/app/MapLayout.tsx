@@ -35,6 +35,7 @@ export function MapLayout() {
   const [liveMessage, setLiveMessage] = useState('');
   const [navigationHintOpen, setNavigationHintOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [boatCardOpen, setBoatCardOpen] = useState(false);
 
   const fleet = useBoatFleet();
 
@@ -166,7 +167,7 @@ export function MapLayout() {
         onOpenMenu={() => setMenuOpen(true)}
         onInteract={() => bus.emit('controls:interactPressed', undefined)}
         onOpenNavigationHint={() => setNavigationHintOpen(true)}
-        interactionHidden={controlsBlocked}
+        interactionHidden={controlsBlocked || boatCardOpen}
       />
 
       <TouchControls bus={bus} hidden={controlsBlocked} />
@@ -176,6 +177,7 @@ export function MapLayout() {
         boats={fleet.boats}
         reducedMotion={settings.effectiveReducedMotion}
         suppressed={controlsBlocked}
+        onBoatCardOpenChange={setBoatCardOpen}
       />
 
       {/*
