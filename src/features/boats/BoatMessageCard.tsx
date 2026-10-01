@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { X } from '@phosphor-icons/react';
 import { useFocusTrap } from '../../components/useFocusTrap';
 import type { Boat } from './boatTypes';
 import styles from './BoatMessageCard.module.css';
@@ -69,7 +70,7 @@ export function BoatMessageCard({ boat, anchorRect, onClose }: BoatMessageCardPr
             {boat.displayName ?? 'Anonimoa'}
           </h3>
           <button type="button" className="xnd-btn-icon" onClick={onClose} aria-label="Itxi" title="Itxi">
-            ✕
+            <X size={20} aria-hidden="true" />
           </button>
         </header>
         <p className={styles.message}>{boat.message}</p>

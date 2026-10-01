@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { X } from '@phosphor-icons/react';
 import { useFocusTrap } from './useFocusTrap';
 import styles from './Panel.module.css';
 
@@ -7,8 +8,8 @@ export type PanelProps = {
   onClose: () => void;
   children: ReactNode;
   variant?: 'side' | 'wide';
-  /** Small glyph shown in the header's icon stamp (e.g. an emoji). Optional. */
-  icon?: string;
+  /** Shown in the header's icon stamp -- a line icon or a short glyph. Optional. */
+  icon?: ReactNode;
 };
 
 /**
@@ -63,7 +64,7 @@ export function Panel({ title, onClose, children, variant = 'side', icon }: Pane
             aria-label="Itxi"
             title="Itxi"
           >
-            ✕
+            <X size={20} aria-hidden="true" />
           </button>
         </header>
         <div className={styles.content}>{children}</div>

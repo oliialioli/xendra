@@ -24,9 +24,8 @@
   height: 108px;
   border-radius: 50%;
   background: var(--ui-surface);
-  opacity: 0.85;
-  border: 2px solid var(--ui-border);
-  box-shadow: var(--ui-shadow-offset) var(--ui-shadow-offset) 0 0 var(--ui-shadow);
+  opacity: 0.9;
+  box-shadow: var(--ui-shadow-raised);
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
@@ -39,7 +38,7 @@
   height: 46px;
   border-radius: 50%;
   background: var(--ui-accent);
-  border: 2px solid var(--ui-border);
+  box-shadow: 0 1px 2px rgb(46 53 41 / 14%), 0 4px 10px rgb(46 53 41 / 16%);
   transform: translate(-50%, -50%);
   pointer-events: none;
 }

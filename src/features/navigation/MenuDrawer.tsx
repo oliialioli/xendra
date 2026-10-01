@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { List } from '@phosphor-icons/react';
 import { Panel } from '../../components/Panel';
 import { MENU_ENTRIES, panelRouteByPath } from '../../app/routes';
 import { useProgress } from '../../app/providers/ProgressContext';
@@ -8,7 +9,7 @@ export function MenuDrawer({ onClose }: { onClose: () => void }) {
   const { visited } = useProgress();
 
   return (
-    <Panel title="Menua" icon="☰" onClose={onClose}>
+    <Panel title="Menua" icon={<List size={20} aria-hidden="true" />} onClose={onClose}>
       <nav aria-label="Xendraren atalak">
         <ul className={shared.list}>
           {MENU_ENTRIES.map((entry) => {

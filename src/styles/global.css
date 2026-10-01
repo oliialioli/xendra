@@ -85,11 +85,20 @@ a {
 }
 
 /*
- * Shared editorial/cartographic control system -- plain (non-module) classes
- * so every panel, the HUD, and the menu can compose the same look without
- * duplicating it per component. Flat fills, thin ink borders, small solid
- * offset shadows, no blur/gradients/glassmorphism.
+ * Shared control system -- plain (non-module) classes so every panel, the
+ * HUD, and the menu compose the same look without duplicating it per
+ * component. Soft cream cards over the map: no ink outlines, one diffuse
+ * shadow per floating surface, khaki for "active", yellow for "act here".
  */
+
+/* A floating cream surface (cards, the toolbar capsule, the logo). */
+.xnd-surface {
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  border-radius: var(--ui-radius-lg);
+  box-shadow: var(--ui-shadow);
+}
+
 .xnd-btn-icon {
   display: inline-flex;
   align-items: center;
@@ -99,151 +108,141 @@ a {
   padding: 0 var(--space-2);
   background: var(--ui-surface);
   color: var(--ui-ink);
-  border: 2px solid var(--ui-border);
-  border-radius: var(--ui-radius-sm);
+  border: none;
+  border-radius: var(--ui-radius-md);
   font-family: var(--font-ui);
   font-weight: 600;
   font-size: 1rem;
-  box-shadow: var(--ui-shadow-offset) var(--ui-shadow-offset) 0 0 var(--ui-shadow);
-  transition:
-    transform var(--duration-fast) var(--ease-organic),
-    box-shadow var(--duration-fast) var(--ease-organic);
+  line-height: 1;
+  box-shadow: var(--ui-shadow);
+  transition: background-color var(--duration-fast) var(--ease-organic);
+}
+
+.xnd-btn-icon:hover {
+  background: var(--ui-well);
 }
 
 .xnd-btn-icon[aria-pressed='true'],
 .xnd-btn-icon[aria-expanded='true'] {
-  background: var(--ui-accent);
-  color: var(--ui-accent-ink);
+  background: var(--ui-khaki);
 }
 
-.xnd-btn-icon:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: calc(var(--ui-shadow-offset) + 1px) calc(var(--ui-shadow-offset) + 1px) 0 0
-    var(--ui-shadow);
-}
-
-.xnd-btn-icon:active {
-  transform: translate(var(--ui-shadow-offset), var(--ui-shadow-offset));
-  box-shadow: 0 0 0 0 var(--ui-shadow);
-}
-
-/* Groups several .xnd-btn-icon into one compact bordered module (HUD controls). */
+/* Groups several .xnd-btn-icon into one cream capsule (HUD controls). */
 .xnd-control-module {
   display: inline-flex;
-  gap: 1px;
-  background: var(--ui-border);
-  border: 2px solid var(--ui-border);
-  border-radius: var(--ui-radius-sm);
-  overflow: hidden;
-  box-shadow: var(--ui-shadow-offset) var(--ui-shadow-offset) 0 0 var(--ui-shadow);
+  gap: var(--space-1);
+  padding: 6px;
+  background: var(--ui-surface);
+  border-radius: calc(var(--ui-radius-md) + 6px);
+  box-shadow: var(--ui-shadow);
 }
 
 .xnd-control-module .xnd-btn-icon {
-  border: none;
-  border-radius: 0;
+  min-width: 40px;
+  min-height: 40px;
+  background: transparent;
   box-shadow: none;
 }
 
-.xnd-control-module .xnd-btn-icon:hover,
-.xnd-control-module .xnd-btn-icon:active {
-  transform: none;
+.xnd-control-module .xnd-btn-icon:hover {
+  background: var(--ui-well);
 }
 
-/* Primary CTA: label on the left, small boxed arrow on the right. */
+.xnd-control-module .xnd-btn-icon[aria-pressed='true'] {
+  background: var(--ui-khaki);
+}
+
+/*
+ * Primary action: label on the left, the arrow in its own inset chip on
+ * the right. The single yellow element on screen at a time.
+ */
 .xnd-btn-primary {
-  position: relative;
   display: inline-flex;
   align-items: center;
+  gap: var(--space-4);
   min-height: var(--hud-touch-target);
-  padding: 0 calc(var(--space-7) + var(--space-2)) 0 var(--space-4);
+  padding: 5px 5px 5px var(--space-4);
   background: var(--ui-accent);
   color: var(--ui-accent-ink);
-  border: 2px solid var(--ui-border);
-  border-radius: var(--ui-radius-sm);
+  border: none;
+  border-radius: var(--ui-radius-md);
   font-family: var(--font-ui);
-  font-weight: 700;
-  box-shadow: var(--ui-shadow-offset) var(--ui-shadow-offset) 0 0 var(--ui-shadow);
-  transition:
-    transform var(--duration-fast) var(--ease-organic),
-    box-shadow var(--duration-fast) var(--ease-organic);
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: var(--ui-shadow);
+  transition: filter var(--duration-fast) var(--ease-organic);
 }
 
 .xnd-btn-primary::after {
   content: '→';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: var(--space-7);
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-left: 2px solid var(--ui-border);
-  background: rgb(0 0 0 / 8%);
-  font-weight: 700;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--ui-radius-sm);
+  background: rgb(46 53 41 / 10%);
+  font-weight: 500;
 }
 
 .xnd-btn-primary:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: calc(var(--ui-shadow-offset) + 1px) calc(var(--ui-shadow-offset) + 1px) 0 0
-    var(--ui-shadow);
+  filter: brightness(0.97);
 }
 
 .xnd-btn-primary:active {
-  transform: translate(var(--ui-shadow-offset), var(--ui-shadow-offset));
-  box-shadow: 0 0 0 0 var(--ui-shadow);
+  filter: brightness(0.93);
 }
 
 .xnd-btn-primary:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: var(--ui-shadow-offset) var(--ui-shadow-offset) 0 0 var(--ui-shadow);
+  filter: none;
 }
 
-/* Secondary/outline button: same shape language, lighter weight, no arrow box. */
+/* Secondary: same shape, quiet khaki fill, no arrow chip. */
 .xnd-btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: var(--hud-touch-target);
   padding: 0 var(--space-5);
-  background: var(--ui-surface);
+  background: var(--ui-khaki);
   color: var(--ui-ink);
-  border: 2px solid var(--ui-border);
-  border-radius: var(--ui-radius-sm);
+  border: none;
+  border-radius: var(--ui-radius-md);
   font-family: var(--font-ui);
-  font-weight: 700;
-  box-shadow: var(--ui-shadow-offset) var(--ui-shadow-offset) 0 0 var(--ui-shadow);
-  transition:
-    transform var(--duration-fast) var(--ease-organic),
-    box-shadow var(--duration-fast) var(--ease-organic);
+  font-weight: 600;
+  transition: background-color var(--duration-fast) var(--ease-organic);
 }
 
 .xnd-btn-secondary:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: calc(var(--ui-shadow-offset) + 1px) calc(var(--ui-shadow-offset) + 1px) 0 0
-    var(--ui-shadow);
+  background: var(--ui-khaki-strong);
 }
 
-.xnd-btn-secondary:active {
-  transform: translate(var(--ui-shadow-offset), var(--ui-shadow-offset));
-  box-shadow: 0 0 0 0 var(--ui-shadow);
-}
-
-/* Small editorial label/tag (used for badges, status pills). */
+/* Small pastel tag. Pick a fill with data-tone; khaki is the default. */
 .xnd-tag {
   display: inline-flex;
   align-items: center;
-  padding: 2px var(--space-2);
-  background: var(--ui-surface);
+  padding: 3px 7px;
+  background: var(--ui-tag-khaki);
   color: var(--ui-ink);
-  border: 1.5px solid var(--ui-border);
-  border-radius: 999px;
+  border-radius: 4px;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+
+.xnd-tag[data-tone='peach'] {
+  background: var(--ui-tag-peach);
+}
+
+.xnd-tag[data-tone='sky'] {
+  background: var(--ui-tag-sky);
+}
+
+.xnd-tag[data-tone='rose'] {
+  background: var(--ui-tag-rose);
 }
 
 @media (prefers-reduced-motion: reduce) {

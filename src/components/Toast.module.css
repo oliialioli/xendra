@@ -12,16 +12,29 @@
 
 .pill {
   pointer-events: auto;
-  background: var(--ui-accent);
-  color: var(--ui-accent-ink);
-  border: 2px solid var(--ui-border);
-  border-radius: var(--ui-radius-md);
-  box-shadow: var(--ui-shadow-offset) var(--ui-shadow-offset) 0 0 var(--ui-shadow);
-  padding: var(--space-3) var(--space-4);
-  font-family: var(--font-ui);
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  border-radius: 999px;
+  box-shadow: var(--ui-shadow-raised);
+  padding: var(--space-3) var(--space-5) var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
   text-align: center;
   animation: toastIn var(--duration-medium) var(--ease-organic);
+}
+
+/* Small yellow dot -- the same "this just happened" highlight as the primary button. */
+.pill::before {
+  content: '';
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ui-accent);
+  box-shadow: 0 0 0 3px rgb(233 236 130 / 35%);
 }
 
 @keyframes toastIn {

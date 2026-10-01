@@ -1,7 +1,7 @@
 /*
- * Bottom-center floating hint, same editorial/cartographic language as the
- * rest of the chrome (Hud.module.css's .proximityBar is the closest sibling
- * -- flat surface, thin ink border, solid offset shadow, no blur/gradients).
+ * Bottom-center floating hint, same soft field-guide card as the rest of the
+ * chrome (Hud.module.css's .proximityBar is the closest sibling -- cream
+ * surface, no outline, a soft diffuse shadow).
  * Always mounted; visibility/opacity/pointer-events are what actually show
  * or hide it, so it can play an exit transition instead of vanishing
  * instantly, while never intercepting a click/tap/key while hidden.
@@ -15,12 +15,11 @@
   align-items: center;
   gap: var(--space-4);
   width: min(500px, calc(100vw - var(--space-6) * 2));
-  padding: var(--space-4);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
   background: var(--ui-surface);
   color: var(--ui-ink);
-  border: 2px solid var(--ui-border);
   border-radius: var(--ui-radius-lg);
-  box-shadow: var(--ui-shadow-offset) var(--ui-shadow-offset) 0 0 var(--ui-shadow);
+  box-shadow: var(--ui-shadow-raised);
   font-family: var(--font-mono);
 
   opacity: 0;
@@ -57,13 +56,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--ui-surface);
-  border: 2px solid var(--ui-border);
+  background: var(--ui-well);
   border-radius: var(--ui-radius-sm);
   /* Subtle inner bezel -- reads as a raised physical key, not a flat tile. */
-  box-shadow: inset 0 -2px 0 0 var(--ui-shadow);
+  box-shadow: inset 0 -2px 0 0 var(--ui-border);
   font-family: var(--font-mono);
-  font-weight: 700;
+  font-weight: 500;
   font-size: 0.95rem;
   line-height: 1;
   color: var(--ui-ink);
@@ -98,10 +96,8 @@
   width: 44px;
   height: 44px;
   color: var(--ui-ink);
-  background: var(--ui-surface);
-  border: 2px solid var(--ui-border);
-  border-radius: var(--ui-radius-sm);
-  box-shadow: inset 0 -2px 0 0 var(--ui-shadow);
+  background: var(--ui-khaki);
+  border-radius: var(--ui-radius-md);
 }
 
 .text {
@@ -111,17 +107,17 @@
 
 .title {
   margin: 0 0 2px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.01em;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
 }
 
 .subtitle {
   margin: 0;
   font-size: 0.82rem;
   line-height: 1.35;
-  color: var(--ui-ink);
-  opacity: 0.75;
+  color: var(--ui-ink-muted);
 }
 
 .subtitleTouch {
@@ -130,7 +126,8 @@
 
 .closeButton {
   flex-shrink: 0;
-  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
 }
 
 @media (pointer: coarse), (max-width: 720px) {

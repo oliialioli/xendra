@@ -7,32 +7,33 @@
 }
 
 .lead {
-  color: var(--ui-ink);
-  opacity: 0.75;
+  color: var(--ui-ink-muted);
   margin-top: 0;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
+/* Inset cards inside a panel: a deeper cream well, no outline or shadow of their own. */
 .card {
-  border: 2px solid var(--ui-border);
   border-radius: var(--ui-radius-md);
   padding: var(--space-4);
-  background: var(--ui-background);
+  background: var(--ui-well);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  box-shadow: 2px 2px 0 0 var(--ui-shadow);
 }
 
 .cardTitle {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
 }
 
 .list {
@@ -41,15 +42,13 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
 .listItem {
-  border: 2px solid var(--ui-border);
   border-radius: var(--ui-radius-md);
-  padding: var(--space-4);
-  background: var(--ui-background);
-  box-shadow: 2px 2px 0 0 var(--ui-shadow);
+  padding: var(--space-3) var(--space-4);
+  background: var(--ui-well);
 }
 
 .badge {
@@ -66,31 +65,38 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: 6px;
 }
 
 .field label {
   font-family: var(--font-mono);
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--ui-ink-muted);
 }
 
 .field input,
 .field textarea,
 .field select {
-  padding: var(--space-2) var(--space-3);
-  border: 2px solid var(--ui-border);
-  border-radius: var(--ui-radius-sm);
-  background: var(--ui-surface);
+  padding: var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--ui-radius-md);
+  background: var(--ui-well);
   color: var(--ui-ink);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  transition: border-color var(--duration-fast) var(--ease-organic);
+}
+
+.field input:hover,
+.field textarea:hover,
+.field select:hover {
+  border-color: var(--ui-border);
 }
 
 .field input:focus-visible,
 .field textarea:focus-visible,
 .field select:focus-visible {
-  outline: 3px solid var(--ui-secondary);
+  outline: 3px solid var(--color-focus-ring);
   outline-offset: 1px;
 }
 
@@ -110,15 +116,21 @@
   align-items: center;
   gap: var(--space-1);
   color: var(--ui-ink);
-  font-weight: 700;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 500;
   text-decoration: underline;
-  text-underline-offset: 3px;
-  text-decoration-color: var(--ui-secondary);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--ui-khaki-strong);
+}
+
+.secondaryLink:hover {
+  text-decoration-color: currentColor;
 }
 
 .statusText {
   font-family: var(--font-mono);
   font-size: 0.82rem;
-  color: var(--ui-ink);
-  opacity: 0.7;
+  color: var(--ui-ink-muted);
 }

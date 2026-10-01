@@ -1,7 +1,7 @@
 /*
- * Editorial/cartographic card, anchored to the right edge on every viewport
- * so the map stays the protagonist -- no full-screen dark scrim. `.scrim` is
- * only an invisible full-viewport click-catcher for "click outside to close".
+ * Floating cream card, anchored to the right edge on every viewport so the
+ * map stays the protagonist -- no full-screen dark scrim. `.scrim` is only
+ * an invisible full-viewport click-catcher for "click outside to close".
  */
 .scrim {
   position: fixed;
@@ -21,9 +21,8 @@
   flex-direction: column;
   background: var(--ui-surface);
   color: var(--ui-ink);
-  border: 2px solid var(--ui-border);
   border-radius: var(--ui-radius-lg);
-  box-shadow: 6px 6px 0 0 var(--ui-shadow);
+  box-shadow: var(--ui-shadow-raised);
   animation: slideInRight var(--duration-medium) var(--ease-organic);
 }
 
@@ -35,8 +34,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-4) var(--space-4);
-  border-bottom: 2px solid var(--ui-border);
+  padding: var(--space-4) var(--space-4) var(--space-3) var(--space-5);
 }
 
 .iconStamp {
@@ -44,28 +42,40 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  font-size: 1.3rem;
-  background: var(--ui-accent);
-  border: 2px solid var(--ui-border);
+  width: 36px;
+  height: 36px;
+  font-size: 1.15rem;
+  color: var(--ui-ink);
+  background: var(--ui-khaki);
   border-radius: var(--ui-radius-sm);
-  box-shadow: 2px 2px 0 0 var(--ui-shadow);
 }
 
 .title {
   flex: 1;
   font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.45rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.15;
+}
+
+.header :global(.xnd-btn-icon) {
+  box-shadow: none;
+  background: transparent;
+}
+
+.header :global(.xnd-btn-icon):hover {
+  background: var(--ui-well);
 }
 
 .content {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-4) var(--space-5) var(--space-5);
+  padding: var(--space-2) var(--space-5) var(--space-5);
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  line-height: 1.6;
 }
 
 @media (max-width: 640px) {

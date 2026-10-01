@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Question } from '@phosphor-icons/react';
+import { LANDMARK_INDICATOR_CONFIG } from '../features/navigation/landmarkIndicatorConfig';
 import { PhaserGame } from '../game/PhaserGame';
 import { Hud } from '../features/navigation/Hud';
 import { MenuDrawer } from '../features/navigation/MenuDrawer';
@@ -43,6 +45,9 @@ export function MapLayout() {
   const [initialVisitedIds] = useState<LandmarkId[]>(() => Array.from(progress.visited));
 
   const panelEntry = panelRouteByPath.get(location.pathname) ?? null;
+  // Same line icon as the landmark's own map badge, so a panel reads as
+  // "the thing you just opened".
+  const PanelIcon = panelEntry ? LANDMARK_INDICATOR_CONFIG[panelEntry.landmarkId].icon : null;
   const isMapRoute = location.pathname === MAP_ROUTE;
   const isUnknownRoute = !isMapRoute && !panelEntry;
   const showIntro = isMapRoute && !settings.hasSeenIntro && !menuOpen;
@@ -216,11 +221,12 @@ export function MapLayout() {
           }}
         />
       ) : (
-        panelEntry && (
+        panelEntry &&
+        PanelIcon && (
           <Panel
             title={panelEntry.title}
             variant={panelEntry.variant}
-            icon={panelEntry.icon}
+            icon={<PanelIcon size={20} aria-hidden="true" />}
             onClose={() => navigate(MAP_ROUTE)}
           >
             <panelEntry.Component />
@@ -229,7 +235,7 @@ export function MapLayout() {
       )}
 
       {isUnknownRoute && (
-        <Panel title="Orri ezezaguna" icon="?" onClose={() => navigate(MAP_ROUTE)}>
+        <Panel title="Orri ezezaguna" icon={<Question size={20} aria-hidden="true" />} onClose={() => navigate(MAP_ROUTE)}>
           <p>Helbide hau ez dagokio Xendraren atal bati ere.</p>
           <button type="button" className="xnd-btn-primary" onClick={() => navigate(MAP_ROUTE)}>
             Itzuli mapara

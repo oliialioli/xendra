@@ -1,3 +1,4 @@
+import { List, Question, SpeakerHigh, SpeakerSlash } from '@phosphor-icons/react';
 import { useSettings } from '../../app/providers/SettingsContext';
 import { useAudioPlayer } from '../audio/AudioContext';
 import { assetPath } from '../../lib/assetPath';
@@ -37,7 +38,7 @@ export function Hud({
             aria-label="Kontrolen laguntza"
             title="Kontrolen laguntza"
           >
-            ?
+            <Question size={20} aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -47,7 +48,11 @@ export function Hud({
             aria-label={soundEnabled ? 'Soinua desaktibatu' : 'Soinua aktibatu'}
             title={soundEnabled ? 'Soinua desaktibatu' : 'Soinua aktibatu'}
           >
-            {soundEnabled ? '🔊' : '🔇'}
+            {soundEnabled ? (
+              <SpeakerHigh size={20} aria-hidden="true" />
+            ) : (
+              <SpeakerSlash size={20} aria-hidden="true" />
+            )}
           </button>
           <button
             type="button"
@@ -56,7 +61,7 @@ export function Hud({
             aria-label="Ireki menua"
             title="Ireki menua"
           >
-            ☰
+            <List size={20} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -66,7 +71,7 @@ export function Hud({
           <span>{nearestLabel}</span>
           <button
             type="button"
-            className={`xnd-btn-primary ${styles.interactButton}`}
+            className="xnd-btn-primary"
             onClick={onInteract}
           >
             Ireki

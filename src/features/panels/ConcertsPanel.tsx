@@ -15,7 +15,9 @@ function ConcertNode({ concert, past }: { concert: Concert; past: boolean }) {
   return (
     <li className={`${styles.node} ${past ? styles.past : styles.upcoming}`}>
       <span className={styles.dot} aria-hidden="true" />
-      <span className={shared.badge}>{STATUS_LABEL[concert.status] ?? concert.status}</span>
+      <span className={shared.badge} data-tone={past ? undefined : 'peach'}>
+        {STATUS_LABEL[concert.status] ?? concert.status}
+      </span>
       <h3 className={styles.title}>{concert.city}</h3>
       {concert.venue && <p className={shared.lead}>{concert.venue}</p>}
       <p className={shared.statusText}>

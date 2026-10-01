@@ -11,7 +11,7 @@ export function HistoryPanel() {
       <ol className={shared.list}>
         {xendraContent.history.map((milestone) => (
           <li key={milestone.id} className={shared.listItem}>
-            <span className={shared.badge}>{milestone.year}</span>
+            <span className={shared.badge} data-tone="sky">{milestone.year}</span>
             <h3 className={shared.cardTitle}>{milestone.title}</h3>
             <p className={shared.lead}>{milestone.description}</p>
           </li>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { X } from '@phosphor-icons/react';
 import { useFocusTrap } from '../../components/useFocusTrap';
 import { MAP_ROUTE } from '../../app/routes';
 import { MessageStep } from './MessageStep';
@@ -127,7 +128,7 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
             {step === 'message' ? 'Mezuen kaia' : 'Marraztu zure ontzi papera'}
           </h2>
           <button type="button" className="xnd-btn-icon" onClick={handleClose} aria-label="Itxi" title="Itxi">
-            ✕
+            <X size={20} aria-hidden="true" />
           </button>
         </header>
 

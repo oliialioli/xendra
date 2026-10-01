@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { HandSwipeRight } from '@phosphor-icons/react';
+import { HandSwipeRight, X } from '@phosphor-icons/react';
 import styles from './NavigationHint.module.css';
 
 export type NavigationHintProps = {
@@ -130,7 +130,7 @@ export function NavigationHint({ open, onDismiss }: NavigationHintProps) {
         title="Itxi"
         tabIndex={open ? 0 : -1}
       >
-        ×
+        <X size={20} aria-hidden="true" />
       </button>
     </div>
   );

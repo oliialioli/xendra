@@ -28,31 +28,44 @@
   --color-overlay-scrim: rgb(58 53 48 / 45%);
 
   /*
-   * UI chrome palette -- editorial/cartographic, retro-analog. Separate from
-   * the --color-* world palette above (used by the map art/ambient effects):
+   * UI chrome palette -- soft field-guide cards floating over the map:
+   * cream surfaces, khaki for active/selected states, a single bright
+   * yellow for the one thing to act on, pastel tag fills. Separate from the
+   * --color-* world palette above (used by the map art/ambient effects):
    * this set drives every panel, button and HUD control instead.
    */
-  --ui-background: #f4ecd6;
-  --ui-surface: #fbf5e6;
-  --ui-ink: #232b21;
-  --ui-border: var(--ui-ink);
-  --ui-accent: #cbd35a;
-  --ui-accent-ink: #232b21;
+  --ui-background: #efe9d3;
+  --ui-surface: #f6f1df;
+  /* Slightly deeper cream for fields/wells sitting inside a surface. */
+  --ui-well: #ece5cc;
+  --ui-ink: #2e3529;
+  --ui-ink-muted: #6e6c5a;
+  /* Hairline, only where a boundary is genuinely needed (inputs, canvas). */
+  --ui-border: rgb(46 53 41 / 12%);
+  --ui-khaki: #dcd6b6;
+  --ui-khaki-strong: #cfc8a2;
+  --ui-accent: #e9ec82;
+  --ui-accent-ink: #2e3529;
   --ui-secondary: #8fa3ac;
   --ui-coral: #c97b5c;
   --ui-danger: #a4463a;
-  --ui-shadow: rgb(35 43 33 / 32%);
-  --ui-shadow-offset: 3px;
-  --ui-radius-sm: 8px;
+  --ui-shadow: 0 1px 2px rgb(46 53 41 / 8%), 0 8px 24px rgb(46 53 41 / 12%);
+  --ui-shadow-raised: 0 2px 4px rgb(46 53 41 / 10%), 0 18px 44px rgb(46 53 41 / 18%);
+  --ui-radius-sm: 9px;
   --ui-radius-md: 12px;
-  --ui-radius-lg: 14px;
+  --ui-radius-lg: 20px;
+
+  /* Tag fills (see .xnd-tag[data-tone]). */
+  --ui-tag-peach: #f1cbad;
+  --ui-tag-khaki: #e2ddbf;
+  --ui-tag-sky: #d3e2e8;
+  --ui-tag-rose: #eed9e2;
 
   /* Typography */
-  --font-ui:
-    'Xendra UI', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-display: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+  --font-ui: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: var(--font-ui);
   --font-mono:
-    ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', 'Courier New', monospace;
+    'Chivo Mono', ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', 'Courier New', monospace;
   --font-size-root: 16px;
 
   /* Spacing / radius */
@@ -87,15 +100,15 @@
    * --ui-* chrome palette above, so badges read as part of the world rather
    * than as interface furniture.
    */
-  --landmark-surface: #f7f1e3;
-  --landmark-ink: #3f5043;
+  --landmark-surface: var(--ui-surface);
+  --landmark-ink: var(--ui-ink);
   /* Lighter than --landmark-ink -- used for the badge icon specifically, so
      it reads a touch softer than the label text next to it. */
   --landmark-icon: #6f8073;
-  --landmark-accent: #c66f52;
-  --landmark-label-font: 'Chivo Mono', var(--font-mono);
-  --landmark-border: rgb(63 80 67 / 22%);
-  --landmark-shadow: rgb(63 80 67 / 18%);
+  /* "You can open this now" -- same highlight as the primary action. */
+  --landmark-accent: var(--ui-accent);
+  --landmark-label-font: var(--font-mono);
+  --landmark-shadow: 0 1px 2px rgb(46 53 41 / 10%), 0 4px 12px rgb(46 53 41 / 14%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -107,17 +120,25 @@
     --color-border: #46413a;
     --color-overlay-scrim: rgb(0 0 0 / 60%);
 
-    --ui-background: #211f1c;
-    --ui-surface: #2a2822;
-    --ui-ink: #e9e4d4;
-    --ui-border: #e9e4d4;
-    --ui-shadow: rgb(0 0 0 / 55%);
+    --ui-background: #1f221c;
+    --ui-surface: #2a2e25;
+    --ui-well: #23271f;
+    --ui-ink: #ebe8d6;
+    --ui-ink-muted: #aaa792;
+    --ui-border: rgb(235 232 214 / 14%);
+    --ui-khaki: #3d4234;
+    --ui-khaki-strong: #4a503f;
+    --ui-accent: #e3e67d;
+    --ui-accent-ink: #23271f;
+    --ui-shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 8px 24px rgb(0 0 0 / 40%);
+    --ui-shadow-raised: 0 2px 4px rgb(0 0 0 / 35%), 0 18px 44px rgb(0 0 0 / 50%);
 
-    --landmark-surface: #2c352e;
-    --landmark-ink: #e3ead8;
+    --ui-tag-peach: #5a4436;
+    --ui-tag-khaki: #474a38;
+    --ui-tag-sky: #34474e;
+    --ui-tag-rose: #503e46;
+
     --landmark-icon: #a8b6a0;
-    --landmark-accent: #d98868;
-    --landmark-border: rgb(227 234 216 / 22%);
-    --landmark-shadow: rgb(0 0 0 / 45%);
+    --landmark-shadow: 0 1px 2px rgb(0 0 0 / 35%), 0 4px 12px rgb(0 0 0 / 45%);
   }
 }
