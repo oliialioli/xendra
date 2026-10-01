@@ -10,79 +10,99 @@ import styles from './ArchivePanel.module.css';
 
 type Filter = 'all' | 'photo' | 'video';
 
-type Fastener = 'tape' | 'pin' | 'corners' | 'clip';
 type Frame = 'print' | 'polaroid';
+/** new: crisp white; matte: soft off-white; aged: yellowed paper, faded print; deckle: old snapshot with a scalloped edge. */
+type Paper = 'new' | 'matte' | 'aged' | 'deckle';
+type TapeTone = 'masking' | 'aged' | 'clear' | 'washiStripe' | 'washiDots' | 'washiGrid';
+type TapePlacement = 'top' | 'corners' | 'diagonal' | 'cornerRight' | 'side';
 
 /*
- * How each item hangs on the board: tilt, what holds it up and what kind of
- * print it is. Cycled by position with lengths that don't divide each other
- * (nor the usual 7-8 prints per column, or prints side by side would match)
- * -- deterministic, so the board looks the same on every visit.
+ * How each item hangs on the board: tilt, paper, frame, which tape holds it
+ * and where, a small sideways drift and whether it's stuck partly over the
+ * print above it. Each list is cycled by position with lengths that don't
+ * divide each other (nor the usual 7-8 prints per column, or prints side by
+ * side would match) -- deterministic, so the board looks the same on every
+ * visit.
  */
 const TILTS = [-2.4, 1.6, -1, 2.8, -3, 0.6, 2, -1.6, 1.1];
-const FASTENERS: Fastener[] = ['tape', 'pin', 'corners', 'tape', 'clip', 'pin'];
 const FRAMES: Frame[] = ['print', 'polaroid', 'print', 'print', 'polaroid'];
+const PAPERS: Paper[] = ['new', 'aged', 'matte', 'deckle', 'new', 'aged', 'new', 'matte', 'deckle', 'new', 'aged'];
+const TAPE_TONES: TapeTone[] = [
+  'masking', 'washiStripe', 'aged', 'clear', 'masking', 'washiDots', 'aged', 'masking', 'washiGrid', 'clear', 'aged', 'washiStripe', 'masking',
+];
+const TAPE_PLACEMENTS: TapePlacement[] = ['top', 'corners', 'diagonal', 'top', 'cornerRight', 'top', 'side'];
+const DRIFTS_PX = [0, 10, -8, 0, -12, 6, 0, 12, -6];
+/** Every few prints overlap the one above them in their column. */
+const OVERLAP_EVERY = 3;
 
 function hangingFor(index: number) {
   return {
     tilt: TILTS[index % TILTS.length],
-    fastener: FASTENERS[index % FASTENERS.length],
     frame: FRAMES[index % FRAMES.length],
+    paper: PAPERS[index % PAPERS.length],
+    tapeTone: TAPE_TONES[index % TAPE_TONES.length],
+    tapePlacement: TAPE_PLACEMENTS[index % TAPE_PLACEMENTS.length],
+    drift: DRIFTS_PX[index % DRIFTS_PX.length],
+    overlaps: index % OVERLAP_EVERY === 2,
   };
 }
 
-function Fasteners({ kind }: { kind: Fastener }) {
-  switch (kind) {
-    case 'pin':
-      return <span className={styles.pin} aria-hidden="true" />;
-    case 'corners':
-      return (
-        <>
-          <span className={`${styles.tape} ${styles.cornerLeft}`} aria-hidden="true" />
-          <span className={`${styles.tape} ${styles.cornerRight}`} aria-hidden="true" />
-        </>
-      );
-    case 'clip':
-      return (
-        <svg className={styles.clip} viewBox="0 0 20 52" aria-hidden="true" focusable="false">
-          <path d="M7 34V9a5 5 0 0 1 10 0v30a8 8 0 0 1-16 0V14" />
-        </svg>
-      );
-    default:
-      return <span className={`${styles.tape} ${styles.tapeTop}`} aria-hidden="true" />;
-  }
+/** Where the strips go for each placement, as CSS-module class names. */
+const TAPE_STRIPS: Record<TapePlacement, string[]> = {
+  top: ['tapeTop'],
+  corners: ['tapeCornerLeft', 'tapeCornerRight'],
+  diagonal: ['tapeCornerLeft', 'tapeCornerBottomRight'],
+  cornerRight: ['tapeCornerRight'],
+  side: ['tapeSide'],
+};
+
+function Tape({ tone, placement }: { tone: TapeTone; placement: TapePlacement }) {
+  return (
+    <>
+      {TAPE_STRIPS[placement].map((strip) => (
+        <span key={strip} className={`${styles.tape} ${styles[strip]}`} data-tone={tone} aria-hidden="true" />
+      ))}
+    </>
+  );
 }
 
 function BoardItem({ item, onOpen }: { item: MediaItem; onOpen: () => void }) {
   // Keyed to the item's place in the whole archive, not the filtered list,
-  // so each print keeps the same tilt and fastener whichever filter is on.
-  const { tilt, fastener, frame } = hangingFor(xendraContent.media.indexOf(item));
+  // so each print keeps the same look whichever filter is on.
+  const { tilt, frame, paper, tapeTone, tapePlacement, drift, overlaps } = hangingFor(
+    xendraContent.media.indexOf(item),
+  );
   return (
     <li
       className={styles.item}
       data-frame={frame}
-      style={{ '--tilt': `${tilt}deg` } as CSSProperties}
+      data-paper={paper}
+      data-overlap={overlaps || undefined}
+      style={{ '--tilt': `${tilt}deg`, '--drift': `${drift}px` } as CSSProperties}
     >
       <button type="button" className={styles.photo} onClick={onOpen} aria-label={`Ireki: ${item.altText}`}>
-        {item.thumbnailPath ? (
-          <img src={assetPath(item.thumbnailPath)} alt="" loading="lazy" className={styles.image} />
-        ) : (
-          <span className={styles.imagePlaceholder} />
-        )}
-        {item.kind === 'video' && (
-          <span className={styles.play} aria-hidden="true">
-            <Play size={18} weight="fill" />
-          </span>
-        )}
+        <span className={styles.paper}>
+          {item.thumbnailPath ? (
+            <img src={assetPath(item.thumbnailPath)} alt="" loading="lazy" className={styles.image} />
+          ) : (
+            <span className={styles.imagePlaceholder} />
+          )}
+          {item.kind === 'video' && (
+            <span className={styles.play} aria-hidden="true">
+              <Play size={18} weight="fill" />
+            </span>
+          )}
+        </span>
       </button>
-      <Fasteners kind={fastener} />
+      <Tape tone={tapeTone} placement={tapePlacement} />
     </li>
   );
 }
 
 /**
- * Photos and videos as prints hung on a linen board -- taped, pinned or
- * clipped, each a little askew -- opening large in MediaLightbox on click.
+ * Photos and videos as prints taped to a linen board -- old and new papers,
+ * different tapes, each a little askew and some overlapping -- opening
+ * large in MediaLightbox on click.
  */
 export function ArchivePanel() {
   const [filter, setFilter] = useState<Filter>('all');

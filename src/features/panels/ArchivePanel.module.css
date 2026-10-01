@@ -21,45 +21,104 @@
   break-inside: avoid;
   margin: 0 0 var(--space-6);
   padding-top: var(--space-2);
-  transform: rotate(var(--tilt, 0deg));
+  transform: translateX(var(--drift, 0px)) rotate(var(--tilt, 0deg));
   transition: transform var(--duration-fast) var(--ease-organic);
+}
+
+/* Stuck partly over the print above it in the column. */
+.item[data-overlap] {
+  margin-top: -64px;
 }
 
 .item:hover,
 .item:focus-within {
-  transform: rotate(0deg) translateY(-3px);
+  z-index: 2;
+  transform: translateX(var(--drift, 0px)) rotate(0deg) translateY(-3px);
 }
 
-/* --- The print itself ---------------------------------------------------- */
+/* --- The print ----------------------------------------------------------- */
 
+/* The button only carries the shadow (a drop-shadow, so it follows a deckled edge too). */
 .photo {
-  position: relative;
   display: block;
   width: 100%;
-  padding: 7px;
+  padding: 0;
   border: none;
-  background: #fbfaf6;
+  background: none;
   cursor: zoom-in;
-  box-shadow:
-    0 1px 1px rgb(40 32 20 / 10%),
-    0 8px 16px -6px rgb(40 32 20 / 35%);
-  transition: box-shadow var(--duration-fast) var(--ease-organic);
+  filter: drop-shadow(0 1px 1px rgb(40 32 20 / 14%)) drop-shadow(0 6px 8px rgb(40 32 20 / 22%));
+  transition: filter var(--duration-fast) var(--ease-organic);
 }
 
 .item:hover .photo {
-  box-shadow:
-    0 1px 1px rgb(40 32 20 / 10%),
-    0 16px 26px -8px rgb(40 32 20 / 40%);
+  filter: drop-shadow(0 1px 1px rgb(40 32 20 / 14%)) drop-shadow(0 12px 14px rgb(40 32 20 / 28%));
 }
 
-/* Polaroid: deeper bottom margin, square-ish window. */
-.item[data-frame='polaroid'] .photo {
+.paper {
+  position: relative;
+  display: block;
+  padding: 7px;
+  background: #fbfaf6;
+}
+
+.item[data-frame='polaroid'] .paper {
   padding: 8px 8px 30px;
 }
 
 .item[data-frame='polaroid'] .image {
   aspect-ratio: 1;
   object-fit: cover;
+}
+
+/* Matte: a softer, slightly grey stock. */
+.item[data-paper='matte'] .paper {
+  background: #f1efe8;
+}
+
+/* Aged: yellowed paper with a faint stain, the print itself faded warm. */
+.item[data-paper='aged'] .paper {
+  background:
+    radial-gradient(ellipse at 80% 90%, rgb(160 120 50 / 16%), transparent 55%),
+    radial-gradient(ellipse at 10% 15%, rgb(160 120 50 / 10%), transparent 45%),
+    #efe4c6;
+  border-radius: 2px;
+}
+
+.item[data-paper='aged'] .image {
+  filter: sepia(0.35) saturate(0.8) contrast(0.92) brightness(1.03);
+}
+
+/* Deckle: an old snapshot with a scalloped edge and a washed-out, near-monochrome print. */
+.item[data-paper='deckle'] .paper {
+  padding: 10px;
+  background: #f3ecda;
+  clip-path: polygon(
+    0% 0, 4% 3px, 8% 0, 12% 3px, 16% 0, 20% 3px,
+    24% 0, 28% 3px, 32% 0, 36% 3px, 40% 0, 44% 3px,
+    48% 0, 52% 3px, 56% 0, 60% 3px, 64% 0, 68% 3px,
+    72% 0, 76% 3px, 80% 0, 84% 3px, 88% 0, 92% 3px,
+    96% 0, 100% 3px, calc(100% - 3px) 4%, 100% 8%, calc(100% - 3px) 12%, 100% 16%,
+    calc(100% - 3px) 20%, 100% 24%, calc(100% - 3px) 28%, 100% 32%, calc(100% - 3px) 36%, 100% 40%,
+    calc(100% - 3px) 44%, 100% 48%, calc(100% - 3px) 52%, 100% 56%, calc(100% - 3px) 60%, 100% 64%,
+    calc(100% - 3px) 68%, 100% 72%, calc(100% - 3px) 76%, 100% 80%, calc(100% - 3px) 84%, 100% 88%,
+    calc(100% - 3px) 92%, 100% 96%, calc(100% - 3px) 100%, 96% 100%, 92% calc(100% - 3px), 88% 100%,
+    84% calc(100% - 3px), 80% 100%, 76% calc(100% - 3px), 72% 100%, 68% calc(100% - 3px), 64% 100%,
+    60% calc(100% - 3px), 56% 100%, 52% calc(100% - 3px), 48% 100%, 44% calc(100% - 3px), 40% 100%,
+    36% calc(100% - 3px), 32% 100%, 28% calc(100% - 3px), 24% 100%, 20% calc(100% - 3px), 16% 100%,
+    12% calc(100% - 3px), 8% 100%, 4% calc(100% - 3px), 0% 100%, 0 96%, 3px 92%,
+    0 88%, 3px 84%, 0 80%, 3px 76%, 0 72%, 3px 68%,
+    0 64%, 3px 60%, 0 56%, 3px 52%, 0 48%, 3px 44%,
+    0 40%, 3px 36%, 0 32%, 3px 28%, 0 24%, 3px 20%,
+    0 16%, 3px 12%, 0 8%, 3px 4%
+  );
+}
+
+.item[data-paper='deckle'][data-frame='polaroid'] .paper {
+  padding: 10px 10px 26px;
+}
+
+.item[data-paper='deckle'] .image {
+  filter: grayscale(0.7) sepia(0.3) contrast(0.95) brightness(1.04);
 }
 
 .image,
@@ -94,17 +153,14 @@
   margin-top: -32px;
 }
 
-/* --- What holds it up ---------------------------------------------------- */
+/* --- Tape ---------------------------------------------------------------- */
 
-/* Masking tape: translucent, matte, with torn (zigzag) ends. */
+/* A strip with torn (zigzag) ends; its look comes from data-tone below. */
 .tape {
   position: absolute;
   z-index: 1;
   height: 24px;
-  background:
-    linear-gradient(180deg, rgb(255 255 255 / 22%), transparent 40%),
-    rgb(222 204 152 / 74%);
-  box-shadow: 0 1px 2px rgb(40 32 20 / 22%);
+  box-shadow: 0 1px 2px rgb(40 32 20 / 20%);
   clip-path: polygon(
     0 8%, 3% 0, 6% 10%, 9% 2%, 91% 0, 94% 9%, 97% 1%, 100% 10%,
     100% 92%, 97% 100%, 94% 90%, 91% 98%, 9% 100%, 6% 91%, 3% 99%, 0 90%
@@ -112,72 +168,82 @@
   pointer-events: none;
 }
 
+/* New masking tape: matte cream. */
+.tape[data-tone='masking'] {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 22%), transparent 40%),
+    rgb(222 204 152 / 74%);
+}
+
+/* Old tape: gone amber, darker and blotchy at the edges. */
+.tape[data-tone='aged'] {
+  background:
+    radial-gradient(ellipse at 15% 50%, rgb(150 100 30 / 35%), transparent 60%),
+    radial-gradient(ellipse at 85% 40%, rgb(150 100 30 / 30%), transparent 55%),
+    rgb(198 160 92 / 62%);
+}
+
+/* Clear tape: barely there, just a sheen. */
+.tape[data-tone='clear'] {
+  background: linear-gradient(170deg, rgb(255 255 255 / 55%), rgb(255 255 255 / 22%) 45%, rgb(255 255 255 / 38%));
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 40%) inset, 0 1px 1px rgb(40 32 20 / 12%);
+}
+
+/* Washi tapes: thin, slightly see-through, patterned. */
+.tape[data-tone='washiStripe'] {
+  background: repeating-linear-gradient(-45deg, rgb(143 168 136 / 85%) 0 4px, rgb(232 236 219 / 85%) 4px 9px);
+}
+
+.tape[data-tone='washiDots'] {
+  background:
+    radial-gradient(circle, rgb(214 122 98 / 90%) 1.5px, transparent 2px) 0 0 / 8px 8px,
+    rgb(244 218 204 / 85%);
+}
+
+.tape[data-tone='washiGrid'] {
+  background:
+    linear-gradient(90deg, rgb(214 168 52 / 40%) 50%, transparent 50%) 0 0 / 8px 8px,
+    linear-gradient(rgb(214 168 52 / 40%) 50%, transparent 50%) 0 0 / 8px 8px,
+    rgb(247 237 206 / 88%);
+}
+
 .tapeTop {
   top: -6px;
   left: 50%;
-  width: 72px;
+  width: 74px;
   transform: translateX(-50%) rotate(-3deg);
 }
 
-.cornerLeft,
-.cornerRight {
-  top: 2px;
-  width: 52px;
+.tapeCornerLeft,
+.tapeCornerRight,
+.tapeCornerBottomRight {
+  width: 54px;
 }
 
-.cornerLeft {
+.tapeCornerLeft {
+  top: 2px;
   left: -14px;
   transform: rotate(-38deg);
 }
 
-.cornerRight {
+.tapeCornerRight {
+  top: 2px;
   right: -14px;
   transform: rotate(38deg);
 }
 
-/* Push pin: a glossy yellow head, its needle angled into the board. */
-.pin {
-  position: absolute;
-  z-index: 1;
-  top: -4px;
-  left: calc(50% - 7px);
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff7c9 0 1.5px, #ecc63f 3px, #b8901a 100%);
-  box-shadow: 2px 3px 3px rgb(40 32 20 / 35%);
-  pointer-events: none;
+.tapeCornerBottomRight {
+  bottom: 10px;
+  right: -14px;
+  transform: rotate(-40deg);
 }
 
-.pin::after {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 6px;
-  width: 2px;
-  height: 16px;
-  border-radius: 1px;
-  background: linear-gradient(#2e2e2c, #77776f);
-  transform: rotate(-28deg);
-  transform-origin: top;
-  z-index: -1;
-}
-
-/* Paper clip over the top-left edge. */
-.clip {
-  position: absolute;
-  z-index: 1;
-  top: -12px;
-  left: 14px;
-  width: 16px;
-  height: 42px;
-  transform: rotate(-5deg);
-  fill: none;
-  stroke: #8d939a;
-  stroke-width: 2;
-  stroke-linecap: round;
-  filter: drop-shadow(1px 1px 1px rgb(40 32 20 / 30%));
-  pointer-events: none;
+/* Across the left edge, a third of the way down. */
+.tapeSide {
+  top: 30%;
+  left: -18px;
+  width: 50px;
+  transform: rotate(-8deg);
 }
 
 @media (max-width: 720px) {
@@ -189,12 +255,17 @@
     columns: 2 100px;
     column-gap: var(--space-4);
   }
+
+  .item[data-overlap] {
+    margin-top: -44px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .item,
   .item:hover,
-  .item:focus-within {
+  .item:focus-within,
+  .photo {
     transition: none;
   }
 }
