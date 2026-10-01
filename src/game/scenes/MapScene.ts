@@ -812,7 +812,10 @@ export class MapScene extends Phaser.Scene {
     // desired world-width so zoom stays near 1 and shows an ample area of the island.
     // Breakpoints and limits are in CSS pixels; the result is then scaled by
     // the canvas resolution so a retina screen shows the same area, sharper.
-    const desiredVisibleWidth = cssWidth < 700 ? 550 : cssWidth < 1100 ? 1100 : 2000;
+    // Phones show ~650 world units across: about as far out as a portrait
+    // phone can go while the island still covers the full screen height
+    // (see minZoomToCoverViewport below), so the player sees more around them.
+    const desiredVisibleWidth = cssWidth < 700 ? 650 : cssWidth < 1100 ? 1100 : 2000;
     let zoom = Phaser.Math.Clamp(cssWidth / desiredVisibleWidth, 0.5, 1.6) * resolution;
 
     // Never zoom out far enough to reveal space beyond the world bounds --
