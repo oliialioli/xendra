@@ -1,0 +1,92 @@
+.root {
+  position: fixed;
+  inset: 0;
+  /* Above the panel it was opened from, below toasts. */
+  z-index: calc(var(--z-panel) + 5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-4) var(--space-4);
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: rgb(30 26 20 / 92%);
+}
+
+.close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+}
+
+/* The item as a single print: white border, a deeper bottom margin carrying the caption. */
+.print {
+  position: relative;
+  margin: 0;
+  max-width: min(92vw, 1040px);
+  padding: 10px 10px 0;
+  background: #fbfaf6;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 25%), 0 24px 60px rgb(0 0 0 / 45%);
+  animation: printIn var(--duration-medium) var(--ease-organic);
+  touch-action: pan-y;
+}
+
+.media {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100dvh - 200px);
+  margin: 0 auto;
+  background: #e9e4d8;
+}
+
+/* The source videos are small (480px wide); show them at a comfortable size anyway. */
+video.media {
+  width: min(88vw, 820px);
+  height: auto;
+  background: #1e1a14;
+}
+
+.caption {
+  padding: var(--space-3) var(--space-1) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #4a4a40;
+}
+
+.nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.nav :global(.xnd-btn-icon):disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.counter {
+  min-width: 5ch;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: #efe9d3;
+}
+
+@keyframes printIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) rotate(-1deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .print {
+    animation: none;
+  }
+}
