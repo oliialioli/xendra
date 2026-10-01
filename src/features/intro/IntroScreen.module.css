@@ -47,18 +47,6 @@
   animation: none !important;
 }
 
-/*
- * Already played this session: the finished scene straight away, but the
- * snail keeps its idle (the [data-idle] groups in IntroSnail), started
- * mid-cycle so it doesn't wait for a hatch that isn't happening.
- */
-.root[data-mode='replay'] {
-  --t-hatch: -2s;
-}
-
-.root[data-mode='replay'] *:not([data-idle]) {
-  animation: none !important;
-}
 
 .column {
   display: flex;

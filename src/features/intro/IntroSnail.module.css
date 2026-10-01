@@ -3,7 +3,7 @@
  * IntroScreen.module.css sets on its root, so the whole intro is retimed in
  * one place. Base styles are each element's *final* state (egg gone, snail
  * standing); the animations only describe how it gets there, so turning
- * animations off (reduced motion, replay in the same session) shows the end
+ * animations off (reduced motion) shows the end
  * of the story straight away.
  */
 .scene {

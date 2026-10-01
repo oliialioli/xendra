@@ -3,7 +3,6 @@ import { HandSwipeRight, HandTap, MouseLeftClick } from '@phosphor-icons/react';
 import { useSettings } from '../../app/providers/SettingsContext';
 import { xendraContent } from '../../content/xendraContent';
 import { assetPath } from '../../lib/assetPath';
-import { storageKey } from '../../lib/storage';
 import { IntroSnail } from './IntroSnail';
 import styles from './IntroScreen.module.css';
 
@@ -17,29 +16,6 @@ const PAPER_SRC = assetPath('/assets/brand/intro-paper.jpg');
 
 /** Never hold the intro back longer than this waiting on images/fonts. */
 const PRELOAD_TIMEOUT_MS = 1500;
-
-/**
- * Per-tab memory that the hatching already played, so coming back to the
- * intro in the same session shows the finished scene instead of replaying
- * it. sessionStorage on purpose: a new visit gets the full story again.
- */
-const PLAYED_KEY = storageKey('introPlayed');
-
-function hasPlayedThisSession(): boolean {
-  try {
-    return window.sessionStorage.getItem(PLAYED_KEY) === '1';
-  } catch {
-    return false;
-  }
-}
-
-function markPlayedThisSession(): void {
-  try {
-    window.sessionStorage.setItem(PLAYED_KEY, '1');
-  } catch {
-    // Storage unavailable (private mode, blocked): worst case it replays.
-  }
-}
 
 function preloadImage(src: string): Promise<void> {
   const image = new Image();
@@ -71,14 +47,12 @@ const KEY_CLUSTERS = [
  * animates), so nothing shifts as they appear. See IntroSnail for the
  * hatching itself.
  *
- * Plays once per session: coming back in the same session shows the
- * finished scene with only the snail's idle; with reduced motion,
- * everything is shown finished and still.
+ * Plays in full every time the intro opens (MapLayout opens it on every
+ * visit); with reduced motion, everything is shown finished and still.
  */
 export function IntroScreen({ onEnter, onOpenMenu }: IntroScreenProps) {
   const settings = useSettings();
-  const [playedEarlier] = useState(hasPlayedThisSession);
-  const mode = settings.effectiveReducedMotion ? 'static' : playedEarlier ? 'replay' : 'play';
+  const mode = settings.effectiveReducedMotion ? 'static' : 'play';
   const [ready, setReady] = useState(false);
   const enterButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -96,7 +70,6 @@ export function IntroScreen({ onEnter, onOpenMenu }: IntroScreenProps) {
 
   function handleActionsShown(event: AnimationEvent<HTMLDivElement>) {
     if (event.target !== event.currentTarget) return;
-    markPlayedThisSession();
     // Hand keyboard users straight to "enter" -- unless they already moved focus themselves.
     if (document.activeElement === document.body || document.activeElement === null) {
       enterButtonRef.current?.focus({ preventScroll: true });

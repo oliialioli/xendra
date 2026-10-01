@@ -170,11 +170,18 @@ export const OBSTACLE_RECTS: ObstacleRect[] = [
  * so the snail can never visually overlap the front/back rim, at the cost of
  * a little unused walkable slack at the basin's left/right.
  */
+/**
+ * The yellow postbox's ground-contact point: the sandy clearing where the
+ * path from the kiosk ends. Shared by LANDMARK_POSITIONS.postbox and its
+ * plinth collider below so the two can't drift apart.
+ */
+const POSTBOX_POSITION: Vector2Like = { x: 552, y: 831 };
+
 export const OBSTACLE_CIRCLES: ObstacleCircle[] = [
   { id: 'fountain-basin', x: 1235, y: 692, radius: 85 },
   // The postbox's round plinth (see POSTBOX_WIDTH_PERCENT below), centered a
   // little above its anchor so the snail can still walk right up to its front.
-  { id: 'postbox-plinth', x: 543, y: 772, radius: 18 },
+  { id: 'postbox-plinth', x: POSTBOX_POSITION.x, y: POSTBOX_POSITION.y - 9, radius: 18 },
 ];
 
 export const SPAWN_POINT: Vector2Like = { x: 1150, y: 780 };
@@ -321,7 +328,7 @@ export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   // kept there, not here, since it needs to be shared with the boat
   // launch/river-entry logic without this file importing that one.
   dockMessages: { x: 1800, y: 1025 },
-  postbox: { x: 543, y: 781 },
+  postbox: POSTBOX_POSITION,
 };
 
 export const LANDMARK_INTERACTION_RADIUS = 110;

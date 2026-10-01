@@ -103,8 +103,7 @@ function EggShell({ gradientId }: { gradientId: string }) {
  * at the frame edge. All motion lives in IntroSnail.module.css and is
  * sequenced by the custom properties IntroScreen.module.css sets on its
  * root; with animations off, every element rests at its final state (egg
- * gone, snail standing). The two `data-idle` groups are the only motion
- * kept when the intro is shown again in the same session.
+ * gone, snail standing).
  *
  * Two copies of the snail take part: a "peek" copy, masked so only what's
  * outside the egg shows, slides its head and antennae out through the
@@ -146,9 +145,9 @@ export function IntroSnail() {
 
       <g className={styles.final} clipPath={`url(#${frameClipId})`}>
         <g className={styles.settle}>
-          <g className={styles.breathe} data-idle>
+          <g className={styles.breathe}>
             <SnailBody />
-            <g className={styles.feelers} data-idle>
+            <g className={styles.feelers}>
               <SnailFeelers />
             </g>
           </g>

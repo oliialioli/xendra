@@ -50,7 +50,10 @@ export function MapLayout() {
   const PanelIcon = panelEntry ? LANDMARK_INDICATOR_CONFIG[panelEntry.landmarkId].icon : null;
   const isMapRoute = location.pathname === MAP_ROUTE;
   const isUnknownRoute = !isMapRoute && !panelEntry;
-  const showIntro = isMapRoute && !settings.hasSeenIntro && !menuOpen;
+  // The intro opens on every visit (every page load), not just the first --
+  // it's the way into the island. Only leaving it dismisses it, for this load.
+  const [introDismissed, setIntroDismissed] = useState(false);
+  const showIntro = isMapRoute && !introDismissed && !menuOpen;
   const controlsBlocked = Boolean(panelEntry) || isUnknownRoute || menuOpen || showIntro;
 
   useEffect(() => {
@@ -202,9 +205,9 @@ export function MapLayout() {
 
       {showIntro && (
         <IntroScreen
-          onEnter={() => settings.markIntroSeen()}
+          onEnter={() => setIntroDismissed(true)}
           onOpenMenu={() => {
-            settings.markIntroSeen();
+            setIntroDismissed(true);
             setMenuOpen(true);
           }}
         />
