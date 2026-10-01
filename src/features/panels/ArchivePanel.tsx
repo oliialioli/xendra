@@ -112,6 +112,23 @@ function BoardItem({ item, onOpen }: { item: MediaItem; onOpen: () => void }) {
 }
 
 /**
+ * A keepsake (the first concert's ticket) taped across the top of the
+ * board, over the prints already hung there -- the cut-out ticket itself,
+ * no frame, with two strips of old tape.
+ */
+function Keepsake({ item, onOpen }: { item: MediaItem; onOpen: () => void }) {
+  return (
+    <div className={styles.keepsake}>
+      <button type="button" className={styles.keepsakeButton} onClick={onOpen} aria-label={`Ireki: ${item.altText}`}>
+        {item.thumbnailPath && <img src={assetPath(item.thumbnailPath)} alt="" className={styles.keepsakeImage} />}
+      </button>
+      <span className={`${styles.tape} ${styles.keepsakeTapeLeft}`} data-tone="aged" aria-hidden="true" />
+      <span className={`${styles.tape} ${styles.keepsakeTapeRight}`} data-tone="aged" aria-hidden="true" />
+    </div>
+  );
+}
+
+/**
  * Spreads the posters evenly through the photos and videos, so the full
  * board reads as one mixed collage instead of photos first and every poster
  * piled at the end.
@@ -133,20 +150,23 @@ function mixPosters(items: MediaItem[]): MediaItem[] {
 
 /**
  * Photos, videos and gig posters taped to a linen board -- old and new papers,
- * different tapes, each a little askew and some overlapping -- opening
- * large in MediaLightbox on click.
+ * different tapes, each a little askew and some overlapping, with the first
+ * concert's ticket stuck over the top -- opening large in MediaLightbox on
+ * click.
  */
 export function ArchivePanel() {
   const [filter, setFilter] = useState<Filter>('all');
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const items = useMemo(
-    () =>
-      filter === 'all'
-        ? mixPosters(xendraContent.media)
-        : xendraContent.media.filter((item) => item.kind === filter),
-    [filter],
-  );
+  // Everything the lightbox can step through, in board order: keepsakes
+  // first (they sit on top of the board), then the hung prints.
+  const items = useMemo(() => {
+    if (filter !== 'all') return xendraContent.media.filter((item) => item.kind === filter);
+    const tickets = xendraContent.media.filter((item) => item.kind === 'ticket');
+    return [...tickets, ...mixPosters(xendraContent.media.filter((item) => item.kind !== 'ticket'))];
+  }, [filter]);
+  const tickets = items.filter((item) => item.kind === 'ticket');
+  const prints = items.filter((item) => item.kind !== 'ticket');
 
   if (xendraContent.media.length === 0) {
     return (
@@ -176,9 +196,12 @@ export function ArchivePanel() {
       </div>
 
       <div className={styles.board}>
+        {tickets.map((ticket) => (
+          <Keepsake key={ticket.id} item={ticket} onOpen={() => setOpenIndex(items.indexOf(ticket))} />
+        ))}
         <ul className={styles.items}>
-          {items.map((item, index) => (
-            <BoardItem key={item.id} item={item} onOpen={() => setOpenIndex(index)} />
+          {prints.map((item) => (
+            <BoardItem key={item.id} item={item} onOpen={() => setOpenIndex(items.indexOf(item))} />
           ))}
         </ul>
       </div>

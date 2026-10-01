@@ -97,7 +97,8 @@ export type HistoryMilestone = {
   description: string;
 };
 
-export type MediaKind = 'photo' | 'video' | 'poster';
+/** ticket: a keepsake (e.g. a concert ticket) shown on top of the board rather than hung in its columns. */
+export type MediaKind = 'photo' | 'video' | 'poster' | 'ticket';
 
 export type MediaItem = {
   id: string;
