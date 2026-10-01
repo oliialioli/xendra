@@ -198,9 +198,8 @@ export class MapScene extends Phaser.Scene {
     });
 
     this.setUpBridgeListeners();
-    // In RESIZE mode game.scale.gameSize tracks the real container size and
-    // is kept correct by Phaser itself on window resize/orientation change;
-    // we only need to react to its own 'resize' event to recompute zoom.
+    // PhaserGame.tsx resizes the game whenever its container (or the screen
+    // resolution) changes; Phaser then emits 'resize', where zoom is recomputed.
     this.scale.on(Phaser.Scale.Events.RESIZE, this.updateCameraZoom);
     this.updateCameraZoom();
 
@@ -796,15 +795,25 @@ export class MapScene extends Phaser.Scene {
     });
   }
 
+  /** Canvas pixels per CSS pixel, read off the live canvas -- see renderResolution() in gameConfig.ts. */
+  private get renderResolution(): number {
+    const cssWidth = this.game.canvas.clientWidth;
+    return cssWidth > 0 ? this.scale.gameSize.width / cssWidth : 1;
+  }
+
   private updateCameraZoom = (): void => {
     const { width, height } = this.scale.gameSize;
     if (width === 0 || height === 0) return;
+    const resolution = this.renderResolution;
+    const cssWidth = width / resolution;
 
     // Smaller viewports get a *smaller* desired world-width so zoom ends up
     // higher (camera closer, snail stays legible); wide desktops get a large
     // desired world-width so zoom stays near 1 and shows an ample area of the island.
-    const desiredVisibleWidth = width < 700 ? 550 : width < 1100 ? 1100 : 2000;
-    let zoom = Phaser.Math.Clamp(width / desiredVisibleWidth, 0.5, 1.6);
+    // Breakpoints and limits are in CSS pixels; the result is then scaled by
+    // the canvas resolution so a retina screen shows the same area, sharper.
+    const desiredVisibleWidth = cssWidth < 700 ? 550 : cssWidth < 1100 ? 1100 : 2000;
+    let zoom = Phaser.Math.Clamp(cssWidth / desiredVisibleWidth, 0.5, 1.6) * resolution;
 
     // Never zoom out far enough to reveal space beyond the world bounds --
     // the camera must always stay fully covered by the island's world image.
@@ -831,8 +840,9 @@ export class MapScene extends Phaser.Scene {
       // gameEvents.ts for why the two diverge at any zoom other than 1.
       worldViewX: camera.worldView.x,
       worldViewY: camera.worldView.y,
-      zoom: camera.zoom,
-      viewportWidth: this.scale.gameSize.width,
+      // DOM overlays work in CSS pixels, the canvas in device pixels.
+      zoom: camera.zoom / this.renderResolution,
+      viewportWidth: this.scale.gameSize.width / this.renderResolution,
       snailX: this.snail.position.x,
       snailY: this.snail.position.y,
     });

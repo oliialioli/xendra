@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
-import { createGameConfig } from './config/gameConfig';
+import { createGameConfig, renderResolution } from './config/gameConfig';
 import type { GameEventBus } from './bridge/gameEvents';
 import type { Landmark, LandmarkId } from '../types/content';
 import styles from './PhaserGame.module.css';
@@ -33,7 +33,24 @@ export function PhaserGame({ bus, landmarks, visitedIds, reducedMotion }: Phaser
     const game = new Phaser.Game(config);
     gameRef.current = game;
 
+    // Keep the canvas at the container's size x screen resolution -- see
+    // the `scale` comment in gameConfig.ts. Window resize also covers the
+    // resolution itself changing (browser zoom, moving to another screen).
+    const fitCanvas = () => {
+      const resolution = renderResolution();
+      const width = Math.round(container.clientWidth * resolution);
+      const height = Math.round(container.clientHeight * resolution);
+      if (width === 0 || height === 0) return;
+      if (width === game.scale.width && height === game.scale.height) return;
+      game.scale.resize(width, height);
+    };
+    const resizeObserver = new ResizeObserver(fitCanvas);
+    resizeObserver.observe(container);
+    window.addEventListener('resize', fitCanvas);
+
     return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', fitCanvas);
       game.destroy(true);
       gameRef.current = null;
     };

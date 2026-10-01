@@ -10,6 +10,19 @@ export type GameBootData = {
   reducedMotion: boolean;
 };
 
+/** Never render more than 2 canvas pixels per CSS pixel -- 3x phones gain little visibly for 2.25x the fill cost. */
+const MAX_RENDER_RESOLUTION = 2;
+
+/**
+ * Canvas pixels per CSS pixel: the screen's devicePixelRatio, capped. The
+ * canvas is sized at CSS size x this (see PhaserGame.tsx) and displayed
+ * back at CSS size, so a retina screen gets a full-resolution image instead
+ * of a 1x canvas the browser stretches (which read as soft and pixelated).
+ */
+export function renderResolution(): number {
+  return Math.min(Math.max(window.devicePixelRatio || 1, 1), MAX_RENDER_RESOLUTION);
+}
+
 export function createGameConfig(
   parent: HTMLElement,
   bootData: GameBootData,
@@ -18,16 +31,16 @@ export function createGameConfig(
     type: Phaser.AUTO,
     parent,
     backgroundColor: '#6f97a0',
-    // RESIZE mode: the canvas always fills its container 1:1, no letterbox
-    // bars. Phaser's own ScaleManager listens for window resize/orientation
-    // changes and keeps parentSize/canvas/main-camera in sync automatically --
-    // never call `game.scale.resize()` yourself alongside this mode (its own
-    // docs say that call is only for `NONE` mode; doing so fights the
-    // ScaleManager's internal RESIZE bookkeeping and corrupts the canvas size).
+    // NONE mode, sized by hand: Phaser's RESIZE mode always makes the canvas
+    // exactly the container's CSS size, i.e. 1x on a retina screen. Instead
+    // PhaserGame.tsx keeps the canvas at container size x renderResolution()
+    // via game.scale.resize() (the call NONE mode is meant for), and
+    // PhaserGame.module.css stretches it back to fill the container. Phaser
+    // still maps pointer input correctly through its displayScale.
     scale: {
-      mode: Phaser.Scale.RESIZE,
-      width: parent.clientWidth || window.innerWidth,
-      height: parent.clientHeight || window.innerHeight,
+      mode: Phaser.Scale.NONE,
+      width: Math.round((parent.clientWidth || window.innerWidth) * renderResolution()),
+      height: Math.round((parent.clientHeight || window.innerHeight) * renderResolution()),
     },
     physics: {
       default: 'arcade',

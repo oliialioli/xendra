@@ -27,8 +27,9 @@ export type GameToAppEvents = {
      */
     worldViewX: number;
     worldViewY: number;
+    /** World units -> CSS pixels (the camera's own zoom divided by the canvas resolution). */
     zoom: number;
-    /** Phaser's own tracked game/canvas width (Scale.gameSize.width) -- the same value the camera's own zoom math is built around, so DOM overlays never need a separate window.innerWidth read that could diverge from it. */
+    /** The canvas's width in CSS pixels (Scale.gameSize.width / resolution) -- the same value the camera's own zoom math is built around, so DOM overlays never need a separate window.innerWidth read that could diverge from it. */
     viewportWidth: number;
     snailX: number;
     snailY: number;
