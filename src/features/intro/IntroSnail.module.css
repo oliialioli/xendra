@@ -1,0 +1,228 @@
+/*
+ * Hatching sequence. Every timing comes from the --t-* custom properties
+ * IntroScreen.module.css sets on its root, so the whole intro is retimed in
+ * one place. Base styles are each element's *final* state (egg gone, snail
+ * standing); the animations only describe how it gets there, so turning
+ * animations off (reduced motion, replay in the same session) shows the end
+ * of the story straight away.
+ */
+.scene {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.scene g,
+.scene ellipse {
+  transform-box: fill-box;
+}
+
+/* --- Egg ----------------------------------------------------------------- */
+
+.groundShadow {
+  opacity: 0.32;
+  transform-origin: 50% 50%;
+  animation: shadowIn 450ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--t-egg) both;
+}
+
+.eggPop {
+  transform-origin: 50% 100%;
+  animation: eggIn 450ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--t-egg) both;
+}
+
+/* Something inside is pushing: three nudges with a pause between each. */
+.wobble {
+  transform-origin: 50% 100%;
+  animation: wobble 900ms ease-in-out var(--t-wobble);
+}
+
+.crack {
+  stroke-dasharray: var(--crack-length);
+  animation: crackDraw 260ms ease-out var(--t-crack) both;
+}
+
+.cap {
+  opacity: 0;
+  transform-origin: 70% 100%;
+  animation: capOff 520ms cubic-bezier(0.2, 0.7, 0.3, 1) var(--t-hatch) both;
+}
+
+.cup {
+  opacity: 0;
+  transform-origin: 50% 100%;
+  animation: cupOff 340ms ease-in calc(var(--t-hatch) + 40ms) both;
+}
+
+/* --- Snail peeking out through the crack --------------------------------- */
+
+.peek {
+  opacity: 0;
+  animation: peekShow calc(var(--t-hatch) - var(--t-peek) + 40ms) linear var(--t-peek);
+}
+
+.peekSlide {
+  animation: peekSlide 420ms cubic-bezier(0.25, 0.8, 0.3, 1) var(--t-peek) both;
+}
+
+.peekFeelers {
+  transform-origin: 0% 100%;
+  animation: feelersOut 380ms cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--t-peek) + 100ms) both;
+}
+
+/* --- The snail, once born ------------------------------------------------ */
+
+.final {
+  animation: appear 60ms linear var(--t-hatch) both;
+}
+
+.settle {
+  transform-origin: 50% 100%;
+  animation: settle 560ms ease-out calc(var(--t-hatch) + 40ms);
+}
+
+.breathe {
+  transform-origin: 50% 100%;
+  animation: breathe 3.4s ease-in-out calc(var(--t-hatch) + 700ms) infinite;
+}
+
+.feelers {
+  transform-origin: 0% 100%;
+  animation: sway 2.8s ease-in-out calc(var(--t-hatch) + 900ms) infinite;
+}
+
+@keyframes shadowIn {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+@keyframes eggIn {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+@keyframes wobble {
+  0%,
+  30%,
+  38%,
+  66%,
+  74%,
+  100% {
+    transform: none;
+  }
+  10% {
+    transform: rotate(-7deg) scale(1.03, 0.97);
+  }
+  22% {
+    transform: rotate(3deg);
+  }
+  48% {
+    transform: rotate(9deg) scale(0.97, 1.04);
+  }
+  58% {
+    transform: rotate(-4deg);
+  }
+  84% {
+    transform: rotate(-5deg) scale(1.05, 0.95);
+  }
+}
+
+@keyframes crackDraw {
+  from {
+    stroke-dashoffset: var(--crack-length);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes capOff {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  45% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translate(-7px, -15px) rotate(-38deg);
+  }
+}
+
+@keyframes cupOff {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(9px) scale(0.86, 0.7);
+  }
+}
+
+@keyframes peekShow {
+  from,
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes peekSlide {
+  from {
+    transform: translateX(-10px);
+  }
+}
+
+@keyframes feelersOut {
+  from {
+    transform: scale(0.15);
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes settle {
+  0%,
+  100% {
+    transform: none;
+  }
+  25% {
+    transform: scale(1.07, 0.9);
+  }
+  55% {
+    transform: scale(0.97, 1.04);
+  }
+  80% {
+    transform: scale(1.01, 0.99);
+  }
+}
+
+/* Idle: the same squash-and-stretch the in-game snail uses, much slower and smaller. */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: scale(1.015, 0.985);
+  }
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: rotate(-5deg);
+  }
+}

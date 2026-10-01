@@ -1,14 +1,19 @@
 import Phaser from 'phaser';
+import {
+  SNAIL_COLORS,
+  SNAIL_FRAME_SIZE,
+  SNAIL_SPIRAL_ALPHA,
+  snailGeometry,
+  type SnailDirection,
+} from './snailArt';
 
-export type SnailDirection = 'down' | 'up' | 'left' | 'right';
-
-const SNAIL_FRAME_SIZE = 64;
+export type { SnailDirection } from './snailArt';
 
 /**
- * Draws a very simple, clearly-placeholder snail silhouette per direction:
- * an oval body, a spiral shell, and exactly two long antennae oriented toward
- * the facing direction. Replace with a real 128x128 spritesheet later --
- * see docs/ASSETS.md. Entities only ever call `snail-<direction>`, so swapping
+ * Draws a very simple, clearly-placeholder snail silhouette per direction
+ * from the shared shapes in snailArt.ts (also used by the intro screen's
+ * SVG snail). Replace with a real 128x128 spritesheet later -- see
+ * docs/ASSETS.md. Entities only ever call `snail-<direction>`, so swapping
  * this for `this.load.spritesheet(...)` output requires no entity code changes.
  */
 export function generateSnailTextures(scene: Phaser.Scene): void {
@@ -19,62 +24,39 @@ export function generateSnailTextures(scene: Phaser.Scene): void {
     if (scene.textures.exists(key)) return;
 
     const g = scene.add.graphics();
-    const size = SNAIL_FRAME_SIZE;
-    const cx = size / 2;
-    const cy = size / 2 + 6;
+    const { body, shell, spiral, antennae, tentacles } = snailGeometry(direction);
 
-    // Body
-    g.fillStyle(0x7c9070, 1);
-    g.fillEllipse(cx, cy, 34, 20);
+    g.fillStyle(SNAIL_COLORS.body, 1);
+    g.fillEllipse(body.cx, body.cy, body.width, body.height);
 
-    // Shell
-    g.fillStyle(0xb5654a, 1);
-    g.fillCircle(cx - 4, cy - 10, 15);
-    g.lineStyle(2, 0x6e3f3d, 0.8);
-    g.beginPath();
-    g.arc(cx - 4, cy - 10, 10, 0, Math.PI * 1.5);
-    g.strokePath();
-    g.beginPath();
-    g.arc(cx - 4, cy - 10, 5, 0, Math.PI * 1.5);
-    g.strokePath();
+    g.fillStyle(SNAIL_COLORS.shell, 1);
+    g.fillCircle(shell.cx, shell.cy, shell.radius);
+    g.lineStyle(spiral.strokeWidth, SNAIL_COLORS.spiral, SNAIL_SPIRAL_ALPHA);
+    spiral.radii.forEach((radius) => {
+      g.beginPath();
+      g.arc(shell.cx, shell.cy, radius, 0, Math.PI * 1.5);
+      g.strokePath();
+    });
 
-    // Antennae (exactly two long, two short tentacles), oriented per direction
-    g.lineStyle(3, 0x3a3530, 1);
-    const antennaOffsets: Record<SnailDirection, { dx: number; dy: number }> = {
-      down: { dx: 6, dy: 14 },
-      up: { dx: 6, dy: -14 },
-      left: { dx: -14, dy: -6 },
-      right: { dx: 14, dy: -6 },
-    };
-    const off = antennaOffsets[direction];
-    const headX = cx + (direction === 'left' ? -14 : direction === 'right' ? 14 : 0);
-    const headY = cy + (direction === 'up' ? -8 : direction === 'down' ? 8 : 0);
+    g.lineStyle(antennae.strokeWidth, SNAIL_COLORS.antenna, 1);
+    g.fillStyle(SNAIL_COLORS.antenna, 1);
+    antennae.lines.forEach((line) => {
+      g.beginPath();
+      g.moveTo(line.x1, line.y1);
+      g.lineTo(line.x2, line.y2);
+      g.strokePath();
+      g.fillCircle(line.x2, line.y2, antennae.tipRadius);
+    });
 
-    g.beginPath();
-    g.moveTo(headX - 3, headY);
-    g.lineTo(headX - 3 + off.dx, headY + off.dy);
-    g.strokePath();
-    g.fillStyle(0x3a3530, 1);
-    g.fillCircle(headX - 3 + off.dx, headY + off.dy, 2.5);
+    g.lineStyle(tentacles.strokeWidth, SNAIL_COLORS.antenna, 1);
+    tentacles.lines.forEach((line) => {
+      g.beginPath();
+      g.moveTo(line.x1, line.y1);
+      g.lineTo(line.x2, line.y2);
+      g.strokePath();
+    });
 
-    g.beginPath();
-    g.moveTo(headX + 3, headY);
-    g.lineTo(headX + 3 + off.dx, headY + off.dy);
-    g.strokePath();
-    g.fillCircle(headX + 3 + off.dx, headY + off.dy, 2.5);
-
-    // Short tentacles
-    g.lineStyle(2, 0x3a3530, 1);
-    g.beginPath();
-    g.moveTo(headX - 6, headY + 2);
-    g.lineTo(headX - 6 + off.dx * 0.35, headY + 2 + off.dy * 0.35);
-    g.strokePath();
-    g.beginPath();
-    g.moveTo(headX + 6, headY + 2);
-    g.lineTo(headX + 6 + off.dx * 0.35, headY + 2 + off.dy * 0.35);
-    g.strokePath();
-
-    g.generateTexture(key, size, size);
+    g.generateTexture(key, SNAIL_FRAME_SIZE, SNAIL_FRAME_SIZE);
     g.destroy();
   });
 }

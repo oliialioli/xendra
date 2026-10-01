@@ -14,6 +14,8 @@ Tabla de referencia para sustituir cada asset placeholder por el arte final.
 | Argazkiak (artxiboa) | `public/assets/media/photo-*.jpg` (referenciado por `media[].thumbnailPath`/`fullPath`) | 4:3 (miniatura recortada con `object-fit: cover`) | JPG | No | — | **Final** |
 | Bideoak (artxiboa) | `public/assets/media/video-*.mp4` + `video-*-poster.jpg` (referenciado por `media[].fullPath`/`thumbnailPath`) | H.264 MP4, poster 4:3 | MP4/JPG | No | — | **Final** |
 | Logotipo (wordmark) | `public/assets/brand/xendra-logo.svg` | 454×88 (vector, escala libre) | SVG | Sí | — | **Final** |
+| Logotipo crema (pantalla de inicio) | `public/assets/brand/xendra-logo-cream.svg` | 454×88 (vector, escala libre) | SVG | Sí | — | **Final** (mismo trazado, relleno `#D7C6AF`) |
+| Papel kraft de la pantalla de inicio | `public/assets/brand/intro-paper.jpg` | 920×1024 (se estira con `cover`) | JPG | No | — | **Final** (textura del Figma *xendra-mundua*, nodo 10:20, ya multiplicada sobre `#F3EAE1`) |
 | Favicon | `public/favicon.svg` | vector | SVG | Sí | — | Placeholder de marca |
 
 ## Cómo reemplazar el mapa
@@ -32,8 +34,9 @@ Tabla de referencia para sustituir cada asset placeholder por el arte final.
 
 ## Cómo reemplazar el sprite del caracol
 
-El caracol actual es 100 % vectorial y se genera en `generateSnailTextures()`
-(`src/game/utils/placeholderTextures.ts`), produciendo 4 texturas
+El caracol actual es 100 % vectorial: sus formas y colores viven en
+`src/game/utils/snailArt.ts` y `generateSnailTextures()`
+(`src/game/utils/placeholderTextures.ts`) las dibuja produciendo 4 texturas
 (`snail-down`, `snail-up`, `snail-left`, `snail-right`). La entidad `Snail`
 (`src/game/entities/Snail.ts`) solo conoce esos 4 nombres de textura y cambia entre
 ellos según la dirección de movimiento; nunca dibuja el caracol directamente.
@@ -50,6 +53,11 @@ Para sustituirlo por un spritesheet real:
 3. No hace falta tocar `Snail.ts` si mantienes los mismos nombres de textura/anim;
    si añades animaciones de fotogramas, cambia `setTexture` por `play()` en
    `updateFacing()`.
+4. La pantalla de inicio dibuja el mismo caracol en SVG a partir de `snailArt.ts`
+   (`src/features/intro/IntroSnail.tsx`, pose `right`), para que el que nace del
+   huevo sea exactamente el que luego se controla. Al cambiar el caracol, sustituye
+   ahí `SnailBody`/`SnailFeelers` por el nuevo arte (manteniendo la concha dentro
+   del huevo y las antenas en su propio grupo, que es lo que se anima).
 
 Restricciones del diseño del caracol (ver prompt maestro): exactamente dos antenas
 largas y dos tentáculos cortos, nunca cuatro antenas iguales; silueta reconocible;

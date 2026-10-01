@@ -37,7 +37,6 @@ export type BandInfo = {
   name: string;
   originText: string;
   bio: string;
-  tagline: string;
   entrySubtitle: string;
 };
 

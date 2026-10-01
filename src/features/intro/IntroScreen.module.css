@@ -1,55 +1,258 @@
+/*
+ * Kraft-paper intro (Figma "xendra-mundua", frame 10:20): warm dark brown
+ * paper with cream ink. The paper image is set inline (it needs the
+ * deploy base path); the flat colour underneath is what shows while it loads.
+ *
+ * The --t-* properties are the whole intro's timeline (~3.7s) -- shared with
+ * IntroSnail.module.css, which reads them for the hatching itself.
+ */
 .root {
+  --intro-cream: #d7c6af;
+  --intro-cream-strong: #ebdfca;
+  --intro-cream-muted: rgb(215 198 175 / 64%);
+  --intro-ink: #2a2118;
+  --intro-paper: #4c4032;
+
+  --t-logo: 100ms;
+  --t-egg: 650ms;
+  --t-wobble: 1100ms;
+  --t-crack: 1950ms;
+  --t-peek: 2050ms;
+  --t-tagline: 2350ms;
+  --t-hatch: 2500ms;
+  --t-actions: 3050ms;
+  --t-controls: 3300ms;
+  --t-keys: 3800ms;
+
   position: fixed;
   inset: 0;
   z-index: var(--z-menu);
   display: flex;
+  overflow-y: auto;
+  background-color: var(--intro-paper);
+  background-position: center;
+  background-size: cover;
+  color: var(--intro-cream);
+}
+
+/* Hold every animation at its first frame until the logo, paper and fonts are in. */
+.root[data-ready='false'],
+.root[data-ready='false'] * {
+  animation-play-state: paused !important;
+}
+
+/* Reduced motion: the finished scene, completely still. */
+.root[data-mode='static'],
+.root[data-mode='static'] * {
+  animation: none !important;
+}
+
+/*
+ * Already played this session: the finished scene straight away, but the
+ * snail keeps its idle (the [data-idle] groups in IntroSnail), started
+ * mid-cycle so it doesn't wait for a hatch that isn't happening.
+ */
+.root[data-mode='replay'] {
+  --t-hatch: -2s;
+}
+
+.root[data-mode='replay'] *:not([data-idle]) {
+  animation: none !important;
+}
+
+.column {
+  display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-4);
-  padding: var(--space-6);
+  width: 100%;
+  max-width: 440px;
+  margin: auto;
+  padding: var(--space-6) var(--space-4);
   text-align: center;
-  background: var(--ui-background);
-  color: var(--ui-ink);
 }
 
 .logo {
-  height: 44px;
-  width: auto;
-  max-width: min(280px, 70vw);
-  padding: var(--space-3) var(--space-5);
-  background: var(--ui-surface);
-  border-radius: var(--ui-radius-lg);
-  box-shadow: var(--ui-shadow);
-  box-sizing: content-box;
+  display: block;
+  width: clamp(150px, 20vw, 210px);
+  height: auto;
+  animation: rise 700ms var(--ease-organic) var(--t-logo) both;
+}
+
+.stage {
+  width: clamp(170px, 34vh, 300px);
+  margin-top: clamp(var(--space-3), 3vh, var(--space-5));
 }
 
 .tagline {
-  font-size: 1.4rem;
-  font-family: var(--font-display);
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-ui);
+  font-size: clamp(1.15rem, 1rem + 0.6vw, 1.4rem);
   font-weight: 500;
-  letter-spacing: -0.015em;
-  max-width: 32ch;
-  margin: 0;
-}
-
-.subtitle {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
-  color: var(--ui-ink-muted);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--intro-cream);
+  animation: rise 600ms var(--ease-organic) var(--t-tagline) both;
 }
 
 .actions {
   display: flex;
-  gap: var(--space-3);
   flex-wrap: wrap;
   justify-content: center;
+  gap: var(--space-3);
+  margin-top: clamp(var(--space-5), 4vh, var(--space-6));
+  animation: reveal 450ms var(--ease-organic) var(--t-actions) both;
 }
 
-.controlsHint {
-  max-width: 40ch;
+.actions :global(.xnd-btn-primary) {
+  background: var(--intro-cream);
+  color: var(--intro-ink);
+  box-shadow: 0 1px 2px rgb(20 14 8 / 30%), 0 10px 28px rgb(20 14 8 / 28%);
+}
+
+.actions :global(.xnd-btn-primary)::after {
+  background: rgb(42 33 24 / 12%);
+}
+
+.actions :global(.xnd-btn-primary):hover {
+  filter: none;
+  background: var(--intro-cream-strong);
+}
+
+.actions :global(.xnd-btn-secondary) {
+  background: rgb(215 198 175 / 12%);
+  color: var(--intro-cream);
+  box-shadow: none;
+}
+
+.actions :global(.xnd-btn-secondary):hover {
+  background: rgb(215 198 175 / 20%);
+}
+
+.root :focus-visible {
+  outline: 2px solid var(--intro-cream);
+  outline-offset: 3px;
+}
+
+/* --- Controls guide ------------------------------------------------------ */
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: clamp(var(--space-5), 4vh, var(--space-6));
+  animation: reveal 450ms var(--ease-organic) var(--t-controls) both;
+}
+
+.controlsRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.keyCluster {
+  display: grid;
+  grid-template-columns: repeat(3, 24px);
+  grid-template-rows: repeat(2, 24px);
+  grid-template-areas:
+    '. up .'
+    'left down right';
+  gap: 3px;
+}
+
+.key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  background: rgb(215 198 175 / 10%);
+  box-shadow: inset 0 -2px 0 rgb(20 14 8 / 35%);
+  color: var(--intro-cream);
   font-family: var(--font-mono);
-  font-size: 0.82rem;
-  color: var(--ui-ink-muted);
+  font-size: 0.8rem;
+  line-height: 1;
+  /* A short sweep up-left-down-right once the guide is in, hinting at movement. */
+  animation: keyPress 420ms ease-out calc(var(--t-keys) + var(--key-step) * 170ms);
+}
+
+.key[data-area='up'] {
+  grid-area: up;
+}
+
+.key[data-area='left'] {
+  grid-area: left;
+}
+
+.key[data-area='down'] {
+  grid-area: down;
+}
+
+.key[data-area='right'] {
+  grid-area: right;
+}
+
+.mouse,
+.gesture {
+  color: var(--intro-cream);
+  opacity: 0.85;
+}
+
+.controlsLabel {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--intro-cream);
+}
+
+.controlsTouch {
+  display: none;
+}
+
+.soundNote {
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--intro-cream-muted);
+}
+
+@media (pointer: coarse), (max-width: 720px) {
+  .controlsDesktop {
+    display: none;
+  }
+
+  .controlsTouch {
+    display: block;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Like rise, but also unfocusable/unclickable until it has appeared. */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+  }
+  to {
+    visibility: visible;
+  }
+}
+
+@keyframes keyPress {
+  0%,
+  100% {
+    transform: none;
+  }
+  35% {
+    background: var(--intro-cream);
+    color: var(--intro-ink);
+    box-shadow: inset 0 -1px 0 rgb(20 14 8 / 35%);
+    transform: translateY(1px);
+  }
 }
