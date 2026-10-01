@@ -14,6 +14,7 @@ import {
 } from '../../content/mapGeometry';
 import { waterfallConfig } from '../../content/dockConfig';
 import { castleConfig } from '../../content/castleConfig';
+import { campfireConfig } from '../../content/campfireConfig';
 import {
   clampTargetToWalkable,
   isInsideWithMargin,
@@ -160,6 +161,10 @@ export class MapScene extends Phaser.Scene {
     if (castleConfig.enabled && castleConfig.assetSrc) {
       this.load.image(MapScene.castleAssetKey(), assetPath(castleConfig.assetSrc));
     }
+
+    if (campfireConfig.enabled && campfireConfig.assetSrc) {
+      this.load.image(MapScene.campfireAssetKey(), assetPath(campfireConfig.assetSrc));
+    }
   }
 
   create(): void {
@@ -184,7 +189,8 @@ export class MapScene extends Phaser.Scene {
     this.setUpLandmarkVisuals();
     this.setUpLandmarkAssetSprites();
     this.setUpWaterfallAsset();
-    this.setUpCastleAsset();
+    this.setUpGroundDecor(castleConfig, MapScene.castleAssetKey());
+    this.setUpGroundDecor(campfireConfig, MapScene.campfireAssetKey());
 
     this.ambient = new AmbientEffectsSystem(this, {
       reducedMotion: this.reducedMotion,
@@ -472,29 +478,36 @@ export class MapScene extends Phaser.Scene {
     return 'castle-asset';
   }
 
-  /**
-   * Overlays the ruined-castle artwork on the island's hill (see
-   * castleConfig) -- decorative only, same pattern as setUpWaterfallAsset()
-   * above, but sized/anchored via analyzeOpaqueBuildingBounds like a real
-   * landmark building (see setUpLandmarkAssetSprites()) since this is a
-   * ground-standing structure, not a hand-placed environmental prop like the
-   * waterfall. A no-op while `enabled` is false.
-   */
-  private setUpCastleAsset(): void {
-    if (!castleConfig.enabled || !castleConfig.assetSrc) return;
+  private static campfireAssetKey(): string {
+    return 'campfire-asset';
+  }
 
-    const key = MapScene.castleAssetKey();
+  /**
+   * Overlays a decorative ground-standing artwork -- the ruined castle on
+   * the hill (castleConfig), the campfire by the train (campfireConfig) --
+   * same pattern as setUpWaterfallAsset() above, but sized/anchored via
+   * analyzeOpaqueBuildingBounds like a real landmark building (see
+   * setUpLandmarkAssetSprites()) since these stand on the ground rather than
+   * being hand-placed environmental props like the waterfall. No interaction
+   * or proximity. A no-op while `enabled` is false.
+   */
+  private setUpGroundDecor(
+    config: { enabled: boolean; assetSrc: string; x: number; y: number; approvedWidth: number },
+    key: string,
+  ): void {
+    if (!config.enabled || !config.assetSrc) return;
+
     const source = this.textures.get(key).source[0];
     const analysis = analyzeOpaqueBuildingBounds(source.image as HTMLImageElement | HTMLCanvasElement, 'bottom-center');
 
     const opaqueWidth = analysis.bbox.x1 - analysis.bbox.x0 + 1;
-    const displayWidth = castleConfig.approvedWidth * (analysis.imageWidth / opaqueWidth);
+    const displayWidth = config.approvedWidth * (analysis.imageWidth / opaqueWidth);
     const displayHeight = displayWidth / (analysis.imageWidth / analysis.imageHeight);
 
-    const sprite = this.add.image(castleConfig.x, castleConfig.y, key);
+    const sprite = this.add.image(config.x, config.y, key);
     sprite.setOrigin(analysis.origin.x, analysis.origin.y);
     sprite.setDisplaySize(displayWidth, displayHeight);
-    sprite.setDepth(castleConfig.y);
+    sprite.setDepth(config.y);
   }
 
   private setUpBridgeListeners(): void {

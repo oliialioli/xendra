@@ -82,7 +82,8 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     icon: Train,
     label: 'Historia',
     revealRadius: LANDMARK_REVEAL_RADIUS,
-    visualHeight: 55,
+    // Clears the middle carriage's roof above tren.png's anchor.
+    visualHeight: 150,
   },
   bulletinBoard: {
     icon: ImagesSquare,

@@ -144,6 +144,24 @@ export type ObstacleCircle = { id: string; x: number; y: number; radius: number 
  */
 const BULLETIN_BOARD_POSITION: Vector2Like = { x: 962, y: 976 };
 
+/*
+ * The train (tren.png) on the straight run of track east of the fountain:
+ * its near-side wheels follow this line, which runs parallel to the drawn
+ * rails (slope measured on xendra-map-base-v7-4k.png), from the back of the
+ * last carriage to the front of the engine.
+ */
+const TRAIN_NEAR_RAIL = { x0: 1971, x1: 2254, y0: 503, slope: 0.458 };
+const TRAIN_FOOTPRINT_SEGMENTS = 6;
+
+/** The train's footprint as short axis-aligned steps along its diagonal, so the snail can't walk through it. */
+const TRAIN_FOOTPRINT: ObstacleRect[] = Array.from({ length: TRAIN_FOOTPRINT_SEGMENTS }, (_, i) => {
+  const { x0, x1, y0, slope } = TRAIN_NEAR_RAIL;
+  const width = (x1 - x0) / TRAIN_FOOTPRINT_SEGMENTS;
+  const x = x0 + i * width;
+  const railY = y0 + slope * (x - x0);
+  return { id: `train-${i + 1}`, x, y: railY - 22, width, height: slope * width + 24 };
+});
+
 export const OBSTACLE_RECTS: ObstacleRect[] = [
   // Sized to just the kiosk's base/pillars (see KIOSK_CONFIG below), not its
   // full visible silhouette -- the roof overhangs past the walls on every
@@ -176,6 +194,7 @@ export const OBSTACLE_RECTS: ObstacleRect[] = [
     width: 92,
     height: 28,
   },
+  ...TRAIN_FOOTPRINT,
 ];
 
 /**
@@ -199,6 +218,8 @@ export const OBSTACLE_CIRCLES: ObstacleCircle[] = [
   // The postbox's round plinth (see POSTBOX_WIDTH_PERCENT below), centered a
   // little above its anchor so the snail can still walk right up to its front.
   { id: 'postbox-plinth', x: POSTBOX_POSITION.x, y: POSTBOX_POSITION.y - 9, radius: 18 },
+  // The campfire's stone ring (see campfireConfig.ts).
+  { id: 'campfire-ring', x: 2150, y: 680, radius: 24 },
 ];
 
 export const SPAWN_POINT: Vector2Like = { x: 1150, y: 780 };
@@ -337,12 +358,22 @@ export const POSTBOX_WIDTH_PERCENT = 1.6;
 /** Same convention, for the bulletin board (the photos & videos landmark). */
 export const BULLETIN_BOARD_WIDTH_PERCENT = 4;
 
+/**
+ * The train's visible width in world units: the illustration at 0.242 world
+ * units per source pixel, a scale picked so the whole train fits the
+ * straight run of track before it curves south.
+ */
+export const TRAIN_WIDTH = 287;
+
 export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   kiosk: { x: (KIOSK_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (KIOSK_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   stage: { x: (STAGE_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (STAGE_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   school: { x: (SCHOOL_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (SCHOOL_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   fountain: { x: (FOUNTAIN_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (FOUNTAIN_CONFIG.yPercent / 100) * WORLD_HEIGHT },
-  trainHistory: { x: 2159, y: 582 },
+  // Bottom-centre of tren.png's own silhouette (the engine's lowest point
+  // sets the bottom, the middle carriage the centre) -- see
+  // TRAIN_NEAR_RAIL above and LANDMARK_ASSET_OVERRIDES.trainHistory.
+  trainHistory: { x: 2113, y: 628 },
   bulletinBoard: BULLETIN_BOARD_POSITION,
   // dockMessages' own position lives in dockConfig.ts (dockPosition) --
   // kept there, not here, since it needs to be shared with the boat
@@ -472,6 +503,12 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
   dockMessages: {
     path: '/assets/landmarks/casa_rio.png',
     approvedBuildingWidth: (HOUSE_WIDTH_PERCENT / 100) * WORLD_WIDTH,
+    renderOffset: { x: 0, y: 0 },
+    proximityGlow: true,
+  },
+  trainHistory: {
+    path: '/assets/landmarks/tren.png',
+    approvedBuildingWidth: TRAIN_WIDTH,
     renderOffset: { x: 0, y: 0 },
     proximityGlow: true,
   },
