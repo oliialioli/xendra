@@ -137,6 +137,13 @@ export type ObstacleCircle = { id: string; x: number; y: number; radius: number 
  * artwork placed on top of it), so the only entry here is the kiosk, whose
  * overlay sprite is real geometry the snail should still collide with.
  */
+/**
+ * The bulletin board's ground-contact point (bottom of its front leg), on
+ * the sandy clearing below-left of the fountain plaza.
+ * Shared by LANDMARK_POSITIONS.bulletinBoard and its footprint rect below.
+ */
+const BULLETIN_BOARD_POSITION: Vector2Like = { x: 985, y: 950 };
+
 export const OBSTACLE_RECTS: ObstacleRect[] = [
   // Sized to just the kiosk's base/pillars (see KIOSK_CONFIG below), not its
   // full visible silhouette -- the roof overhangs past the walls on every
@@ -159,6 +166,16 @@ export const OBSTACLE_RECTS: ObstacleRect[] = [
   // well past any wall the snail could actually be blocked by). Bottom edge
   // sits at the sprite's own anchor point, same convention as every rect above.
   { id: 'castle-ruins', x: 1400, y: 120, width: 200, height: 110 },
+  // The bulletin board's two legs (see BULLETIN_BOARD_WIDTH_PERCENT below):
+  // a shallow strip along its base, bottom edge just above the anchor so the
+  // player can still walk right up to its front.
+  {
+    id: 'bulletin-board',
+    x: BULLETIN_BOARD_POSITION.x - 46,
+    y: BULLETIN_BOARD_POSITION.y - 34,
+    width: 92,
+    height: 28,
+  },
 ];
 
 /**
@@ -317,13 +334,16 @@ export const HOUSE_WIDTH_PERCENT = 5.86;
  */
 export const POSTBOX_WIDTH_PERCENT = 1.6;
 
+/** Same convention, for the bulletin board (the photos & videos landmark). */
+export const BULLETIN_BOARD_WIDTH_PERCENT = 4;
+
 export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   kiosk: { x: (KIOSK_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (KIOSK_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   stage: { x: (STAGE_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (STAGE_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   school: { x: (SCHOOL_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (SCHOOL_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   fountain: { x: (FOUNTAIN_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (FOUNTAIN_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   trainHistory: { x: 2159, y: 582 },
-  bulletinBoard: { x: 988, y: 918 },
+  bulletinBoard: BULLETIN_BOARD_POSITION,
   // dockMessages' own position lives in dockConfig.ts (dockPosition) --
   // kept there, not here, since it needs to be shared with the boat
   // launch/river-entry logic without this file importing that one.
@@ -452,6 +472,12 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
   dockMessages: {
     path: '/assets/landmarks/casa_rio.png',
     approvedBuildingWidth: (HOUSE_WIDTH_PERCENT / 100) * WORLD_WIDTH,
+    renderOffset: { x: 0, y: 0 },
+    proximityGlow: true,
+  },
+  bulletinBoard: {
+    path: '/assets/landmarks/tablon-anuncios.png',
+    approvedBuildingWidth: (BULLETIN_BOARD_WIDTH_PERCENT / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
     proximityGlow: true,
   },

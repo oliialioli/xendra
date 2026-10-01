@@ -88,7 +88,9 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     icon: ImagesSquare,
     label: 'Galeria',
     revealRadius: LANDMARK_REVEAL_RADIUS,
-    visualHeight: 45,
+    // Roughly tablon-anuncios.png's own height (roof to anchor) at
+    // BULLETIN_BOARD_WIDTH_PERCENT, so the badge sits just over the roof.
+    visualHeight: 100,
   },
   // Provisional pencil badge icon until a definitive one exists -- the
   // landmark's real artwork (a house) is set up separately, see
