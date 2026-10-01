@@ -44,6 +44,10 @@ export function createGameConfig(
       antialias: true,
       pixelArt: false,
       roundPixels: false,
+      // Lets power-of-two textures (e.g. the 512x512 postbox) shrink smoothly
+      // instead of aliasing when drawn at a fraction of their size. Phaser
+      // only builds mipmaps for power-of-two textures; others are unaffected.
+      mipmapFilter: 'LINEAR_MIPMAP_LINEAR',
     },
     scene: [MapScene],
     callbacks: {
