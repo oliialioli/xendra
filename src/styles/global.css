@@ -8,7 +8,8 @@
 
 html {
   font-size: var(--font-size-root);
-  color-scheme: light dark;
+  /* Always the light cream chrome, even when the OS is in dark mode. */
+  color-scheme: light;
 }
 
 html,

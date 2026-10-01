@@ -103,6 +103,8 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     icon: EnvelopeSimple,
     label: 'Kontaktua',
     revealRadius: LANDMARK_REVEAL_RADIUS,
-    visualHeight: 40,
+    // Roughly buzon.png's own analyzed height (cap to anchor) at
+    // POSTBOX_WIDTH_PERCENT, so the badge sits just over the cap.
+    visualHeight: 88,
   },
 };

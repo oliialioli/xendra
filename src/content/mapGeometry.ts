@@ -162,9 +162,9 @@ export const OBSTACLE_RECTS: ObstacleRect[] = [
 ];
 
 /**
- * Small round obstacles -- currently just the fountain's own outer basin
- * (see FOUNTAIN_CONFIG below), centered on the same plaza-center point as
- * LANDMARK_POSITIONS.fountain. Arcade physics only supports circular
+ * Small round obstacles -- the fountain's own outer basin (see
+ * FOUNTAIN_CONFIG below), centered on the same plaza-center point as
+ * LANDMARK_POSITIONS.fountain, and the postbox's plinth. Arcade physics only supports circular
  * bodies, so this can't match the basin's slightly elliptical isometric
  * footprint exactly; the radius favors the basin's shorter (vertical) extent
  * so the snail can never visually overlap the front/back rim, at the cost of
@@ -172,6 +172,9 @@ export const OBSTACLE_RECTS: ObstacleRect[] = [
  */
 export const OBSTACLE_CIRCLES: ObstacleCircle[] = [
   { id: 'fountain-basin', x: 1235, y: 692, radius: 85 },
+  // The postbox's round plinth (see POSTBOX_WIDTH_PERCENT below), centered a
+  // little above its anchor so the snail can still walk right up to its front.
+  { id: 'postbox-plinth', x: 543, y: 772, radius: 18 },
 ];
 
 export const SPAWN_POINT: Vector2Like = { x: 1150, y: 780 };
@@ -299,6 +302,13 @@ export const FOUNTAIN_CONFIG = {
  * position.
  */
 export const HOUSE_WIDTH_PERCENT = 5.86;
+
+/**
+ * Approved on-screen width (percentage of WORLD_WIDTH) of the yellow
+ * postbox's *visible* pillar only (not its baked shadow) -- same convention
+ * as HOUSE_WIDTH_PERCENT above; its position is LANDMARK_POSITIONS.postbox.
+ */
+export const POSTBOX_WIDTH_PERCENT = 1.6;
 
 export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   kiosk: { x: (KIOSK_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (KIOSK_CONFIG.yPercent / 100) * WORLD_HEIGHT },
@@ -435,6 +445,12 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
   dockMessages: {
     path: '/assets/landmarks/casa_rio.png',
     approvedBuildingWidth: (HOUSE_WIDTH_PERCENT / 100) * WORLD_WIDTH,
+    renderOffset: { x: 0, y: 0 },
+    proximityGlow: true,
+  },
+  postbox: {
+    path: '/assets/landmarks/buzon.png',
+    approvedBuildingWidth: (POSTBOX_WIDTH_PERCENT / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
     proximityGlow: true,
   },
