@@ -1,3 +1,9 @@
+/* Four filters don't fit one row in a phone-width panel: let them wrap. */
+.filters {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
 /* Linen pinboard: warm canvas tone with a faint fibre grain. */
 .board {
   padding: var(--space-6) var(--space-5) var(--space-4);
@@ -68,6 +74,22 @@
 .item[data-frame='polaroid'] .image {
   aspect-ratio: 1;
   object-fit: cover;
+}
+
+/* Poster: the printed sheet itself, edge to edge, with a faint fold across the middle. */
+.item[data-frame='poster'] .paper {
+  padding: 0;
+  background: none;
+}
+
+.item[data-frame='poster'] .paper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, transparent 49.4%, rgb(40 32 20 / 9%) 50%, rgb(255 255 255 / 16%) 50.5%, transparent 51.4%),
+    linear-gradient(90deg, transparent 49.6%, rgb(40 32 20 / 6%) 50%, transparent 50.6%);
+  pointer-events: none;
 }
 
 /* Matte: a softer, slightly grey stock. */

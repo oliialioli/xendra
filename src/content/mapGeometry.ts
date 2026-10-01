@@ -142,7 +142,7 @@ export type ObstacleCircle = { id: string; x: number; y: number; radius: number 
  * the sandy clearing below-left of the fountain plaza.
  * Shared by LANDMARK_POSITIONS.bulletinBoard and its footprint rect below.
  */
-const BULLETIN_BOARD_POSITION: Vector2Like = { x: 985, y: 950 };
+const BULLETIN_BOARD_POSITION: Vector2Like = { x: 962, y: 976 };
 
 export const OBSTACLE_RECTS: ObstacleRect[] = [
   // Sized to just the kiosk's base/pillars (see KIOSK_CONFIG below), not its

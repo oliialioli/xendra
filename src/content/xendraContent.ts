@@ -110,6 +110,22 @@ export const xendraContent: XendraContent = {
     { id: 'video-01', kind: 'video', thumbnailPath: '/assets/media/video-01-poster.jpg', fullPath: '/assets/media/video-01.mp4', altText: 'Xendra zuzenean, oholtza gainean' },
     { id: 'video-02', kind: 'video', thumbnailPath: '/assets/media/video-02-poster.jpg', fullPath: '/assets/media/video-02.mp4', altText: 'Xendra zuzenean, biolinarekin' },
     { id: 'video-03', kind: 'video', thumbnailPath: '/assets/media/video-03-poster.jpg', fullPath: '/assets/media/video-03.mp4', altText: 'Xendra kalean, kontzertu ttiki batean' },
+    // Gig posters, oldest first (board thumbnails are 640px; the lightbox loads the full one).
+    { id: 'poster-01', kind: 'poster', thumbnailPath: '/assets/media/poster-01-thumb.jpg', fullPath: '/assets/media/poster-01.jpg', altText: '«Physis versus nomos» kartela, Xendra' },
+    { id: 'poster-02', kind: 'poster', thumbnailPath: '/assets/media/poster-02-thumb.jpg', fullPath: '/assets/media/poster-02.jpg', altText: 'Xendraren 2025eko biraren kartela, data guztiekin' },
+    { id: 'poster-03', kind: 'poster', thumbnailPath: '/assets/media/poster-03-thumb.jpg', fullPath: '/assets/media/poster-03.jpg', altText: 'Xendra Uharten, Kultur Etxean, apirilaren 5ean' },
+    { id: 'poster-04', kind: 'poster', thumbnailPath: '/assets/media/poster-04-thumb.jpg', fullPath: '/assets/media/poster-04.jpg', altText: 'Arrosadiako jaiak 2025: kontzertuen kartela' },
+    { id: 'poster-05', kind: 'poster', thumbnailPath: '/assets/media/poster-05-thumb.jpg', fullPath: '/assets/media/poster-05.jpg', altText: '«Kantu eta hitza» zikloaren kartela, Iruñean' },
+    { id: 'poster-06', kind: 'poster', thumbnailPath: '/assets/media/poster-06-thumb.jpg', fullPath: '/assets/media/poster-06.jpg', altText: 'Xendra Akelarre Kultur Elkartean, apirilaren 25ean' },
+    { id: 'poster-07', kind: 'poster', thumbnailPath: '/assets/media/poster-07-thumb.jpg', fullPath: '/assets/media/poster-07.jpg', altText: 'Xendraren aurkezpena, kartel urdinean' },
+    { id: 'poster-08', kind: 'poster', thumbnailPath: '/assets/media/poster-08-thumb.jpg', fullPath: '/assets/media/poster-08.jpg', altText: 'Pintxo-potea Gaztetxean, ekainaren 26an' },
+    { id: 'poster-09', kind: 'poster', thumbnailPath: '/assets/media/poster-09-thumb.jpg', fullPath: '/assets/media/poster-09.jpg', altText: 'Pintxo pote akustikoa Hiriberri Arakilen, 2025eko abuztuaren 22an' },
+    { id: 'poster-10', kind: 'poster', thumbnailPath: '/assets/media/poster-10-thumb.jpg', fullPath: '/assets/media/poster-10.jpg', altText: '«Arrakaletan loratuz» jardunaldien kartela' },
+    { id: 'poster-11', kind: 'poster', thumbnailPath: '/assets/media/poster-11-thumb.jpg', fullPath: '/assets/media/poster-11.jpg', altText: 'Herriko Tabernako asteazken akustikoak, martxoan' },
+    { id: 'poster-12', kind: 'poster', thumbnailPath: '/assets/media/poster-12-thumb.jpg', fullPath: '/assets/media/poster-12.jpg', altText: 'Udaberriko kontzertua Artziko jauregian, maiatzaren 16an' },
+    { id: 'poster-13', kind: 'poster', thumbnailPath: '/assets/media/poster-13-thumb.jpg', fullPath: '/assets/media/poster-13.jpg', altText: 'Tafallako jai herrikoien kartela' },
+    { id: 'poster-14', kind: 'poster', thumbnailPath: '/assets/media/poster-14-thumb.jpg', fullPath: '/assets/media/poster-14.jpg', altText: 'Berdintasuna elkartearen jaiak 2026' },
+    { id: 'poster-15', kind: 'poster', thumbnailPath: '/assets/media/poster-15-thumb.jpg', fullPath: '/assets/media/poster-15.jpg', altText: 'Rock & Roll 26, abuztuaren 14an' },
   ],
 
   press: [

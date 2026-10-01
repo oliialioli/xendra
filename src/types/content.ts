@@ -97,7 +97,7 @@ export type HistoryMilestone = {
   description: string;
 };
 
-export type MediaKind = 'photo' | 'video';
+export type MediaKind = 'photo' | 'video' | 'poster';
 
 export type MediaItem = {
   id: string;

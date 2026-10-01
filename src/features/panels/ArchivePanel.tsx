@@ -8,9 +8,17 @@ import { MediaLightbox } from './MediaLightbox';
 import shared from './panelShared.module.css';
 import styles from './ArchivePanel.module.css';
 
-type Filter = 'all' | 'photo' | 'video';
+type Filter = 'all' | 'photo' | 'video' | 'poster';
 
-type Frame = 'print' | 'polaroid';
+const FILTER_LABELS: Record<Filter, string> = {
+  all: 'Guztiak',
+  photo: 'Argazkiak',
+  video: 'Bideoak',
+  poster: 'Kartelak',
+};
+
+/** poster: the gig poster is the paper itself -- no white border. */
+type Frame = 'print' | 'polaroid' | 'poster';
 /** new: crisp white; matte: soft off-white; aged: yellowed paper, faded print; deckle: old snapshot with a scalloped edge. */
 type Paper = 'new' | 'matte' | 'aged' | 'deckle';
 type TapeTone = 'masking' | 'aged' | 'clear' | 'washiStripe' | 'washiDots' | 'washiGrid';
@@ -35,11 +43,14 @@ const DRIFTS_PX = [0, 10, -8, 0, -12, 6, 0, 12, -6];
 /** Every few prints overlap the one above them in their column. */
 const OVERLAP_EVERY = 3;
 
-function hangingFor(index: number) {
+function hangingFor(item: MediaItem, index: number) {
+  const paper = PAPERS[index % PAPERS.length];
+  const isPoster = item.kind === 'poster';
   return {
     tilt: TILTS[index % TILTS.length],
-    frame: FRAMES[index % FRAMES.length],
-    paper: PAPERS[index % PAPERS.length],
+    frame: isPoster ? 'poster' : FRAMES[index % FRAMES.length],
+    // A deckled edge reads as an old photo, not a poster.
+    paper: isPoster && paper === 'deckle' ? 'new' : paper,
     tapeTone: TAPE_TONES[index % TAPE_TONES.length],
     tapePlacement: TAPE_PLACEMENTS[index % TAPE_PLACEMENTS.length],
     drift: DRIFTS_PX[index % DRIFTS_PX.length],
@@ -70,6 +81,7 @@ function BoardItem({ item, onOpen }: { item: MediaItem; onOpen: () => void }) {
   // Keyed to the item's place in the whole archive, not the filtered list,
   // so each print keeps the same look whichever filter is on.
   const { tilt, frame, paper, tapeTone, tapePlacement, drift, overlaps } = hangingFor(
+    item,
     xendraContent.media.indexOf(item),
   );
   return (
@@ -100,7 +112,27 @@ function BoardItem({ item, onOpen }: { item: MediaItem; onOpen: () => void }) {
 }
 
 /**
- * Photos and videos as prints taped to a linen board -- old and new papers,
+ * Spreads the posters evenly through the photos and videos, so the full
+ * board reads as one mixed collage instead of photos first and every poster
+ * piled at the end.
+ */
+function mixPosters(items: MediaItem[]): MediaItem[] {
+  const posters = items.filter((item) => item.kind === 'poster');
+  const rest = items.filter((item) => item.kind !== 'poster');
+  if (posters.length === 0 || rest.length === 0) return items;
+
+  const step = rest.length / posters.length;
+  const mixed: MediaItem[] = [];
+  let next = 0;
+  rest.forEach((item, i) => {
+    while (next < posters.length && (next + 0.5) * step <= i) mixed.push(posters[next++]);
+    mixed.push(item);
+  });
+  return mixed.concat(posters.slice(next));
+}
+
+/**
+ * Photos, videos and gig posters taped to a linen board -- old and new papers,
  * different tapes, each a little askew and some overlapping -- opening
  * large in MediaLightbox on click.
  */
@@ -109,7 +141,10 @@ export function ArchivePanel() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const items = useMemo(
-    () => xendraContent.media.filter((item) => filter === 'all' || item.kind === filter),
+    () =>
+      filter === 'all'
+        ? mixPosters(xendraContent.media)
+        : xendraContent.media.filter((item) => item.kind === filter),
     [filter],
   );
 
@@ -123,8 +158,8 @@ export function ArchivePanel() {
 
   return (
     <div>
-      <div role="group" aria-label="Iragazi artxiboa" className={`xnd-control-module ${shared.section}`}>
-        {(['all', 'photo', 'video'] as Filter[]).map((option) => (
+      <div role="group" aria-label="Iragazi artxiboa" className={`xnd-control-module ${shared.section} ${styles.filters}`}>
+        {(Object.keys(FILTER_LABELS) as Filter[]).map((option) => (
           <button
             key={option}
             type="button"
@@ -135,7 +170,7 @@ export function ArchivePanel() {
               setOpenIndex(null);
             }}
           >
-            {option === 'all' ? 'Guztiak' : option === 'photo' ? 'Argazkiak' : 'Bideoak'}
+            {FILTER_LABELS[option]}
           </button>
         ))}
       </div>
