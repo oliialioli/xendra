@@ -70,7 +70,7 @@ export const PANEL_ROUTES: PanelRouteConfig[] = [
   {
     route: '/archivo',
     landmarkId: 'bulletinBoard',
-    title: 'Argazkiak eta bideoak',
+    title: 'Galeria',
     Component: ArchivePanel,
     variant: 'wide',
     icon: '▣',

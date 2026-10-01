@@ -207,7 +207,7 @@ export const xendraContent: XendraContent = {
       id: 'bulletinBoard',
       route: '/archivo',
       title: 'Iragarki-taula',
-      shortLabel: 'Argazkiak eta bideoak',
+      shortLabel: 'Galeria',
       description: 'Xendraren artxibo bisuala.',
       position: LANDMARK_POSITIONS.bulletinBoard,
       interactionRadius: LANDMARK_INTERACTION_RADIUS,
