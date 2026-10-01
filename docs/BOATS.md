@@ -59,7 +59,8 @@ else needs to change:
 | Boat size | `features/boats/BoatFleet.tsx` | `BOAT_WORLD_SIZE` |
 | Boat speed | `features/boats/boatHash.ts` | `BASE_SPEED` / `SPEED_VARIATION` |
 | Floating bob | `features/boats/BoatFleet.tsx` | `FLOAT_AMPLITUDE_PX` / `FLOAT_SPEED` |
-| Bridge under-crossings (hide/fade a boat) | `content/boatPathConfig.ts` | `boatPathConfig.occlusionSegments` (only the waterfall's own rock cluster today -- the two real bridges are still empty, see below) |
+| How boats are posed (always upright, mirrored when heading left, tilted in curves) | `features/boats/BoatFleet.tsx` | `MAX_BOAT_TILT_RAD` (max tilt), `uprightPose()` |
+| Bridge under-crossings (hide/fade a boat) | `content/boatPathConfig.ts` | `boatPathConfig.occlusionSegments` (the three river crossings plus the waterfall's rock cluster) |
 | House landmark (Mensajes/Mezuak) position/size | `content/mapGeometry.ts` | position: `dockConfig.xPercent`/`yPercent` (shared with the landmark hotspot below); size: `HOUSE_WIDTH_PERCENT` |
 | Waterfall art position/scale/rotation | `content/dockConfig.ts` | `waterfallConfig.x`/`y`/`scale`/`rotation`/`anchorX`/`anchorY` |
 | Waterfall boat effect (tilt/speed/drop/splash) | `content/dockConfig.ts` | `waterfallConfig.tilt`/`speedMultiplier`/`dropDistance`/`splashEnabled`, over `segmentStart`/`segmentEnd` |

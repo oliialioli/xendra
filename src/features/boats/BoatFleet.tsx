@@ -29,6 +29,32 @@ export type BoatFleetProps = {
 
 /** World-unit footprint a boat's bitmap renders at, before the map's own zoom -- see docs/BOATS.md for how to retune. */
 const BOAT_WORLD_SIZE = 72;
+/**
+ * Boats are side-view drawings (hull down, sail up, drawn "facing right"
+ * per the drawing step's own instruction), so they're posed the way a 2D
+ * side-scroller poses a sprite: mirrored horizontally when heading left,
+ * and only *tilted* -- never rotated past this -- to follow the river's
+ * curves. Rotating the drawing to the full heading angle instead turned it
+ * upside-down whenever a boat traveled leftward (a 180-degree heading),
+ * which is what visitors' real boats looked like on the lower half of the
+ * loop. Retune this if curves should read as steeper/flatter.
+ */
+const MAX_BOAT_TILT_RAD = (30 * Math.PI) / 180;
+
+/**
+ * Maps a true heading (radians, same y-down atan2 convention as the path
+ * tangent) to an always-upright pose: `mirrored` when the heading points
+ * left, plus a tilt clamped to +-MAX_BOAT_TILT_RAD. A mirrored sprite faces
+ * PI, so rotating it by `tilt` makes it face PI + tilt -- hence tilt =
+ * heading - PI, normalized, for the mirrored case.
+ */
+function uprightPose(headingRad: number): { tiltRad: number; mirrored: boolean } {
+  const heading = Math.atan2(Math.sin(headingRad), Math.cos(headingRad));
+  const mirrored = Math.cos(heading) < 0;
+  const raw = mirrored ? heading - Math.PI : heading;
+  const tilt = Math.atan2(Math.sin(raw), Math.cos(raw));
+  return { tiltRad: Math.max(-MAX_BOAT_TILT_RAD, Math.min(MAX_BOAT_TILT_RAD, tilt)), mirrored };
+}
 const LAUNCH_DURATION_MS = 1400;
 const LAUNCH_FADE_MS = 300;
 const FLOAT_AMPLITUDE_PX = 3;
@@ -232,7 +258,8 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed, onBoatCardOpe
           // samplePathAtProgress's own tangent always faces the polygon's
           // forward point order -- flip it 180 degrees when the fleet is
           // actually traveling that order backwards (boatPathConfig.direction
-          // === -1), so the sprite still faces the way it's really moving.
+          // === -1), so this is the boat's true heading. uprightPose() below
+          // turns it into the pose actually drawn.
           angleRad = sample.angleRad + (boatPathConfig.direction < 0 ? Math.PI : 0);
 
           if (waterfallEnvelope > 0) {
@@ -263,16 +290,20 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed, onBoatCardOpe
 
         const screenX = (worldX - worldViewX) * zoom;
         const screenY = (worldY - worldViewY) * zoom;
-        const angleDeg = (angleRad * 180) / Math.PI;
+        const { tiltRad, mirrored } = uprightPose(angleRad);
+        const tiltDeg = (tiltRad * 180) / Math.PI;
         // Subtle splash bulge at the peak of the waterfall crossing -- same
         // shared envelope as the tilt/drop/speed effects above, no new asset.
         const splashBoost = waterfallConfig.splashEnabled ? 1 + waterfallEnvelope * 0.12 : 1;
         const scale = zoom * state.motionParams.scaleVariation * splashBoost;
+        const scaleX = mirrored ? -scale : scale;
 
         // translate(-50%,-50%) centers the box on the screen point (its own
         // top-left otherwise would); rotate/scale then pivot correctly
-        // around that same centered point -- see BoatFleet.module.css.
-        el.style.transform = `translate3d(${screenX}px, ${screenY}px, 0) translate(-50%, -50%) rotate(${angleDeg}deg) scale(${scale})`;
+        // around that same centered point -- see BoatFleet.module.css. The
+        // negative x-scale mirrors the drawing (applied before the rotate,
+        // since CSS composes the transform list right-to-left).
+        el.style.transform = `translate3d(${screenX}px, ${screenY}px, 0) translate(-50%, -50%) rotate(${tiltDeg}deg) scale(${scaleX}, ${scale})`;
         el.style.opacity = String(opacity);
         inner.style.transform = `translateY(${floatOffset}px)`;
       });
