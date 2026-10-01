@@ -19,14 +19,15 @@ export const xendraContent: XendraContent = {
     entrySubtitle: 'Zeharkatu uhartea, aurkitu musika.', // TODO_CONTENT
   },
 
+  // Member bios are left empty for now; a card only shows a bio once one is written here.
   members: [
-    { id: 'member-1', name: 'Leire Diges Izco', pronouns: 'TODO_CONTENT', instrument: 'Ahotsa eta gitarra', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/leire-diges.jpg' },
-    { id: 'member-2', name: 'Iratxo Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Gitarra eta ahotsa', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/iratxo.jpg' },
-    { id: 'member-3', name: 'Leire Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Biolina', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/leire-gorostiza.jpg' },
-    { id: 'member-4', name: 'Ainhoa Bandres Abadía', pronouns: 'TODO_CONTENT', instrument: 'Txeloa', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/ainhoa.jpg' },
-    { id: 'member-5', name: 'Iker Andueza Gil', pronouns: 'TODO_CONTENT', instrument: 'Baxua', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/iker.jpg' },
-    { id: 'member-6', name: 'Laida Beltzunegi Landa', pronouns: 'TODO_CONTENT', instrument: 'Teklatua', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/laida.jpg' },
-    { id: 'member-7', name: 'Ion Galbete Labiano', pronouns: 'TODO_CONTENT', instrument: 'Bateria eta koroak', bio: 'TODO_CONTENT: biografia laburra.', photoPath: '/assets/members/ion.jpg' },
+    { id: 'member-1', name: 'Leire Diges Izco', pronouns: 'TODO_CONTENT', instrument: 'Ahotsa eta gitarra', bio: '', photoPath: '/assets/members/leire-diges.jpg' },
+    { id: 'member-2', name: 'Iratxo Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Gitarra eta ahotsa', bio: '', photoPath: '/assets/members/iratxo.jpg' },
+    { id: 'member-3', name: 'Leire Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Biolina', bio: '', photoPath: '/assets/members/leire-gorostiza.jpg' },
+    { id: 'member-4', name: 'Ainhoa Bandres Abadía', pronouns: 'TODO_CONTENT', instrument: 'Txeloa', bio: '', photoPath: '/assets/members/ainhoa.jpg' },
+    { id: 'member-5', name: 'Iker Andueza Gil', pronouns: 'TODO_CONTENT', instrument: 'Baxua', bio: '', photoPath: '/assets/members/iker.jpg' },
+    { id: 'member-6', name: 'Laida Beltzunegi Landa', pronouns: 'TODO_CONTENT', instrument: 'Teklatua', bio: '', photoPath: '/assets/members/laida.jpg' },
+    { id: 'member-7', name: 'Ion Galbete Labiano', pronouns: 'TODO_CONTENT', instrument: 'Bateria eta koroak', bio: '', photoPath: '/assets/members/ion.jpg' },
   ],
 
   album: {

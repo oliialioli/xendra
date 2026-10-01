@@ -33,7 +33,7 @@ export function GroupPanel() {
             )}
             <h3 className={shared.cardTitle}>{member.name}</h3>
             <p className={shared.statusText}>{member.instrument}</p>
-            <p className={shared.lead}>{member.bio}</p>
+            {member.bio && <p className={shared.lead}>{member.bio}</p>}
           </article>
         ))}
       </div>
