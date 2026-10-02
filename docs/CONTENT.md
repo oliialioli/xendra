@@ -13,8 +13,8 @@ código.
 - [x] **Texto de la tienda (Denda)** — campo `kiosk.intro` en `xendraContent.ts`,
       usado en `MerchPanel.tsx`.
 - [x] **Email de contacto/contratación** — `contact.email` (xendra.taldea@gmail.com)
-      y `contact.phone` (616 04 08 06). Si `contact.email` fuera `null`, el formulario de contacto valida pero no
-      permite "enviar" nada (no finge un envío).
+      y `contact.phone` (616 04 08 06). El panel Kontaktua solo los muestra como enlaces
+      (sin formulario).
 
 ## Integrantes (7)
 
@@ -61,11 +61,9 @@ quedan en `source-photos/` (fuera del repo, ver `.gitignore`).
 
 ## Contacto y redes
 
-- `contact.email` (ver arriba).
-- `contact.socialLinks`: array vacío por ahora — añadir enlaces reales, nunca URLs
-  inventadas.
-- `contact.reasons`: motivos de contacto, ya definidos (contratación, prensa,
-  otro) — ajustar si hace falta.
+- `contact.email` y `contact.phone` (ver arriba).
+- `contact.socialLinks`: Instagram (@_xendra_) y YouTube (@Xendra6) — añadir solo
+  enlaces reales, nunca URLs inventadas.
 
 ## Notas de implementación
 

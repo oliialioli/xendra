@@ -3,8 +3,7 @@ import type { LandmarkId } from '../types/content';
 export type AnalyticsEvent =
   | { type: 'landmark_discovered'; landmarkId: LandmarkId }
   | { type: 'panel_opened'; landmarkId: LandmarkId | null; source: 'map' | 'menu' | 'direct' }
-  | { type: 'audio_played'; trackId: string }
-  | { type: 'contact_started' };
+  | { type: 'audio_played'; trackId: string };
 
 export type AnalyticsSender = (event: AnalyticsEvent) => void;
 

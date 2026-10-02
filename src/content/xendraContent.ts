@@ -161,12 +161,6 @@ export const xendraContent: XendraContent = {
     email: 'xendra.taldea@gmail.com',
     phone: '616 04 08 06',
     phoneHref: '+34616040806',
-    contactMode: 'mailtoLink',
-    reasons: [
-      { id: 'booking', label: 'Kontratazioa / kontzertuak' },
-      { id: 'press', label: 'Prentsa' },
-      { id: 'general', label: 'Beste bat' },
-    ],
     socialLinks: [
       { label: 'Instagram', url: 'https://www.instagram.com/_xendra_/' },
       { label: 'YouTube', url: 'https://www.youtube.com/@Xendra6' },
