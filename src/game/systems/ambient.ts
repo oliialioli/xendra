@@ -4,13 +4,12 @@ type AmbientOptions = {
   reducedMotion: boolean;
   stageLightPositions: { x: number; y: number }[];
   riverSparklePoints: { x: number; y: number }[];
-  windLeafSpawnPoints: { x: number; y: number }[];
 };
 
 /**
- * Small, decoupled ambient effects layer: water sparkle, wind-blown leaves,
- * proximity-triggered stage lights, and occasional rain (the campfire has its
- * own entity, see entities/Campfire.ts).
+ * Small, decoupled ambient effects layer: water sparkle and proximity-
+ * triggered stage lights (rain and wind live in systems/weather.ts, the
+ * campfire in entities/Campfire.ts).
  * Every effect is cheap (tweens + a handful of sprites, no shaders/blur) and
  * is skipped entirely when `reducedMotion` is true. The scene already pauses
  * the whole game loop when the tab is hidden (Phaser's default `pauseOnBlur`),
@@ -20,8 +19,6 @@ export class AmbientEffectsSystem {
   private scene: Phaser.Scene;
   private reducedMotion: boolean;
   private stageLights: Phaser.GameObjects.Arc[] = [];
-  private rainEmitter: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
-  private rainTimer: Phaser.Time.TimerEvent | null = null;
   private activeTweens: Phaser.Tweens.Tween[] = [];
 
   constructor(scene: Phaser.Scene, options: AmbientOptions) {
@@ -32,8 +29,6 @@ export class AmbientEffectsSystem {
 
     if (!this.reducedMotion) {
       this.createRiverSparkles(options.riverSparklePoints);
-      this.createLeaves(options.windLeafSpawnPoints);
-      this.scheduleOccasionalRain();
     }
 
     this.createStageLights(options.stageLightPositions);
@@ -43,8 +38,6 @@ export class AmbientEffectsSystem {
     this.reducedMotion = reduced;
     if (reduced) {
       this.activeTweens.forEach((t) => t.stop());
-      this.rainTimer?.remove();
-      this.rainEmitter?.stop();
     }
   }
 
@@ -59,20 +52,6 @@ export class AmbientEffectsSystem {
   }
 
   private ensureTextures(): void {
-    if (!this.scene.textures.exists('ambient-leaf')) {
-      const g = this.scene.add.graphics();
-      g.fillStyle(0x7c9070, 0.9);
-      g.fillEllipse(4, 4, 8, 4);
-      g.generateTexture('ambient-leaf', 8, 8);
-      g.destroy();
-    }
-    if (!this.scene.textures.exists('ambient-rain')) {
-      const g = this.scene.add.graphics();
-      g.fillStyle(0x6f97a0, 0.6);
-      g.fillRect(0, 0, 2, 12);
-      g.generateTexture('ambient-rain', 2, 12);
-      g.destroy();
-    }
     if (!this.scene.textures.exists('ambient-spark')) {
       const g = this.scene.add.graphics();
       g.fillStyle(0xffffff, 0.8);
@@ -99,22 +78,6 @@ export class AmbientEffectsSystem {
     });
   }
 
-  private createLeaves(spawnPoints: { x: number; y: number }[]): void {
-    spawnPoints.forEach((point, index) => {
-      const emitter = this.scene.add.particles(point.x, point.y, 'ambient-leaf', {
-        speed: { min: 20, max: 40 },
-        angle: { min: 160, max: 200 },
-        lifespan: 6000,
-        alpha: { start: 0.7, end: 0 },
-        scale: { start: 1, end: 0.6 },
-        frequency: 2600 + index * 400,
-        rotate: { min: 0, max: 360 },
-        quantity: 1,
-      });
-      emitter.setDepth(2);
-    });
-  }
-
   private createStageLights(positions: { x: number; y: number }[]): void {
     this.stageLights = positions.map((pos) => {
       const light = this.scene.add.circle(pos.x, pos.y, 10, 0xc99a3e, 0.15);
@@ -123,40 +86,7 @@ export class AmbientEffectsSystem {
     });
   }
 
-  private scheduleOccasionalRain(): void {
-    const scheduleNext = () => {
-      const delay = Phaser.Math.Between(45000, 90000);
-      this.rainTimer = this.scene.time.delayedCall(delay, () => {
-        this.playRainBurst();
-        scheduleNext();
-      });
-    };
-    scheduleNext();
-  }
-
-  private playRainBurst(): void {
-    if (this.reducedMotion) return;
-    const cam = this.scene.cameras.main;
-    this.rainEmitter = this.scene.add.particles(0, 0, 'ambient-rain', {
-      x: { min: cam.worldView.x, max: cam.worldView.right },
-      y: cam.worldView.y - 20,
-      lifespan: 900,
-      speedY: { min: 400, max: 500 },
-      speedX: { min: -20, max: -10 },
-      quantity: 3,
-      frequency: 20,
-      alpha: { start: 0.5, end: 0.1 },
-    });
-    this.rainEmitter.setDepth(5000);
-    this.scene.time.delayedCall(5000, () => {
-      this.rainEmitter?.stop();
-      this.scene.time.delayedCall(1000, () => this.rainEmitter?.destroy());
-    });
-  }
-
   destroy(): void {
     this.activeTweens.forEach((t) => t.stop());
-    this.rainTimer?.remove();
-    this.rainEmitter?.destroy();
   }
 }

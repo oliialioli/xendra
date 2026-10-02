@@ -37,6 +37,7 @@ import { PostboxLetters } from '../entities/PostboxLetters';
 import { KioskVendor } from '../entities/KioskVendor';
 import { findNearestLandmark } from '../systems/proximity';
 import { AmbientEffectsSystem } from '../systems/ambient';
+import { WeatherSystem } from '../systems/weather';
 import type { GameEventBus } from '../bridge/gameEvents';
 import { assetPath } from '../../lib/assetPath';
 
@@ -145,6 +146,7 @@ export class MapScene extends Phaser.Scene {
   private landmarkLights = new Map<LandmarkId, LandmarkLightState>();
   private landmarkGlow = new Map<LandmarkId, LandmarkGlowState>();
   private ambient!: AmbientEffectsSystem;
+  private weather!: WeatherSystem;
 
   private keyD!: Phaser.Input.Keyboard.Key;
   private debugGraphics: Phaser.GameObjects.Graphics | null = null;
@@ -221,11 +223,8 @@ export class MapScene extends Phaser.Scene {
       reducedMotion: this.reducedMotion,
       stageLightPositions: STAGE_LIGHT_OFFSETS,
       riverSparklePoints: ISLAND_POLYGON.filter((_, i) => i % 3 === 0),
-      windLeafSpawnPoints: [
-        { x: 900, y: 300 },
-        { x: 1900, y: 700 },
-      ],
     });
+    this.weather = new WeatherSystem(this, this.reducedMotion);
 
     this.setUpBridgeListeners();
     // PhaserGame.tsx resizes the game whenever its container (or the screen
@@ -259,6 +258,7 @@ export class MapScene extends Phaser.Scene {
     this.noticeBoardPapers?.update(this.snail.position, delta);
     this.postboxLetters?.update(this.snail.position);
     this.kioskVendor?.update(this.snail.position);
+    this.weather.update();
 
     if (!this.controlsEnabled) {
       this.snail.setVelocity(0, 0);
@@ -657,6 +657,7 @@ export class MapScene extends Phaser.Scene {
       this.bus.on('motion:setReduced', ({ reduced }) => {
         this.reducedMotion = reduced;
         this.ambient.setReducedMotion(reduced);
+        this.weather.setReducedMotion(reduced);
       }),
       this.bus.on('visited:hydrate', ({ ids }) => {
         this.visited = new Set(ids);
@@ -1013,6 +1014,7 @@ export class MapScene extends Phaser.Scene {
     this.unsubscribers.forEach((unsub) => unsub());
     this.unsubscribers = [];
     this.ambient.destroy();
+    this.weather.destroy();
     this.campfire?.destroy();
     this.campfire = null;
     this.fountainSpray?.destroy();
