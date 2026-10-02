@@ -1,13 +1,18 @@
 /*
- * Members in rows of four, the last row centred -- seven members read as
- * four on top and three below. Phones get two per row instead: four
- * portraits across a phone-width panel would be too small to recognise.
+ * Members in two centred rows (three on top, four below -- see TOP_ROW in
+ * GroupPanel.tsx), every portrait a quarter of the width so both rows match.
+ * Phones get two per row instead: four portraits across a phone-width panel
+ * would be too small to recognise.
  */
 .members {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--space-3);
+}
+
+.members + .members {
+  margin-top: var(--space-3);
 }
 
 .member {

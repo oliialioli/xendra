@@ -2,11 +2,6 @@ import { xendraContent } from '../../content/xendraContent';
 import { assetPath } from '../../lib/assetPath';
 import shared from './panelShared.module.css';
 
-/** Mail to the band about one product, with its name already in the subject. */
-function askUsHref(email: string, productName: string): string {
-  return `mailto:${email}?subject=${encodeURIComponent(`Denda: ${productName}`)}`;
-}
-
 export function MerchPanel() {
   const { kiosk, merch, contact } = xendraContent;
   const instagram = contact.socialLinks.find((link) => link.label === 'Instagram');
@@ -59,12 +54,8 @@ export function MerchPanel() {
               {product.priceLabel ?? 'Prezioa zehazteke'}
             </p>
             {product.ctaMode === 'externalLink' && product.ctaUrl ? (
-              <a className={shared.secondaryLink} href={product.ctaUrl}>
-                Ikusi dendan
-              </a>
-            ) : product.ctaMode === 'askUs' && contact.email ? (
-              <a className={shared.secondaryLink} href={askUsHref(contact.email, product.name)}>
-                Eskatu
+              <a className={shared.secondaryLink} href={product.ctaUrl} target="_blank" rel="noreferrer">
+                Erosi
               </a>
             ) : (
               <span className={shared.statusText}>Laster</span>

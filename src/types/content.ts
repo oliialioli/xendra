@@ -88,8 +88,7 @@ export type MerchProduct = {
   imagePath: string | null;
   priceLabel: string | null;
   available: boolean;
-  /** askUs: sold by writing to the band (Instagram or email), see KioskGreeting.intro. */
-  ctaMode: 'externalLink' | 'askUs' | 'comingSoon';
+  ctaMode: 'externalLink' | 'comingSoon';
   ctaUrl: string | null;
 };
 

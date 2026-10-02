@@ -7,6 +7,8 @@ import { dockConfig } from './dockConfig';
  * Content is in Euskera (Basque) throughout. See docs/CONTENT.md for the
  * full list of TODO_CONTENT items to replace.
  */
+const MERCH_ORDER_FORM =
+  'https://docs.google.com/forms/d/e/1FAIpQLSf4bGHJzfONScfI4GLxOU0auXw7Jk0wtorWRwka4FIQ54_4Gw/viewform';
 const albumTitle = 'Bihia'; // confirmed via badok.eus and Apple Music
 
 export const xendraContent: XendraContent = {
@@ -22,13 +24,13 @@ export const xendraContent: XendraContent = {
   // Member bios are left empty for now; a card only shows a bio once one is written here.
   members: [
     // Display order: the four on top, then the three below (see GroupPanel).
-    { id: 'member-3', name: 'Leire Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Biolina', bio: '', photoPath: '/assets/members/leire-gorostiza.jpg' },
-    { id: 'member-4', name: 'Ainhoa Bandres Abadia', pronouns: 'TODO_CONTENT', instrument: 'Txeloa', bio: '', photoPath: '/assets/members/ainhoa.jpg' },
-    { id: 'member-1', name: 'Leire Diges Izco', pronouns: 'TODO_CONTENT', instrument: 'Ahotsa eta gitarra', bio: '', photoPath: '/assets/members/leire-diges.jpg' },
-    { id: 'member-2', name: 'Iratxo Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Gitarra eta ahotsa', bio: '', photoPath: '/assets/members/iratxo.jpg' },
-    { id: 'member-6', name: 'Laida Beltzunegi Landa', pronouns: 'TODO_CONTENT', instrument: 'Teklatua', bio: '', photoPath: '/assets/members/laida.jpg' },
-    { id: 'member-5', name: 'Iker Andueza Gil', pronouns: 'TODO_CONTENT', instrument: 'Baxua', bio: '', photoPath: '/assets/members/iker.jpg' },
-    { id: 'member-7', name: 'Ion Galbete Labiano', pronouns: 'TODO_CONTENT', instrument: 'Bateria eta koroak', bio: '', photoPath: '/assets/members/ion.jpg' },
+    { id: 'member-7', name: 'Ion Galbete Labiano', pronouns: '', instrument: 'Bateria eta koroak', bio: '', photoPath: '/assets/members/ion.jpg' },
+    { id: 'member-5', name: 'Iker Andueza Gil', pronouns: '', instrument: 'Baxua', bio: '', photoPath: '/assets/members/iker.jpg' },
+    { id: 'member-6', name: 'Laida Beltzunegi Landa', pronouns: '', instrument: 'Teklatua', bio: '', photoPath: '/assets/members/laida.jpg' },
+    { id: 'member-2', name: 'Iratxo Gorostiza Etxeberria', pronouns: '', instrument: 'Gitarra eta ahotsa', bio: '', photoPath: '/assets/members/iratxo.jpg' },
+    { id: 'member-1', name: 'Leire Diges Izco', pronouns: '', instrument: 'Gitarra eta ahotsa', bio: '', photoPath: '/assets/members/leire-diges.jpg' },
+    { id: 'member-4', name: 'Ainhoa Bandres Abadia', pronouns: '', instrument: 'Txeloa', bio: '', photoPath: '/assets/members/ainhoa.jpg' },
+    { id: 'member-3', name: 'Leire Gorostiza Etxeberria', pronouns: '', instrument: 'Biolina', bio: '', photoPath: '/assets/members/leire-gorostiza.jpg' },
   ],
 
   album: {
@@ -40,7 +42,7 @@ export const xendraContent: XendraContent = {
     externalLinks: [
       { label: 'Bandcamp', url: 'https://xendrataldea.bandcamp.com/album/bihia' },
       { label: 'Badok', url: 'https://www.badok.eus/euskal-musika/xendra/bihia' },
-      { label: 'YouTube', url: 'https://www.youtube.com/channel/UCjGkN3mEifFsobvw9fztmaQ' },
+      { label: 'YouTube', url: 'https://www.youtube.com/playlist?list=OLAK5uy_kbWls6s4OfqWO5WhMT08M6W8UT9s6ZZYw' },
       { label: 'Apple Music', url: 'https://music.apple.com/es/album/bihia/1785223280' },
     ],
     // Durations from the album's Bandcamp page.
@@ -71,37 +73,36 @@ export const xendraContent: XendraContent = {
     { id: 'concert-2026-08-16', city: 'Tafalla', venue: '', date: '2026-08-16', time: null, status: 'past', ticketsUrl: null },
     { id: 'concert-2026-08-14', city: 'Erronkari', venue: '', date: '2026-08-14', time: null, status: 'past', ticketsUrl: null },
     { id: 'concert-2026-08-13', city: 'Amurrio', venue: '', date: '2026-08-13', time: null, status: 'past', ticketsUrl: null },
-    { id: 'concert-2026-05-16', city: 'Artzibar', venue: '', date: '2026-05-16', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2026-05-16', city: 'Artzibar', venue: 'Artziko jauregia', date: '2026-05-16', time: null, status: 'past', ticketsUrl: null },
     { id: 'concert-2026-03-28', city: 'Laudio', venue: '', date: '2026-03-28', time: null, status: 'past', ticketsUrl: null },
     { id: 'concert-2026-03-25', city: 'Iruñea', venue: 'Herriko Taberna', date: '2026-03-25', time: null, status: 'past', ticketsUrl: null },
-    { id: 'concert-2026-02-06', city: 'Geltoki', venue: '', date: '2026-02-06', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2026-02-06', city: 'Iruñea', venue: 'Geltoki', date: '2026-02-06', time: null, status: 'past', ticketsUrl: null },
     { id: 'concert-2025-08-22', city: 'Hiriberri', venue: '', date: '2025-08-22', time: null, status: 'past', ticketsUrl: null },
     { id: 'concert-2025-06-27', city: 'Lekeitio', venue: '', date: '2025-06-27', time: null, status: 'past', ticketsUrl: null },
     { id: 'concert-2025-06-26', city: 'Oñati', venue: '', date: '2025-06-26', time: null, status: 'past', ticketsUrl: null },
-    { id: 'concert-2025-06-19', city: 'Erraldoien txokoa', venue: '', date: '2025-06-19', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2025-06-19', city: 'Iruñea', venue: 'Kantua eta Hitza', date: '2025-06-19', time: null, status: 'past', ticketsUrl: null },
     { id: 'concert-2025-05-25', city: 'Arrosadia', venue: '', date: '2025-05-25', time: null, status: 'past', ticketsUrl: null },
-    { id: 'concert-2025-05-04', city: 'Zuia', venue: '', date: '2025-05-04', time: null, status: 'past', ticketsUrl: null },
-    { id: 'concert-2025-04-25', city: 'Akelarre Kultur Elkartea', venue: '', date: '2025-04-25', time: null, status: 'past', ticketsUrl: null },
-    { id: 'concert-2025-04-05', city: 'Uharteko kultur etxea', venue: '', date: '2025-04-05', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2025-05-04', city: 'Zuia', venue: 'Hil da Laboa', date: '2025-05-04', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2025-04-25', city: 'Txantrea', venue: 'Akelarre Kultur Elkartea', date: '2025-04-25', time: null, status: 'past', ticketsUrl: null },
+    { id: 'concert-2025-04-05', city: 'Uharte', venue: 'Kultur etxea', date: '2025-04-05', time: null, status: 'past', ticketsUrl: null },
   ],
 
   merch: [
-    { id: 'merch-begira', name: 'BEGIRA kamiseta', imagePath: '/assets/merch/kamiseta-urdina.jpg', priceLabel: '15€', available: true, ctaMode: 'askUs', ctaUrl: null },
-    { id: 'merch-sua', name: 'SUA kamiseta', imagePath: '/assets/merch/kamiseta-naturala.jpg', priceLabel: '15€', available: true, ctaMode: 'askUs', ctaUrl: null },
-    { id: 'merch-bihia', name: 'BIHIA diska', imagePath: '/assets/music/bihia-azala.jpg', priceLabel: '10€', available: true, ctaMode: 'askUs', ctaUrl: null },
+    { id: 'merch-begira', name: 'BEGIRA kamiseta', imagePath: '/assets/merch/kamiseta-urdina.jpg', priceLabel: '15€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
+    { id: 'merch-sua', name: 'SUA kamiseta', imagePath: '/assets/merch/kamiseta-naturala.jpg', priceLabel: '15€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
+    { id: 'merch-bihia', name: 'BIHIA diska', imagePath: '/assets/music/bihia-azala.jpg', priceLabel: '10€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
   ],
 
-  // "Xendraren bidea", split into the path's year stops.
   history: [
-    { id: 'history-2020', year: '2020', description: 'Uharteko 4 lagun entsaio gelan elkartzen hasi ginen inongo helburu zehatzik gabe. Bizpairu kantu sortu eta beste batzuk bertsionatu genituen lehen urteetan. Ondoren ordea, 2 lagunek entsaiatzeari utzi eta pixkanaka taldekide eta instrumentu berriak sartzen joan ziren.' },
-    { id: 'history-2024', year: '2024', description: '6 taldekide ginen eta 8 abestiko disko bat grabatzea erabaki genuen. Grabaketa Irunberriko SIMA estudioan egin genuen udan.' },
-    { id: 'history-2025', year: '2025', description: 'Urtarrilean atera genuen diskoa. Horrela, lehen kontzertuak ematen hasi ginen, esperientzia oso politak biziz. Urte bukaeran, 7. taldekide bat batu zen gure proiektura.' },
-    { id: 'history-2026', year: '2026', description: 'Beste kontzertu batzuk ematen egon gara.' },
+    { id: 'history-2020', year: '2020', description: 'Uharteko 4 lagun entsaio gelan elkartzen hasi ginen inongo helburu zehatzik gabe. Bizpahiru kantu sortu eta beste batzuk bertsionatu genituen lehen urteetan. Ondoren ordea, 2 lagunek entsaiatzeari utzi eta pixkanaka taldekide eta instrumentu berriak sartzen joan ginen.' },
+    { id: 'history-2024', year: '2024', description: '6 taldekide ginen eta 8 abestiko disko bat grabatzea erabaki genuen. Grabaketa Irunberriko SIMA estudioan egin genuen udan, Ibai Osinagaren laguntzaz.' },
+    { id: 'history-2025', year: '2025', description: `Urtarrilean atera genuen “${albumTitle}” deituriko diska. Horrela, lehen kontzertuak ematen hasi ginen, esperientzia oso politak biziz. Urte bukaeran, Ainhoa eta bere txeloa batu ziren gure proiektura.` },
+    { id: 'history-2026', year: '2026', description: 'Kontzertu gehiago eman genituen, Euskal Herriko txoko ezberdinak ezagutuz, eta abesti berriak sortzen ere aritu ginen.' },
   ],
 
   media: [
     { id: 'photo-01', kind: 'photo', thumbnailPath: '/assets/media/photo-01.jpg', fullPath: '/assets/media/photo-01.jpg', altText: 'Bi taldekide oholtzan, kontzertu baten ondoren' },
-    { id: 'photo-02', kind: 'photo', thumbnailPath: '/assets/media/photo-02.jpg', fullPath: '/assets/media/photo-02.jpg', altText: 'Taldea barrezka, kontzertu baten aurretik' },
+    { id: 'photo-02', kind: 'photo', thumbnailPath: '/assets/media/photo-02.jpg', fullPath: '/assets/media/photo-02.jpg', altText: 'Taldea barrezka, kontzertu baten amaieran' },
     { id: 'photo-03', kind: 'photo', thumbnailPath: '/assets/media/photo-03.jpg', fullPath: '/assets/media/photo-03.jpg', altText: 'Xendra zuzenean, gitarra eta ahotsa' },
     { id: 'photo-04', kind: 'photo', thumbnailPath: '/assets/media/photo-04.jpg', fullPath: '/assets/media/photo-04.jpg', altText: 'Zazpikotea osorik oholtzan' },
     { id: 'photo-05', kind: 'photo', thumbnailPath: '/assets/media/photo-05.jpg', fullPath: '/assets/media/photo-05.jpg', altText: 'Jendea kontzertu baten aurretik, zuri-beltzean' },
@@ -140,7 +141,7 @@ export const xendraContent: XendraContent = {
     { id: 'poster-15', kind: 'poster', thumbnailPath: '/assets/media/poster-15-thumb.jpg', fullPath: '/assets/media/poster-15.jpg', altText: 'Rock & Roll 26, abuztuaren 14an' },
     // Keepsakes, kept last so adding one doesn't shift how the other prints hang (see ArchivePanel's hangingFor).
     { id: 'ticket-first-concert', kind: 'keepsake', thumbnailPath: '/assets/media/entrada-thumb.webp', fullPath: '/assets/media/entrada-full.webp', altText: 'Xendraren lehen kontzerturako sarrera, Uharteko Kultur Etxean, 2025eko apirilaren 5ean' },
-    { id: 'setlist', kind: 'keepsake', thumbnailPath: '/assets/media/setlist-thumb.webp', fullPath: '/assets/media/setlist-full.webp', altText: 'Kontzertu bateko abesti-zerrenda, eskuz idatzia' },
+    { id: 'setlist', kind: 'keepsake', thumbnailPath: '/assets/media/setlist-thumb.webp', fullPath: '/assets/media/setlist-full.webp', altText: '2026ko martxoaren 25eko kontzertuko zerrenda, Iruñeako Herriko tabernan emandako kontzertua' },
   ],
 
   press: [
@@ -148,6 +149,11 @@ export const xendraContent: XendraContent = {
       id: 'press-1',
       label: 'Xendra taldeko pop-rock doinuek jantziko dute larunbatean Artziko jauregia (Irati Irratia, 2026-05-12)',
       url: 'https://iratiirratia.eus/index.php/2026/05/12/xendra-taldeko-pop-rock-doinuek-jantziko-dute-larunbatean-artziko-jauregia/',
+    },
+    {
+      id: 'press-2',
+      label: 'Soinu & Doinu 2025: Xendra (Xaloa Telebista)',
+      url: 'https://www.youtube.com/watch?v=fwefdfEypvc',
     },
   ],
 
@@ -163,7 +169,7 @@ export const xendraContent: XendraContent = {
     ],
     socialLinks: [
       { label: 'Instagram', url: 'https://www.instagram.com/_xendra_/' },
-      { label: 'YouTube', url: 'https://www.youtube.com/channel/UCjGkN3mEifFsobvw9fztmaQ' },
+      { label: 'YouTube', url: 'https://www.youtube.com/@Xendra6' },
     ],
   },
 

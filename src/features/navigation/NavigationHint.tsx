@@ -118,7 +118,7 @@ export function NavigationHint({ open, onDismiss }: NavigationHintProps) {
         <p className={styles.title}>Arakatu mapa</p>
         <p className={`${styles.subtitle} ${styles.subtitleDesktop}`}>Erabili geziak mugitzeko</p>
         <p className={`${styles.subtitle} ${styles.subtitleTouch}`}>
-          Irristatu mugitzeko · Estutu zooma egiteko
+          Irristatu mugitzeko
         </p>
       </div>
 
