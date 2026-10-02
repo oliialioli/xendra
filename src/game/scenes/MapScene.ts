@@ -105,11 +105,13 @@ const SNAIL_COLLISION_RADIUS = 12;
  */
 const MAX_STEP_SECONDS = 0.05;
 
-const CAMPFIRE_POSITION = { x: 2159, y: 540 };
 const STAGE_LIGHT_OFFSETS = [
   { x: 730, y: 285 },
   { x: 815, y: 285 },
 ];
+
+/** Interact presses are ignored this long after the map regains control (see setControlsEnabled). */
+const INTERACT_GRACE_MS = 250;
 
 export class MapScene extends Phaser.Scene {
   private bus!: GameEventBus;
@@ -117,6 +119,7 @@ export class MapScene extends Phaser.Scene {
   private visited = new Set<LandmarkId>();
   private reducedMotion = false;
   private campfire: Campfire | null = null;
+  private controlsEnabledAt = 0;
   private fountainSpray: FountainSpray | null = null;
   private controlsEnabled = true;
 
@@ -201,7 +204,6 @@ export class MapScene extends Phaser.Scene {
 
     this.ambient = new AmbientEffectsSystem(this, {
       reducedMotion: this.reducedMotion,
-      campfirePosition: CAMPFIRE_POSITION,
       stageLightPositions: STAGE_LIGHT_OFFSETS,
       riverSparklePoints: ISLAND_POLYGON.filter((_, i) => i % 3 === 0),
       windLeafSpawnPoints: [
@@ -287,10 +289,9 @@ export class MapScene extends Phaser.Scene {
     const safeVelocity = this.resolveSafeVelocity(vx, vy, dtSeconds);
     this.snail.setVelocity(safeVelocity.x * SNAIL_SPEED, safeVelocity.y * SNAIL_SPEED);
 
-    if (
-      Phaser.Input.Keyboard.JustDown(this.wasd.E) ||
-      Phaser.Input.Keyboard.JustDown(this.wasd.ENTER)
-    ) {
+    const interactPressed =
+      Phaser.Input.Keyboard.JustDown(this.wasd.E) || Phaser.Input.Keyboard.JustDown(this.wasd.ENTER);
+    if (interactPressed && this.time.now - this.controlsEnabledAt > INTERACT_GRACE_MS) {
       this.tryInteract();
     }
 
@@ -691,6 +692,12 @@ export class MapScene extends Phaser.Scene {
     if (!keyboard) return;
     if (enabled) {
       keyboard.enableGlobalCapture();
+      // The key that just closed the intro or a panel (Enter on its button)
+      // was also recorded here; without this it would read as a fresh
+      // "interact" press on the very next frame and reopen whatever landmark
+      // the snail is standing next to.
+      keyboard.resetKeys();
+      this.controlsEnabledAt = this.time.now;
     } else {
       keyboard.disableGlobalCapture();
       this.clickTarget = null;

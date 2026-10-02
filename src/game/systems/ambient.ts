@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 
 type AmbientOptions = {
   reducedMotion: boolean;
-  campfirePosition: { x: number; y: number };
   stageLightPositions: { x: number; y: number }[];
   riverSparklePoints: { x: number; y: number }[];
   windLeafSpawnPoints: { x: number; y: number }[];
@@ -10,7 +9,8 @@ type AmbientOptions = {
 
 /**
  * Small, decoupled ambient effects layer: water sparkle, wind-blown leaves,
- * campfire flicker, proximity-triggered stage lights, and occasional rain.
+ * proximity-triggered stage lights, and occasional rain (the campfire has its
+ * own entity, see entities/Campfire.ts).
  * Every effect is cheap (tweens + a handful of sprites, no shaders/blur) and
  * is skipped entirely when `reducedMotion` is true. The scene already pauses
  * the whole game loop when the tab is hidden (Phaser's default `pauseOnBlur`),
@@ -33,7 +33,6 @@ export class AmbientEffectsSystem {
     if (!this.reducedMotion) {
       this.createRiverSparkles(options.riverSparklePoints);
       this.createLeaves(options.windLeafSpawnPoints);
-      this.createCampfire(options.campfirePosition);
       this.scheduleOccasionalRain();
     }
 
@@ -114,32 +113,6 @@ export class AmbientEffectsSystem {
       });
       emitter.setDepth(2);
     });
-  }
-
-  private createCampfire(position: { x: number; y: number }): void {
-    const flame = this.scene.add.ellipse(position.x, position.y - 6, 14, 22, 0xc99a3e, 0.9);
-    flame.setDepth(position.y);
-    const flicker = this.scene.tweens.add({
-      targets: flame,
-      scaleY: { from: 0.8, to: 1.15 },
-      alpha: { from: 0.75, to: 1 },
-      duration: 260,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    });
-    this.activeTweens.push(flicker);
-
-    const smoke = this.scene.add.particles(position.x, position.y - 20, 'ambient-spark', {
-      speed: { min: 6, max: 14 },
-      angle: { min: 260, max: 280 },
-      lifespan: 2200,
-      alpha: { start: 0.25, end: 0 },
-      scale: { start: 0.6, end: 1.4 },
-      tint: 0x9a9284,
-      frequency: 500,
-    });
-    smoke.setDepth(position.y + 1);
   }
 
   private createStageLights(positions: { x: number; y: number }[]): void {
