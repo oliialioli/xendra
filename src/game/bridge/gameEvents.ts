@@ -39,6 +39,8 @@ export type GameToAppEvents = {
 /** Events React sends down into the Phaser world. */
 export type AppToGameEvents = {
   'controls:setEnabled': { enabled: boolean };
+  /** How dark a rain shower has made the map (the veil's opacity, 0 when dry), so DOM layers over it can match. */
+  'weather:gloom': { amount: number };
   /** Puts the snail down at a world point (and the camera on it) -- e.g. back in front of the castle after its minigame. */
   'snail:placeAt': { x: number; y: number };
   'controls:joystick': { x: number; y: number };

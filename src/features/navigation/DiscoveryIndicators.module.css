@@ -4,3 +4,8 @@
   overflow: hidden;
   pointer-events: none;
 }
+
+/* Dimmed with the map while it rains (MapLayout sets --weather-gloom: the rain veil's opacity). */
+:global([data-gloomy]) .root {
+  filter: brightness(calc(1 - var(--weather-gloom, 0) * 1.1)) saturate(calc(1 - var(--weather-gloom, 0)));
+}

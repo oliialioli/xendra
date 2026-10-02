@@ -40,6 +40,7 @@ export function MapLayout() {
   const [navigationHintOpen, setNavigationHintOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [boatCardOpen, setBoatCardOpen] = useState(false);
+  const [gloom, setGloom] = useState(0);
 
   const fleet = useBoatFleet();
 
@@ -54,7 +55,9 @@ export function MapLayout() {
   const isUnknownRoute = !isMapRoute && !panelEntry;
   // The intro opens on every visit (every page load), not just the first --
   // it's the way into the island. Only leaving it dismisses it, for this load.
-  const [introDismissed, setIntroDismissed] = useState(false);
+  // A visit that starts on a link straight to a panel (or the castle game)
+  // skips it: closing that panel goes straight to the map.
+  const [introDismissed, setIntroDismissed] = useState(() => location.pathname !== MAP_ROUTE);
   const showIntro = isMapRoute && !introDismissed && !menuOpen;
   const controlsBlocked = Boolean(panelEntry) || isUnknownRoute || menuOpen || showIntro;
 
@@ -132,11 +135,14 @@ export function MapLayout() {
       setUsingFallbackMap(usingFallback);
     });
 
+    const offGloom = bus.on('weather:gloom', ({ amount }) => setGloom(amount));
+
     return () => {
       offInteract();
       offDiscovered();
       offProximity();
       offAsset();
+      offGloom();
     };
   }, [bus, navigate, progress]);
 
@@ -159,7 +165,18 @@ export function MapLayout() {
   const nearestLandmark = nearestId ? landmarkById.get(nearestId) : null;
 
   return (
-    <div style={{ position: 'fixed', inset: 0, width: '100dvw', height: '100dvh', overflow: 'hidden' }}>
+    <div
+      // Rain dims the map canvas; the boats and badges laid over it in the DOM dim along with it (see their .root).
+      data-gloomy={gloom > 0 || undefined}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100dvw',
+        height: '100dvh',
+        overflow: 'hidden',
+        ['--weather-gloom' as string]: gloom,
+      }}
+    >
       <a className="skip-link" href="#main-content">
         Salto egin edukira
       </a>

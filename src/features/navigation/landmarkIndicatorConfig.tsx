@@ -1,16 +1,15 @@
 import {
-  CastleTurret,
   EnvelopeSimple,
   ImagesSquare,
   MicrophoneStage,
   Pencil,
-  Train,
   TShirt,
   UsersThree,
   VinylRecord,
   type Icon,
 } from '@phosphor-icons/react';
 import type { LandmarkId } from '../../types/content';
+import { CastleRuinIcon, SteamTrainIcon } from './landmarkIcons';
 import { LANDMARK_REVEAL_RADIUS } from '../../content/mapGeometry';
 
 export type LandmarkIndicatorConfig = {
@@ -80,7 +79,7 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     visualHeight: 85,
   },
   trainHistory: {
-    icon: Train,
+    icon: SteamTrainIcon,
     label: 'Historia',
     revealRadius: LANDMARK_REVEAL_RADIUS,
     // Clears the middle carriage's roof above tren.png's anchor.
@@ -112,7 +111,7 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     visualHeight: 88,
   },
   castle: {
-    icon: CastleTurret,
+    icon: CastleRuinIcon,
     label: 'Jokoa',
     revealRadius: LANDMARK_REVEAL_RADIUS,
     // Just over the tall corner tower of castillo.png (its anchor sits near

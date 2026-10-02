@@ -41,6 +41,13 @@ const PAL = {
   bossLight: '#a6b6be',
   bossDark: '#5d6f79',
   white: '#fbf8ef',
+  // The map's own vegetation colours (vegetationArt.ts), a touch lighter for distance.
+  leaf: '#55695a',
+  leafShade: '#465949',
+  leafSeam: '#3c4d40',
+  trunk: '#3a3029',
+  ivy: '#7f9470',
+  cloud: '#fbf8ef',
 } as const;
 
 /** The level is never shown narrower than this, so you can always see what's coming. */
@@ -243,6 +250,88 @@ function drawHills(ctx: CanvasRenderingContext2D, view: View, camX: number, para
   ctx.fill();
 }
 
+/** Soft clouds drifting slowly across the sky. */
+function drawClouds(ctx: CanvasRenderingContext2D, view: View, camX: number, t: number): void {
+  const parallax = 0.08;
+  const spacing = 420;
+  const drift = t * 6;
+  const first = Math.floor((camX * parallax + drift) / spacing) - 1;
+  const count = Math.ceil(view.width / spacing) + 3;
+  ctx.fillStyle = PAL.cloud;
+  for (let i = first; i < first + count; i += 1) {
+    const x = camX + i * spacing - camX * parallax - drift + rand(i + 40) * 160;
+    const y = -view.offsetY * 0.3 + 70 + rand(i + 50) * 110;
+    const w = 70 + rand(i + 60) * 70;
+    ctx.globalAlpha = 0.55 + rand(i + 70) * 0.3;
+    ctx.beginPath();
+    ctx.ellipse(x, y, w, w * 0.22, 0, 0, Math.PI * 2);
+    ctx.ellipse(x - w * 0.35, y - w * 0.12, w * 0.4, w * 0.24, 0, 0, Math.PI * 2);
+    ctx.ellipse(x + w * 0.2, y - w * 0.2, w * 0.45, w * 0.3, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+/** A cypress like the map's: a tall pointed flame of dark green with a seam down its shaded side. */
+function drawCypress(ctx: CanvasRenderingContext2D, x: number, baseY: number, h: number): void {
+  const w = h * 0.24;
+  ctx.fillStyle = PAL.trunk;
+  ctx.fillRect(x - 2, baseY - 8, 4, 8);
+  ctx.fillStyle = PAL.leaf;
+  ctx.beginPath();
+  ctx.moveTo(x, baseY - h);
+  ctx.bezierCurveTo(x + w * 0.9, baseY - h * 0.6, x + w * 0.7, baseY - h * 0.1, x, baseY - 4);
+  ctx.bezierCurveTo(x - w * 0.7, baseY - h * 0.1, x - w * 0.9, baseY - h * 0.6, x, baseY - h);
+  ctx.fill();
+  ctx.fillStyle = PAL.leafShade;
+  ctx.beginPath();
+  ctx.moveTo(x, baseY - h);
+  ctx.bezierCurveTo(x + w * 0.9, baseY - h * 0.6, x + w * 0.7, baseY - h * 0.1, x, baseY - 4);
+  ctx.bezierCurveTo(x + w * 0.3, baseY - h * 0.3, x + w * 0.35, baseY - h * 0.7, x, baseY - h);
+  ctx.fill();
+  ctx.strokeStyle = PAL.leafSeam;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(x + w * 0.05, baseY - h * 0.9);
+  ctx.quadraticCurveTo(x + w * 0.25, baseY - h * 0.5, x + w * 0.1, baseY - 10);
+  ctx.stroke();
+}
+
+/** A round tree like the map's: a two-tone canopy on a short trunk. */
+function drawRoundTree(ctx: CanvasRenderingContext2D, x: number, baseY: number, r: number): void {
+  ctx.fillStyle = PAL.trunk;
+  ctx.fillRect(x - 3, baseY - r * 0.9, 6, r * 0.9);
+  ctx.fillStyle = PAL.leaf;
+  ctx.beginPath();
+  ctx.arc(x, baseY - r * 1.5, r, 0, Math.PI * 2);
+  ctx.arc(x - r * 0.6, baseY - r * 1.15, r * 0.6, 0, Math.PI * 2);
+  ctx.arc(x + r * 0.62, baseY - r * 1.2, r * 0.62, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = PAL.leafShade;
+  ctx.beginPath();
+  ctx.ellipse(x + r * 0.35, baseY - r * 1.15, r * 0.75, r * 0.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/** Cypresses and round trees between the far ruins and the level, as on the map. */
+function drawTrees(ctx: CanvasRenderingContext2D, view: View, camX: number): void {
+  const parallax = 0.6;
+  const spacing = 190;
+  const first = Math.floor((camX * parallax) / spacing) - 1;
+  const count = Math.ceil(view.width / spacing) + 3;
+  const baseY = GROUND_Y - 6;
+  for (let i = first; i < first + count; i += 1) {
+    if (rand(i + 90) < 0.3) continue;
+    const x = camX + i * spacing - camX * parallax + rand(i + 91) * 80;
+    if (rand(i + 92) < 0.55) {
+      drawCypress(ctx, x, baseY, 90 + rand(i + 93) * 60);
+      if (rand(i + 94) < 0.5) drawCypress(ctx, x + 22, baseY, 60 + rand(i + 95) * 40);
+    } else {
+      drawRoundTree(ctx, x, baseY, 22 + rand(i + 96) * 10);
+    }
+  }
+}
+
 /** Broken walls and towers in the distance, moving slower than the level. */
 function drawFarRuins(ctx: CanvasRenderingContext2D, view: View, camX: number): void {
   const parallax = 0.45;
@@ -344,6 +433,40 @@ function drawStone(ctx: CanvasRenderingContext2D, r: Rect, seed: number): void {
     ctx.ellipse(x, r.y + 1, 6 + n * 4, 3 + n * 2, 0, Math.PI, 0);
     ctx.fill();
   }
+  // Ivy hanging off raised stones (not off low steps, where it would trail onto the floor).
+  if (r.y < GROUND_Y && r.h >= 20) {
+    for (let x = r.x + 10; x < r.x + r.w - 6; x += 23) {
+      const n = rand(seed * 53 + x);
+      if (n < 0.45) continue;
+      const len = 10 + n * 26;
+      ctx.strokeStyle = PAL.ivy;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(x, r.y + 2);
+      ctx.quadraticCurveTo(x + 4, r.y + len * 0.5, x - 1, r.y + len);
+      ctx.stroke();
+      ctx.fillStyle = PAL.ivy;
+      for (let k = 6; k < len; k += 7) {
+        ctx.beginPath();
+        ctx.ellipse(x + (k % 14 === 6 ? 3 : -2), r.y + k, 3, 2, k % 14 === 6 ? 0.6 : -0.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  } else {
+    // Loose stones lying on the floor.
+    for (let x = r.x + 30; x < r.x + r.w - 20; x += 83) {
+      const n = rand(seed * 29 + x);
+      if (n < 0.55) continue;
+      const w = 10 + n * 10;
+      ctx.fillStyle = PAL.stoneShade;
+      ctx.fillRect(x + 1, r.y - 7, w, 8);
+      ctx.fillStyle = PAL.stone;
+      ctx.fillRect(x, r.y - 9, w - 1, 7);
+      ctx.fillStyle = PAL.stoneTop;
+      ctx.fillRect(x, r.y - 9, w - 1, 2);
+    }
+  }
+
   // Tufts of grass here and there.
   ctx.strokeStyle = PAL.mossDark;
   ctx.lineWidth = 1.6;
@@ -404,6 +527,16 @@ function drawGate(ctx: CanvasRenderingContext2D, state: GameState): void {
   drawStone(ctx, { x: g.x - 24, y: g.y - 44, w: g.w + 48, h: 18 }, 93);
 
   const lift = state.gateOpen * (g.h - 10);
+  // Chains up to the lintel.
+  ctx.strokeStyle = PAL.iron;
+  ctx.lineWidth = 1.5;
+  [g.x + 4, g.x + g.w - 4].forEach((x) => {
+    for (let y = g.y - 26; y < g.y - lift; y += 7) {
+      ctx.beginPath();
+      ctx.ellipse(x, y + 3, 2, 3.5, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  });
   ctx.save();
   ctx.beginPath();
   ctx.rect(g.x - 2, g.y - 26, g.w + 4, g.h + 26);
@@ -488,6 +621,19 @@ function drawDoor(ctx: CanvasRenderingContext2D, state: GameState): void {
     light.addColorStop(1, PAL.accent);
     ctx.fillStyle = light;
     ctx.fill();
+    // The throne, glimpsed inside.
+    const tx = d.x + archR + 6;
+    const ty = d.y + d.h - 16;
+    ctx.fillStyle = PAL.woodDark;
+    ctx.fillRect(tx - 14, ty - 58, 28, 40);
+    ctx.beginPath();
+    ctx.arc(tx, ty - 58, 14, Math.PI, 0);
+    ctx.fill();
+    ctx.fillRect(tx - 18, ty - 22, 36, 8);
+    ctx.fillRect(tx - 16, ty - 14, 5, 14);
+    ctx.fillRect(tx + 11, ty - 14, 5, 14);
+    ctx.fillStyle = PAL.coral;
+    ctx.fillRect(tx - 10, ty - 50, 20, 26);
     ctx.globalAlpha = 0.35 * pulse;
     ctx.fillStyle = PAL.accent;
     ctx.beginPath();
@@ -522,6 +668,9 @@ function drawDoor(ctx: CanvasRenderingContext2D, state: GameState): void {
     ctx.fill();
   }
   ctx.restore();
+  // Two worn steps up to the door, in front of it.
+  drawStone(ctx, { x: d.x - 30, y: d.y + d.h - 8, w: d.w + 60, h: 8 }, 71);
+  drawStone(ctx, { x: d.x - 16, y: d.y + d.h - 16, w: d.w + 32, h: 8 }, 72);
 }
 
 // ---------------------------------------------------------------- characters
@@ -560,6 +709,10 @@ function drawMite(ctx: CanvasRenderingContext2D, e: Enemy, t: number): void {
     return;
   }
   const step = Math.sin(t * 14 + e.x * 0.1);
+  ctx.fillStyle = 'rgba(46, 53, 41, 0.18)';
+  ctx.beginPath();
+  ctx.ellipse(cx, bottom, ENEMY.width / 2 + 2, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
   // Little legs.
   ctx.strokeStyle = PAL.mite;
   ctx.lineWidth = 2;
@@ -575,10 +728,24 @@ function drawMite(ctx: CanvasRenderingContext2D, e: Enemy, t: number): void {
   ctx.beginPath();
   ctx.ellipse(cx, bottom - 11, ENEMY.width / 2, 10, 0, 0, Math.PI * 2);
   ctx.fill();
+  ctx.fillStyle = '#4c5e69';
+  ctx.beginPath();
+  ctx.ellipse(cx, bottom - 6, ENEMY.width / 2 - 3, 4.5, 0, 0, Math.PI);
+  ctx.fill();
   ctx.fillStyle = PAL.miteLight;
   ctx.beginPath();
   ctx.ellipse(cx - 3, bottom - 15, ENEMY.width / 3, 4, 0, 0, Math.PI * 2);
   ctx.fill();
+  // Two feelers, twitching.
+  const twitch = Math.sin(t * 9 + e.x) * 2;
+  ctx.strokeStyle = PAL.mite;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx + e.dir * 12, bottom - 18);
+  ctx.quadraticCurveTo(cx + e.dir * 18, bottom - 26 + twitch, cx + e.dir * 22, bottom - 24 + twitch);
+  ctx.moveTo(cx + e.dir * 9, bottom - 19);
+  ctx.quadraticCurveTo(cx + e.dir * 12, bottom - 29 - twitch, cx + e.dir * 16, bottom - 29 - twitch);
+  ctx.stroke();
   [[-7, 9], [1, 13], [8, 8]].forEach(([dx, h]) => {
     ctx.fillStyle = PAL.salt;
     ctx.strokeStyle = PAL.saltEdge;
@@ -701,6 +868,51 @@ function drawBoss(ctx: CanvasRenderingContext2D, b: Boss, state: GameState): voi
     ctx.fill();
   }
 
+  // Salt speckles over the stone.
+  if (!flash) {
+    ctx.fillStyle = 'rgba(238, 244, 246, 0.55)';
+    for (let i = 0; i < 14; i += 1) {
+      const sx = cx + (rand(i * 3 + 1) - 0.5) * BOSS.width * 0.8;
+      const sy = top + 36 + rand(i * 3 + 2) * 46;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 1.2 + rand(i * 3 + 3) * 1.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Stubby arms: swinging as it walks, raised while it winds up to throw.
+  const swing = b.phase === 'walk' ? Math.sin(t * 8) * 0.3 : 0;
+  [-1, 1].forEach((side) => {
+    const ax = cx + side * (BOSS.width / 2 - 4);
+    const ay = top + 58;
+    // Canvas rotation turns the arm (drawn hanging down) clockwise: hanging a
+    // little outward at rest, swinging in step; straight up over its head to throw.
+    const throwing = windup && side === b.dir;
+    const angle = throwing ? -side * 2.75 : -side * 0.45 + swing * side;
+    ctx.save();
+    ctx.translate(ax, ay);
+    ctx.rotate(angle);
+    ctx.fillStyle = flash ? PAL.white : PAL.bossDark;
+    ctx.beginPath();
+    ctx.ellipse(0, 14, 9, 17, 0, 0, Math.PI * 2);
+    ctx.fill();
+    if (windup && side === b.dir) {
+      // The crystal it's about to throw, held up and glowing.
+      ctx.fillStyle = '#fff3cf';
+      ctx.strokeStyle = PAL.saltEdge;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(0, 22);
+      ctx.lineTo(7, 32);
+      ctx.lineTo(0, 44);
+      ctx.lineTo(-7, 32);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+    ctx.restore();
+  });
+
   // Face, looking at the snail.
   const look = Math.sign(state.player.x + PLAYER.width / 2 - cx) || b.dir;
   const fx = cx + look * 16;
@@ -809,9 +1021,11 @@ export function drawFrame(ctx: CanvasRenderingContext2D, state: GameState, view:
   ctx.translate(-camX, view.offsetY);
 
   drawSky(ctx, view, camX);
+  drawClouds(ctx, view, camX, state.time);
   drawHills(ctx, view, camX, 0.15, GROUND_Y - 150, 40, PAL.hillFar, 1.3);
   drawFarRuins(ctx, view, camX);
   drawHills(ctx, view, camX, 0.3, GROUND_Y - 60, 30, PAL.hillNear, 4.1);
+  drawTrees(ctx, view, camX);
   drawAbyss(ctx, view, camX);
 
   const left = camX - 40;

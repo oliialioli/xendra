@@ -78,6 +78,8 @@ function ensureTextures(scene: Phaser.Scene): void {
  */
 class RainShowers {
   private readonly scene: Phaser.Scene;
+  private readonly onGloom: (amount: number) => void;
+  private lastGloom = 0;
   private readonly drops: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly splashes: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly gloom: Phaser.GameObjects.Rectangle;
@@ -86,8 +88,9 @@ class RainShowers {
   private timer: Phaser.Time.TimerEvent | null = null;
   private showerTween: Phaser.Tweens.TweenChain | null = null;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, onGloom: (amount: number) => void) {
     this.scene = scene;
+    this.onGloom = onGloom;
     const angle = Phaser.Math.RadToDeg(Math.atan2(-RAIN_VELOCITY.x, RAIN_VELOCITY.y));
 
     this.gloom = scene.add.rectangle(0, 0, 10, 10, 0x34434d, 1).setOrigin(0, 0).setAlpha(0);
@@ -152,7 +155,13 @@ class RainShowers {
     // A margin upwind so slanted drops also enter from the right-hand edge.
     this.view.setTo(view.x - 40, view.y - 40, view.width + 200, view.height + 40);
     this.gloom.setPosition(view.x - 10, view.y - 10).setSize(view.width + 20, view.height + 20);
-    this.gloom.setAlpha(this.state.intensity * MAX_GLOOM);
+    const gloom = this.state.intensity * MAX_GLOOM;
+    this.gloom.setAlpha(gloom);
+    // Tell the DOM layers over the map (boats, badges) too -- in small steps, not every frame.
+    if (Math.abs(gloom - this.lastGloom) >= 0.004 || (gloom === 0 && this.lastGloom !== 0)) {
+      this.lastGloom = gloom;
+      this.onGloom(gloom);
+    }
 
     const megaUnits = (view.width * view.height) / 1_000_000;
     const intensity = this.state.intensity;
@@ -169,6 +178,10 @@ class RainShowers {
     this.drops.stop();
     this.splashes.stop();
     this.gloom.setAlpha(0);
+    if (this.lastGloom !== 0) {
+      this.lastGloom = 0;
+      this.onGloom(0);
+    }
   }
 
   destroy(): void {
@@ -291,19 +304,30 @@ class WindGusts {
 export class WeatherSystem {
   private readonly scene: Phaser.Scene;
   private readonly onGust: (fromLeft: boolean) => void;
+  private readonly onGloom: (amount: number) => void;
   private rain: RainShowers | null = null;
   private wind: WindGusts | null = null;
 
-  /** `onGust` is told each time a gust starts and which way it blows (e.g. so the vegetation can lean with it). */
-  constructor(scene: Phaser.Scene, reducedMotion: boolean, onGust: (fromLeft: boolean) => void = () => {}) {
+  /**
+   * `onGust` is told each time a gust starts and which way it blows (e.g. so
+   * the vegetation can lean with it); `onGloom` how dark the rain has made
+   * the scene (0 to the veil's full opacity), as it changes.
+   */
+  constructor(
+    scene: Phaser.Scene,
+    reducedMotion: boolean,
+    onGust: (fromLeft: boolean) => void = () => {},
+    onGloom: (amount: number) => void = () => {},
+  ) {
     this.scene = scene;
     this.onGust = onGust;
+    this.onGloom = onGloom;
     ensureTextures(scene);
     if (!reducedMotion) this.start();
   }
 
   private start(): void {
-    this.rain = new RainShowers(this.scene);
+    this.rain = new RainShowers(this.scene, this.onGloom);
     this.wind = new WindGusts(this.scene, this.onGust);
   }
 

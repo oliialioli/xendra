@@ -3,6 +3,7 @@ import type { GameEventBus, BridgeEvents } from '../../game/bridge/gameEvents';
 import type { Boat } from './boatTypes';
 import { boatPathConfig } from '../../content/boatPathConfig';
 import { dockConfig, waterfallConfig } from '../../content/dockConfig';
+import { WORLD_HEIGHT, WORLD_WIDTH } from '../../content/mapGeometry';
 import { computeBoatMotionParams } from './boatHash';
 import { samplePathAtProgress, offsetPerpendicular, segmentFraction } from './boatPath';
 import { getBoatBitmapDataUrl } from './boatBitmap';
@@ -38,6 +39,15 @@ export type BoatFleetProps = {
 
 /** World-unit footprint a boat's bitmap renders at, before the map's own zoom -- see docs/BOATS.md for how to retune. */
 const BOAT_WORLD_SIZE = 72;
+/**
+ * The river runs off the edges of the map in places (along the top above the
+ * castle, and at the far left, right and bottom), where the camera can't
+ * follow -- a boat there would be sliced in half by the edge. Instead it fades
+ * out as it sails off: fully gone with its centre this close to an edge...
+ */
+const EDGE_HIDDEN = 34;
+/** ...and fading in over this much further in. */
+const EDGE_FADE = 70;
 /**
  * Boats are side-view drawings (hull down, sail up, drawn "facing right"
  * per the drawing step's own instruction), so they're posed the way a 2D
@@ -324,6 +334,9 @@ export function BoatFleet({ bus, boats, loaded, reducedMotion, suppressed, onBoa
             opacity = 1 - occlusionEnvelope * (1 - OCCLUDED_OPACITY);
           }
 
+          const toEdge = Math.min(worldX, worldY, WORLD_WIDTH - worldX, WORLD_HEIGHT - worldY);
+          opacity *= Math.min(1, Math.max(0, (toEdge - EDGE_HIDDEN) / EDGE_FADE));
+
           if (!reducedMotion) {
             floatOffset = Math.sin(now / 1000 * FLOAT_SPEED + state.motionParams.floatPhase) * FLOAT_AMPLITUDE_PX;
           }
@@ -346,6 +359,8 @@ export function BoatFleet({ bus, boats, loaded, reducedMotion, suppressed, onBoa
         // since CSS composes the transform list right-to-left).
         el.style.transform = `translate3d(${screenX}px, ${screenY}px, 0) translate(-50%, -50%) rotate(${tiltDeg}deg) scale(${scaleX}, ${scale})`;
         el.style.opacity = String(opacity);
+        // Faded right out (off the map's edge): not clickable either.
+        el.style.visibility = opacity <= 0.02 ? 'hidden' : '';
         el.style.zIndex = underBridge ? '1' : '3';
         inner.style.transform = `translateY(${floatOffset}px)`;
       });

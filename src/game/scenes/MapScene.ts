@@ -241,7 +241,12 @@ export class MapScene extends Phaser.Scene {
       riverSparklePoints: ISLAND_POLYGON.filter((_, i) => i % 3 === 0),
     });
     this.vegetation = new VegetationSystem(this);
-    this.weather = new WeatherSystem(this, this.reducedMotion, (fromLeft) => this.vegetation.sway(fromLeft));
+    this.weather = new WeatherSystem(
+      this,
+      this.reducedMotion,
+      (fromLeft) => this.vegetation.sway(fromLeft),
+      (amount) => this.bus.emit('weather:gloom', { amount }),
+    );
 
     this.setUpBridgeListeners();
     // PhaserGame.tsx resizes the game whenever its container (or the screen
@@ -263,6 +268,12 @@ export class MapScene extends Phaser.Scene {
     this.cameras.main.on(Phaser.Cameras.Scene2D.Events.FOLLOW_UPDATE, this.emitCameraFrame, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanup());
+    // Destroying the whole game (the map unmounting) skips SHUTDOWN; at least
+    // stop listening to the bridge, or a dead scene would keep answering it.
+    this.events.once(Phaser.Scenes.Events.DESTROY, () => {
+      this.unsubscribers.forEach((unsub) => unsub());
+      this.unsubscribers = [];
+    });
 
     this.bus.emit('game:ready', undefined);
   }
@@ -790,7 +801,7 @@ export class MapScene extends Phaser.Scene {
   private setControlsEnabled(enabled: boolean): void {
     this.controlsEnabled = enabled;
     const keyboard = this.input.keyboard;
-    if (!keyboard) return;
+    if (!keyboard?.manager) return;
     if (enabled) {
       keyboard.enableGlobalCapture();
       // The key that just closed the intro or a panel (Enter on its button)
