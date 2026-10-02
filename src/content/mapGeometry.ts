@@ -362,6 +362,23 @@ export const HOUSE_WIDTH_PERCENT = 5.86;
  */
 export const POSTBOX_WIDTH_PERCENT = 1.6;
 
+/**
+ * The kiosk vendor who leans out of the kiosk's side window and waves (see
+ * entities/KioskVendor.ts). His three textures are drawn on
+ * kiosco-xendra.png's own pixel grid: `windowTopLeftPx` is where the open
+ * window and the vendor textures' top-left corner sits in the kiosk image,
+ * `shoulderPx` is the waving arm's pivot there, and `armPivot` the same
+ * shoulder inside the arm texture (an origin fraction).
+ */
+export const KIOSK_VENDOR = {
+  windowSrc: '/assets/landmarks/kiosko-ventana.png',
+  bodySrc: '/assets/landmarks/kiosquero.png',
+  armSrc: '/assets/landmarks/kiosquero-brazo.png',
+  windowTopLeftPx: { x: 544, y: 480 },
+  shoulderPx: { x: 644, y: 660 },
+  armPivot: { x: 96 / 128, y: 112 / 128 },
+};
+
 /** The postbox's letter slot in buzon.png's own pixels -- where its letters burst out (see entities/PostboxLetters.ts). */
 export const POSTBOX_SLOT_PX = { x: 313, y: 184 };
 

@@ -3,6 +3,7 @@ import type { GameBootData } from '../config/gameConfig';
 import type { Landmark, LandmarkId, Vector2Like } from '../../types/content';
 import {
   FOUNTAIN_CONFIG,
+  KIOSK_VENDOR,
   POSTBOX_SLOT_PX,
   ISLAND_EDGE_MARGIN,
   ISLAND_POLYGON,
@@ -33,6 +34,7 @@ import { Campfire } from '../entities/Campfire';
 import { FountainSpray } from '../entities/FountainSpray';
 import { NoticeBoardPapers } from '../entities/NoticeBoardPapers';
 import { PostboxLetters } from '../entities/PostboxLetters';
+import { KioskVendor } from '../entities/KioskVendor';
 import { findNearestLandmark } from '../systems/proximity';
 import { AmbientEffectsSystem } from '../systems/ambient';
 import type { GameEventBus } from '../bridge/gameEvents';
@@ -126,6 +128,7 @@ export class MapScene extends Phaser.Scene {
   private fountainSpray: FountainSpray | null = null;
   private noticeBoardPapers: NoticeBoardPapers | null = null;
   private postboxLetters: PostboxLetters | null = null;
+  private kioskVendor: KioskVendor | null = null;
   private controlsEnabled = true;
 
   private snail!: Snail;
@@ -171,6 +174,10 @@ export class MapScene extends Phaser.Scene {
       this.load.image(MapScene.waterfallAssetKey(), assetPath(waterfallConfig.assetSrc));
     }
 
+    this.load.image('kiosk-vendor-window', assetPath(KIOSK_VENDOR.windowSrc));
+    this.load.image('kiosk-vendor-body', assetPath(KIOSK_VENDOR.bodySrc));
+    this.load.image('kiosk-vendor-arm', assetPath(KIOSK_VENDOR.armSrc));
+
     if (castleConfig.enabled && castleConfig.assetSrc) {
       this.load.image(MapScene.castleAssetKey(), assetPath(castleConfig.assetSrc));
     }
@@ -205,6 +212,7 @@ export class MapScene extends Phaser.Scene {
     this.setUpFountainSpray();
     this.setUpNoticeBoardPapers();
     this.setUpPostboxLetters();
+    this.setUpKioskVendor();
     this.setUpWaterfallAsset();
     this.setUpGroundDecor(castleConfig, MapScene.castleAssetKey());
     this.setUpCampfire();
@@ -250,6 +258,7 @@ export class MapScene extends Phaser.Scene {
     this.fountainSpray?.update(this.snail.position);
     this.noticeBoardPapers?.update(this.snail.position, delta);
     this.postboxLetters?.update(this.snail.position);
+    this.kioskVendor?.update(this.snail.position);
 
     if (!this.controlsEnabled) {
       this.snail.setVelocity(0, 0);
@@ -552,6 +561,28 @@ export class MapScene extends Phaser.Scene {
         x: renderX + (POSTBOX_SLOT_PX.x - analysis.origin.x * analysis.imageWidth) * scale,
         y: renderY + (POSTBOX_SLOT_PX.y - analysis.origin.y * analysis.imageHeight) * scale,
       },
+      depth: renderY,
+      isReducedMotion: () => this.reducedMotion,
+    });
+  }
+
+  /** The kiosk's active state (see entities/KioskVendor.ts), placed on the kiosk sprite's own pixel grid. */
+  private setUpKioskVendor(): void {
+    const info = this.landmarkSpriteRenderInfo.get('kiosk');
+    if (!info) return;
+    const { analysis, renderX, renderY, displayWidth } = info;
+    const scale = displayWidth / analysis.imageWidth;
+    const toWorld = (px: { x: number; y: number }) => ({
+      x: renderX + (px.x - analysis.origin.x * analysis.imageWidth) * scale,
+      y: renderY + (px.y - analysis.origin.y * analysis.imageHeight) * scale,
+    });
+    this.kioskVendor = new KioskVendor(this, {
+      anchor: { x: renderX, y: renderY },
+      windowTopLeft: toWorld(KIOSK_VENDOR.windowTopLeftPx),
+      shoulder: toWorld(KIOSK_VENDOR.shoulderPx),
+      scale,
+      keys: { window: 'kiosk-vendor-window', body: 'kiosk-vendor-body', arm: 'kiosk-vendor-arm' },
+      armOrigin: KIOSK_VENDOR.armPivot,
       depth: renderY,
       isReducedMotion: () => this.reducedMotion,
     });
@@ -990,5 +1021,7 @@ export class MapScene extends Phaser.Scene {
     this.noticeBoardPapers = null;
     this.postboxLetters?.destroy();
     this.postboxLetters = null;
+    this.kioskVendor?.destroy();
+    this.kioskVendor = null;
   }
 }
