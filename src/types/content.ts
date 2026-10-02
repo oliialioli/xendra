@@ -116,6 +116,9 @@ export type ContactMode = 'mailtoLink' | 'futureEndpoint';
 
 export type ContactInfo = {
   email: string | null;
+  /** Shown as written; `phoneHref` is the same number for a tel: link (international format). */
+  phone: string | null;
+  phoneHref: string | null;
   contactMode: ContactMode;
   reasons: ContactReasonOption[];
   socialLinks: { label: string; url: string }[];

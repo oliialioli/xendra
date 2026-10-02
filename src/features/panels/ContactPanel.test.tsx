@@ -15,7 +15,7 @@ describe('ContactPanel', () => {
     expect(screen.queryByRole('link', { name: 'Ireki emaila' })).not.toBeInTheDocument();
   });
 
-  it('never fakes a send while the real contact email is unconfirmed', async () => {
+  it("prepares the message to the band's own address once the form is valid", async () => {
     const user = userEvent.setup();
     render(<ContactPanel />);
 
@@ -25,7 +25,13 @@ describe('ContactPanel', () => {
     await user.click(screen.getByLabelText(/onartzen dut datu hauek/i));
     await user.click(screen.getByRole('button', { name: 'Prestatu mezua' }));
 
-    expect(screen.queryByRole('link', { name: 'Ireki emaila' })).not.toBeInTheDocument();
-    expect(screen.getByText(/oraindik ezin dugu bidalketa prestatu/i)).toBeInTheDocument();
+    const link = screen.getByRole('link', { name: 'Ireki emaila' });
+    expect(link.getAttribute('href')).toMatch(/^mailto:xendra\.taldea@gmail\.com\?/);
+  });
+
+  it('shows the band email and phone as links', () => {
+    render(<ContactPanel />);
+    expect(screen.getByRole('link', { name: 'xendra.taldea@gmail.com' })).toHaveAttribute('href', 'mailto:xendra.taldea@gmail.com');
+    expect(screen.getByRole('link', { name: '616 04 08 06' })).toHaveAttribute('href', 'tel:+34616040806');
   });
 });

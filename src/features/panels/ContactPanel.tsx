@@ -20,8 +20,6 @@ export function ContactPanel() {
   const [mailtoHref, setMailtoHref] = useState<string | null>(null);
   const [validButEmailMissing, setValidButEmailMissing] = useState(false);
 
-  const contactEmailAvailable = Boolean(contact.email);
-
   const reasonLabel = useMemo(
     () => contact.reasons.find((r) => r.id === reason)?.label ?? reason,
     [contact.reasons, reason],
@@ -60,10 +58,27 @@ export function ContactPanel() {
 
   return (
     <div>
-      {!contactEmailAvailable && (
-        <p className={shared.statusText}>
-          TODO_CONTENT: kontaktu/kontratazio emaila berresteke.
-        </p>
+      {(contact.email || contact.phone) && (
+        <ul className={`${shared.list} ${shared.section}`}>
+          {contact.email && (
+            <li className={shared.listItem}>
+              <span className={shared.statusText}>Emaila</span>
+              <br />
+              <a className={shared.secondaryLink} href={`mailto:${contact.email}`}>
+                {contact.email}
+              </a>
+            </li>
+          )}
+          {contact.phone && (
+            <li className={shared.listItem}>
+              <span className={shared.statusText}>Telefonoa</span>
+              <br />
+              <a className={shared.secondaryLink} href={`tel:${contact.phoneHref ?? contact.phone}`}>
+                {contact.phone}
+              </a>
+            </li>
+          )}
+        </ul>
       )}
 
       <form className={shared.form} onSubmit={handleSubmit} noValidate>

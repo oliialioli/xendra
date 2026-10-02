@@ -141,7 +141,9 @@ export const xendraContent: XendraContent = {
   ],
 
   contact: {
-    email: null, // TODO_CONTENT: kontaktu/kontratazio emaila
+    email: 'xendra.taldea@gmail.com',
+    phone: '616 04 08 06',
+    phoneHref: '+34616040806',
     contactMode: 'mailtoLink',
     reasons: [
       { id: 'booking', label: 'Kontratazioa / kontzertuak' },
