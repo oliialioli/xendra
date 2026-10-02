@@ -35,6 +35,8 @@ import { FountainSpray } from '../entities/FountainSpray';
 import { NoticeBoardPapers } from '../entities/NoticeBoardPapers';
 import { PostboxLetters } from '../entities/PostboxLetters';
 import { KioskVendor } from '../entities/KioskVendor';
+import { Beaver } from '../entities/Beaver';
+import { RIVER_PATH_POLYGON, boatPathConfig } from '../../content/boatPathConfig';
 import { findNearestLandmark } from '../systems/proximity';
 import { AmbientEffectsSystem } from '../systems/ambient';
 import { WeatherSystem } from '../systems/weather';
@@ -126,6 +128,7 @@ export class MapScene extends Phaser.Scene {
   private visited = new Set<LandmarkId>();
   private reducedMotion = false;
   private campfire: Campfire | null = null;
+  private beaver: Beaver | null = null;
   private controlsEnabledAt = 0;
   private fountainSpray: FountainSpray | null = null;
   private noticeBoardPapers: NoticeBoardPapers | null = null;
@@ -220,6 +223,17 @@ export class MapScene extends Phaser.Scene {
     this.setUpWaterfallAsset();
     this.setUpGroundDecor(castleConfig, MapScene.castleAssetKey());
     this.setUpCampfire();
+    this.beaver = new Beaver(this, {
+      river: RIVER_PATH_POLYGON,
+      avoid: [
+        ...boatPathConfig.bridges.map((bridge) => bridge.segment),
+        ...boatPathConfig.occlusionSegments,
+        ...(boatPathConfig.waterfallSegment ? [boatPathConfig.waterfallSegment] : []),
+      ],
+      // Over the water, under every y-sorted landmark, plant and the snail.
+      depth: 2,
+      isReducedMotion: () => this.reducedMotion,
+    });
 
     this.ambient = new AmbientEffectsSystem(this, {
       reducedMotion: this.reducedMotion,
@@ -261,6 +275,7 @@ export class MapScene extends Phaser.Scene {
     this.noticeBoardPapers?.update(this.snail.position, delta);
     this.postboxLetters?.update(this.snail.position);
     this.kioskVendor?.update(this.snail.position);
+    this.beaver?.update(this.snail.position);
     this.weather.update();
 
     if (!this.controlsEnabled) {
@@ -1020,6 +1035,7 @@ export class MapScene extends Phaser.Scene {
     this.weather.destroy();
     this.vegetation.destroy();
     this.campfire?.destroy();
+    this.beaver?.destroy();
     this.campfire = null;
     this.fountainSpray?.destroy();
     this.fountainSpray = null;
