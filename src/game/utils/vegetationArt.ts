@@ -18,16 +18,15 @@ export const VEGETATION_FRAMES: Record<VegetationKind, { width: number; height: 
   reeds: { width: 32, height: 64, baseX: 16, baseY: 60 },
 };
 
-/** The map's own greens: a dark, slightly blue foliage with a shade and a light, and warm trunks. */
+/** Colours sampled from the approved map reference: one muted green for foliage (with a soft shade), near-black trunks. */
 const COLORS = {
-  leaf: 0x4c6a52,
-  leafShade: 0x3b5442,
-  leafLight: 0x67856a,
-  trunk: 0x6b5040,
-  shadow: 0x1e2a1a,
-  stem: 0x6c8a5a,
-  stemLight: 0x87a273,
-  cattail: 0x7a5a3e,
+  leaf: 0x4b5f4e,
+  leafShade: 0x3c4d3f,
+  leafSeam: 0x34433a,
+  trunk: 0x2f2721,
+  shadow: 0x2a3a26,
+  reedStem: 0x3f5545,
+  cattail: 0x6b5a48,
 };
 
 export function vegetationTextureKey(kind: VegetationKind): string {
@@ -38,17 +37,31 @@ type Draw = (g: Phaser.GameObjects.Graphics, r: number) => void;
 
 const v = (x: number, y: number, r: number) => new Phaser.Math.Vector2(x * r, y * r);
 
-/** Tall and narrow with a pointed top, like the reference's cypresses; shaded on its right. */
-const drawCypress: Draw = (g, r) => {
+/** A long, soft shadow cast to the lower right (the reference's light comes from the upper left). */
+function castShadow(g: Phaser.GameObjects.Graphics, r: number, baseX: number, baseY: number, length: number, depth: number): void {
   g.fillStyle(COLORS.shadow, 0.2);
-  g.fillEllipse(24 * r, 124 * r, 22 * r, 6 * r);
-  g.fillStyle(COLORS.trunk, 1);
-  g.fillRect(15 * r, 110 * r, 2.4 * r, 14 * r);
+  g.fillEllipse((baseX + length * 0.55) * r, baseY * r, length * 1.3 * r, depth * 2 * r);
+}
 
-  const top = 26;
-  const bottom = 118;
-  const halfWidth = (u: number) => 10 * Math.pow(u, 0.55) * Math.sqrt(Math.max(0, 1 - Math.pow(u, 6)));
-  const steps = 32;
+/**
+ * Pointed at the top, fullest about two-thirds of the way down, rounded at
+ * the bottom, on a short dark trunk -- the reference's cypress. The right
+ * side is only a shade darker, with a faint crease down the middle.
+ */
+const drawCypress: Draw = (g, r) => {
+  castShadow(g, r, 16, 123, 24, 3.4);
+  g.fillStyle(COLORS.trunk, 1);
+  g.fillRect(14.6 * r, 112 * r, 2.8 * r, 12 * r);
+
+  const top = 22;
+  const bottom = 116;
+  const widest = 0.68;
+  const maxHalf = 12.5;
+  const halfWidth = (u: number) =>
+    u <= widest
+      ? maxHalf * Math.pow(u / widest, 0.85)
+      : maxHalf * Math.sqrt(Math.max(0, 1 - Math.pow((u - widest) / (1 - widest), 2)));
+  const steps = 40;
   const left: Phaser.Math.Vector2[] = [];
   const right: Phaser.Math.Vector2[] = [];
   for (let i = 0; i <= steps; i += 1) {
@@ -59,74 +72,81 @@ const drawCypress: Draw = (g, r) => {
   }
   g.fillStyle(COLORS.leaf, 1);
   g.fillPoints([...left, ...[...right].reverse()], true);
-  // Shade: the right half -- down its right edge, back up the middle.
-  g.fillStyle(COLORS.leafShade, 1);
-  g.fillPoints([...right, ...right.map((p) => new Phaser.Math.Vector2(16 * r, p.y)).reverse()], true);
-  // Light: a thin strip down the left side.
-  g.fillStyle(COLORS.leafLight, 0.55);
+  // The shaded side: from a little right of centre out to the right edge.
+  g.fillStyle(COLORS.leafShade, 0.55);
   g.fillPoints(
-    [
-      ...left.slice(4, 26),
-      ...left
-        .slice(4, 26)
-        .map((p) => new Phaser.Math.Vector2(16 * r - (16 * r - p.x) * 0.45, p.y))
-        .reverse(),
-    ],
+    [...right, ...right.map((p) => new Phaser.Math.Vector2(16 * r + (p.x - 16 * r) * 0.25, p.y)).reverse()],
     true,
   );
+  g.lineStyle(0.8 * r, COLORS.leafSeam, 0.35);
+  g.lineBetween(16.6 * r, (top + 14) * r, 16.6 * r, (bottom - 3) * r);
 };
 
-/** A round crown on a short trunk; darker towards the lower right, a soft highlight top-left. */
+/** A crown of overlapping rounded lobes, widest low down, on a thin dark trunk, with a faint V-shaped seam. */
 const drawTree: Draw = (g, r) => {
-  g.fillStyle(COLORS.shadow, 0.2);
-  g.fillEllipse(41 * r, 61 * r, 34 * r, 8 * r);
+  castShadow(g, r, 32, 60.5, 36, 4.2);
   g.fillStyle(COLORS.trunk, 1);
-  g.fillRect(30.6 * r, 34 * r, 3 * r, 27 * r);
-  g.fillStyle(COLORS.leafShade, 1);
-  g.fillCircle(33.5 * r, 27.5 * r, 19.5 * r);
-  g.fillStyle(COLORS.leaf, 1);
-  g.fillCircle(31.5 * r, 25.5 * r, 18 * r);
-  g.fillStyle(COLORS.leafLight, 0.5);
-  g.fillEllipse(25 * r, 17 * r, 14 * r, 9 * r);
-};
+  g.fillRect(30.8 * r, 44 * r, 2.6 * r, 17 * r);
 
-/** A low clump of two or three rounded shrubs. */
-const drawBush: Draw = (g, r) => {
-  g.fillStyle(COLORS.shadow, 0.18);
-  g.fillEllipse(19 * r, 28 * r, 26 * r, 6 * r);
-  const blobs: [number, number, number][] = [
-    [11, 22, 7],
-    [19, 19, 8],
-    [25.5, 23, 5.5],
+  const lobes: [number, number, number][] = [
+    [32, 19, 14],
+    [22.5, 30, 11],
+    [41.5, 29, 11],
+    [32, 34, 13.5],
   ];
-  g.fillStyle(COLORS.leafShade, 1);
-  blobs.forEach(([x, y, rad]) => g.fillCircle((x + 1) * r, (y + 1.4) * r, rad * r));
   g.fillStyle(COLORS.leaf, 1);
-  blobs.forEach(([x, y, rad]) => g.fillCircle(x * r, y * r, (rad - 0.8) * r));
-  g.fillStyle(COLORS.leafLight, 0.5);
-  g.fillEllipse(16 * r, 15 * r, 6 * r, 3.6 * r);
+  lobes.forEach(([x, y, rad]) => g.fillCircle(x * r, y * r, rad * r));
+  // Right lobe a shade darker.
+  g.fillStyle(COLORS.leafShade, 0.5);
+  g.fillCircle(44 * r, 30 * r, 8.5 * r);
+  g.lineStyle(0.9 * r, COLORS.leafSeam, 0.4);
+  g.strokePoints([v(27.5, 38, r), v(32, 46.5, r), v(37, 39, r)]);
+  g.lineBetween(32 * r, 46.5 * r, 32 * r, 37 * r);
 };
 
-/** Reeds at the water's edge: slender stems and blades, a few topped with cattails. */
+/** A low cloud of three lobes with a flat base, the right one a shade darker. */
+const drawBush: Draw = (g, r) => {
+  castShadow(g, r, 16, 27.6, 22, 2.8);
+  g.fillStyle(COLORS.leaf, 1);
+  g.fillCircle(16 * r, 17.5 * r, 8 * r);
+  g.fillCircle(9.5 * r, 21.5 * r, 6 * r);
+  g.fillCircle(23 * r, 21.5 * r, 6.4 * r);
+  g.fillRect(9.5 * r, 21.5 * r, 13.5 * r, 6 * r);
+  g.fillStyle(COLORS.leafShade, 0.5);
+  g.fillCircle(24.2 * r, 22.4 * r, 4.6 * r);
+  g.lineStyle(0.8 * r, COLORS.leafSeam, 0.35);
+  g.strokePoints([v(13.5, 21, r), v(16, 27, r), v(19, 21.5, r)]);
+};
+
+/**
+ * Reeds as in the reference: a few tall, slender dark blades standing
+ * apart, each ending in a long pointed leaf, one or two topped with a
+ * brown cattail instead.
+ */
 const drawReeds: Draw = (g, r) => {
   g.fillStyle(COLORS.shadow, 0.14);
-  g.fillEllipse(18 * r, 60 * r, 20 * r, 4 * r);
-  const stems: [number, number, number, boolean][] = [
-    // base x, top x, top y, has a cattail
-    [10, 7, 24, false],
-    [13, 12, 14, true],
-    [16, 17, 20, true],
-    [19, 22, 10, true],
-    [22, 26, 26, false],
-    [15, 9, 32, false],
+  g.fillEllipse(20 * r, 60 * r, 22 * r, 3.4 * r);
+  const blades: [number, number, number, 'leaf' | 'cattail'][] = [
+    // base x, tip x, tip y, top
+    [7, 5, 30, 'leaf'],
+    [12, 10.5, 14, 'cattail'],
+    [16.5, 17, 22, 'leaf'],
+    [21, 22.5, 8, 'leaf'],
+    [25.5, 28, 26, 'cattail'],
   ];
-  stems.forEach(([baseX, topX, topY, cattail], i) => {
-    g.lineStyle(1.5 * r, i % 2 ? COLORS.stem : COLORS.stemLight, 1);
-    const midX = (baseX + topX) / 2 + (topX > baseX ? -1 : 1);
-    g.strokePoints([v(baseX, 60, r), v(midX, (60 + topY) / 2, r), v(topX, topY, r)]);
-    if (cattail) {
+  blades.forEach(([baseX, tipX, tipY, top]) => {
+    const headY = tipY + 12;
+    g.lineStyle(1.7 * r, COLORS.reedStem, 1);
+    g.strokePoints([v(baseX, 60, r), v((baseX + tipX) / 2, (60 + headY) / 2, r), v(tipX, headY, r)]);
+    if (top === 'leaf') {
+      // A long pointed leaf: wide just above the stem, tapering to a tip.
+      g.fillStyle(COLORS.reedStem, 1);
+      g.fillPoints([v(tipX, tipY, r), v(tipX + 2.2, tipY + 9, r), v(tipX, headY + 2, r), v(tipX - 2.2, tipY + 9, r)], true);
+    } else {
       g.fillStyle(COLORS.cattail, 1);
-      g.fillEllipse(topX * r, (topY + 4) * r, 3.4 * r, 8 * r);
+      g.fillEllipse(tipX * r, (tipY + 7) * r, 4.2 * r, 11 * r);
+      g.lineStyle(1 * r, COLORS.reedStem, 1);
+      g.lineBetween(tipX * r, (tipY + 1.5) * r, tipX * r, (tipY - 3) * r);
     }
   });
 };

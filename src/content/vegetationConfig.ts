@@ -91,10 +91,10 @@ export const VEGETATION: VegetationItem[] = [
 
 /** On-map size of each kind relative to its frame, matched to the reference against the landmarks (e.g. a round tree about half the kiosk's width). */
 export const VEGETATION_KIND_SCALE: Record<VegetationKind, number> = {
-  cypress: 1.15,
+  cypress: 0.95,
   tree: 1.7,
-  bush: 1.5,
-  reeds: 1.2,
+  bush: 1.6,
+  reeds: 1.15,
 };
 
 /** Trunk radius (world units, at scale 1) the snail can't walk through; bushes and reeds have none. */
