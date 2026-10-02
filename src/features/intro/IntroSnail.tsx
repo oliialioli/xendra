@@ -1,15 +1,14 @@
 import { useId, type CSSProperties } from 'react';
-import {
-  SNAIL_COLORS,
-  SNAIL_FRAME_SIZE,
-  SNAIL_SPIRAL_ALPHA,
-  snailGeometry,
-  toCssColor,
-} from '../../game/utils/snailArt';
+import { SnailShapes } from '../../components/SnailFigure';
+import { SNAIL_COLORS, SNAIL_FRAME_SIZE, snailParts, toCssColor } from '../../game/utils/snailArt';
 import styles from './IntroSnail.module.css';
 
 /** Side profile reads most clearly as "a snail" at intro size. */
-const SNAIL = snailGeometry('right');
+const SNAIL_PARTS = snailParts('right');
+const BODY_PARTS = SNAIL_PARTS.filter((part) => part.layer === 'body');
+const FEELER_PARTS = SNAIL_PARTS.filter((part) => part.layer === 'feelers');
+/** The right-facing pose's shell (see snailArt.ts rightPose), shown faintly through the egg. */
+const SHELL = { cx: 29, cy: 29, r: 15 };
 
 /**
  * The egg sits exactly where the snail's shell ends up, slightly larger, so
@@ -39,57 +38,21 @@ const CRACK_LENGTH = CRACK_POINTS.split(' ')
     return total + Math.hypot(x - px, y - py);
   }, 0);
 
-function spiralPath(cx: number, cy: number, r: number): string {
-  // 270 degrees clockwise from 3 o'clock to 12 o'clock, like Phaser's arc(0, 1.5 * PI).
-  return `M${cx + r} ${cy} A${r} ${r} 0 1 1 ${cx} ${cy - r}`;
-}
-
 function SnailBody() {
-  const { body, shell, spiral } = SNAIL;
-  return (
-    <>
-      <ellipse cx={body.cx} cy={body.cy} rx={body.width / 2} ry={body.height / 2} fill={toCssColor(SNAIL_COLORS.body)} />
-      <circle cx={shell.cx} cy={shell.cy} r={shell.radius} fill={toCssColor(SNAIL_COLORS.shell)} />
-      {spiral.radii.map((r) => (
-        <path
-          key={r}
-          d={spiralPath(shell.cx, shell.cy, r)}
-          fill="none"
-          stroke={toCssColor(SNAIL_COLORS.spiral)}
-          strokeOpacity={SNAIL_SPIRAL_ALPHA}
-          strokeWidth={spiral.strokeWidth}
-        />
-      ))}
-    </>
-  );
+  return <SnailShapes parts={BODY_PARTS} />;
 }
 
 function SnailFeelers() {
-  const { antennae, tentacles } = SNAIL;
-  const ink = toCssColor(SNAIL_COLORS.antenna);
-  return (
-    <>
-      {antennae.lines.map((line) => (
-        <g key={`a${line.x1}`}>
-          <line {...line} stroke={ink} strokeWidth={antennae.strokeWidth} />
-          <circle cx={line.x2} cy={line.y2} r={antennae.tipRadius} fill={ink} />
-        </g>
-      ))}
-      {tentacles.lines.map((line) => (
-        <line key={`t${line.x1}`} {...line} stroke={ink} strokeWidth={tentacles.strokeWidth} />
-      ))}
-    </>
-  );
+  return <SnailShapes parts={FEELER_PARTS} />;
 }
 
 function EggShell({ gradientId }: { gradientId: string }) {
-  const { shell } = SNAIL;
   return (
     <>
       <ellipse cx={EGG.cx} cy={EGG.cy} rx={EGG.rx} ry={EGG.ry} fill={`url(#${gradientId})`} />
       {/* Snail eggs are translucent: the curled shell shows through faintly. */}
       <g opacity={0.16}>
-        <circle cx={shell.cx} cy={shell.cy} r={shell.radius - 1} fill={toCssColor(SNAIL_COLORS.shell)} />
+        <circle cx={SHELL.cx} cy={SHELL.cy} r={SHELL.r - 1} fill={toCssColor(SNAIL_COLORS.shell)} />
       </g>
       <ellipse cx={EGG.cx - 6} cy={EGG.cy - 9} rx={5} ry={3.4} fill="#fffaf0" opacity={0.55} transform={`rotate(-28 ${EGG.cx - 6} ${EGG.cy - 9})`} />
     </>

@@ -1,7 +1,11 @@
 import Phaser from 'phaser';
 import type { SnailDirection } from '../utils/placeholderTextures';
+import { SNAIL_TEXTURE_RES } from '../utils/snailArt';
 
 export const SNAIL_SPEED = 170;
+
+/** The textures are drawn at SNAIL_TEXTURE_RES px per world unit; this shows them at their world size. */
+const BASE_SCALE = 1 / SNAIL_TEXTURE_RES;
 
 /**
  * Placeholder snail entity. Direction textures are looked up by name
@@ -16,8 +20,11 @@ export class Snail {
   constructor(scene: Phaser.Scene, x: number, y: number) {
     this.sprite = scene.physics.add.sprite(x, y, 'snail-down');
     this.sprite.setDepth(y);
+    this.sprite.setScale(BASE_SCALE);
     this.sprite.setCollideWorldBounds(true);
-    this.sprite.body?.setSize(28, 20).setOffset(18, 30);
+    // In texture pixels (the body scales with the sprite): a 28x20-unit footprint under the shell.
+    const r = SNAIL_TEXTURE_RES;
+    this.sprite.body?.setSize(28 * r, 20 * r).setOffset(18 * r, 30 * r);
   }
 
   get position(): { x: number; y: number } {
@@ -34,7 +41,7 @@ export class Snail {
       this.playWalkFeedback();
     } else {
       this.bounceTween?.stop();
-      this.sprite.setScale(1, 1);
+      this.sprite.setScale(BASE_SCALE, BASE_SCALE);
     }
   }
 
@@ -55,8 +62,8 @@ export class Snail {
     if (this.bounceTween?.isPlaying()) return;
     this.bounceTween = this.sprite.scene.tweens.add({
       targets: this.sprite,
-      scaleX: { from: 1, to: 1.06 },
-      scaleY: { from: 1, to: 0.94 },
+      scaleX: { from: BASE_SCALE, to: BASE_SCALE * 1.06 },
+      scaleY: { from: BASE_SCALE, to: BASE_SCALE * 0.94 },
       duration: 220,
       yoyo: true,
       repeat: -1,
@@ -67,7 +74,7 @@ export class Snail {
   playDiscoveryPulse(): void {
     this.sprite.scene.tweens.add({
       targets: this.sprite,
-      scale: { from: 1, to: 1.25 },
+      scale: { from: BASE_SCALE, to: BASE_SCALE * 1.25 },
       duration: 180,
       yoyo: true,
       ease: 'Sine.easeOut',

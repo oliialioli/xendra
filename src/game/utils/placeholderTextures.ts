@@ -1,62 +1,44 @@
 import Phaser from 'phaser';
-import {
-  SNAIL_COLORS,
-  SNAIL_FRAME_SIZE,
-  SNAIL_SPIRAL_ALPHA,
-  snailGeometry,
-  type SnailDirection,
-} from './snailArt';
+import { SNAIL_FRAME_SIZE, SNAIL_TEXTURE_RES, snailParts, type SnailDirection } from './snailArt';
 
 export type { SnailDirection } from './snailArt';
 
 /**
- * Draws a very simple, clearly-placeholder snail silhouette per direction
- * from the shared shapes in snailArt.ts (also used by the intro screen's
- * SVG snail). Replace with a real 128x128 spritesheet later -- see
- * docs/ASSETS.md. Entities only ever call `snail-<direction>`, so swapping
- * this for `this.load.spritesheet(...)` output requires no entity code changes.
+ * Draws the snail for each facing direction from the shared parts in
+ * snailArt.ts (also used by the intro's and the history path's SVG snail),
+ * at SNAIL_TEXTURE_RES pixels per frame unit -- the Snail entity shows it
+ * at 1/SNAIL_TEXTURE_RES scale. Entities only ever use `snail-<direction>`,
+ * so swapping this for a real spritesheet later needs no entity changes
+ * beyond that scale -- see docs/ASSETS.md.
  */
 export function generateSnailTextures(scene: Phaser.Scene): void {
   const directions: SnailDirection[] = ['down', 'up', 'left', 'right'];
+  const r = SNAIL_TEXTURE_RES;
 
   directions.forEach((direction) => {
     const key = `snail-${direction}`;
     if (scene.textures.exists(key)) return;
 
     const g = scene.add.graphics();
-    const { body, shell, spiral, antennae, tentacles } = snailGeometry(direction);
-
-    g.fillStyle(SNAIL_COLORS.body, 1);
-    g.fillEllipse(body.cx, body.cy, body.width, body.height);
-
-    g.fillStyle(SNAIL_COLORS.shell, 1);
-    g.fillCircle(shell.cx, shell.cy, shell.radius);
-    g.lineStyle(spiral.strokeWidth, SNAIL_COLORS.spiral, SNAIL_SPIRAL_ALPHA);
-    spiral.radii.forEach((radius) => {
-      g.beginPath();
-      g.arc(shell.cx, shell.cy, radius, 0, Math.PI * 1.5);
-      g.strokePath();
+    snailParts(direction).forEach((part) => {
+      const alpha = part.alpha ?? 1;
+      if (part.kind === 'ellipse') {
+        g.fillStyle(part.fill, alpha);
+        g.fillEllipse(part.cx * r, part.cy * r, part.rx * 2 * r, part.ry * 2 * r);
+        return;
+      }
+      g.lineStyle(part.width * r, part.stroke, alpha);
+      g.strokePoints(part.points.map(([x, y]) => new Phaser.Math.Vector2(x * r, y * r)));
+      // Round the ends of solid strokes, like the SVG version's round caps.
+      if (alpha === 1) {
+        g.fillStyle(part.stroke, 1);
+        [part.points[0], part.points[part.points.length - 1]].forEach(([x, y]) => {
+          g.fillCircle(x * r, y * r, (part.width * r) / 2);
+        });
+      }
     });
 
-    g.lineStyle(antennae.strokeWidth, SNAIL_COLORS.antenna, 1);
-    g.fillStyle(SNAIL_COLORS.antenna, 1);
-    antennae.lines.forEach((line) => {
-      g.beginPath();
-      g.moveTo(line.x1, line.y1);
-      g.lineTo(line.x2, line.y2);
-      g.strokePath();
-      g.fillCircle(line.x2, line.y2, antennae.tipRadius);
-    });
-
-    g.lineStyle(tentacles.strokeWidth, SNAIL_COLORS.antenna, 1);
-    tentacles.lines.forEach((line) => {
-      g.beginPath();
-      g.moveTo(line.x1, line.y1);
-      g.lineTo(line.x2, line.y2);
-      g.strokePath();
-    });
-
-    g.generateTexture(key, SNAIL_FRAME_SIZE, SNAIL_FRAME_SIZE);
+    g.generateTexture(key, SNAIL_FRAME_SIZE * r, SNAIL_FRAME_SIZE * r);
     g.destroy();
   });
 }
