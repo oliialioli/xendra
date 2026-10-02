@@ -9,7 +9,13 @@ export function MerchPanel() {
   return (
     <div>
       <p className={shared.lead}>{kiosk.intro}</p>
-      <p className={`${shared.statusText} ${shared.section}`}>
+      {kiosk.orderUrl && (
+        <a className={shared.primaryButton} href={kiosk.orderUrl} target="_blank" rel="noreferrer">
+          Bete eskaera-orria
+        </a>
+      )}
+      <p className={`${shared.statusText} ${shared.section}`} style={{ marginTop: 'var(--space-4)' }}>
+        {kiosk.orAskUs}{' '}
         {instagram && (
           <>
             <a className={shared.secondaryLink} href={instagram.url} target="_blank" rel="noreferrer">

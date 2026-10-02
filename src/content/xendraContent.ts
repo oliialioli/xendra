@@ -174,8 +174,9 @@ export const xendraContent: XendraContent = {
   },
 
   kiosk: {
-    intro:
-      'Aupa! Momentuz produktu hauek ditugu salgai. Hauetako bat nahi izatekotan idatziguzu gure instagram kontura edo gure emailera. Milesker!',
+    intro: 'Aupa! Momentuz produktu hauek ditugu salgai. Hauetako bat nahi izatekotan, bete eskaera-orria. Milesker!',
+    orderUrl: MERCH_ORDER_FORM,
+    orAskUs: 'Nahiago baduzu, idatziguzu gure Instagram kontura edo gure emailera:',
   },
 
   landmarks: [

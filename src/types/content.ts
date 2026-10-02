@@ -131,6 +131,10 @@ export type ContactInfo = {
 export type KioskGreeting = {
   /** The shop's opening note, above the products. */
   intro: string;
+  /** The order form: the main way to buy. */
+  orderUrl: string | null;
+  /** Under the order button: the other way, writing to the band (Instagram or email). */
+  orAskUs: string;
 };
 
 export type PressLink = {

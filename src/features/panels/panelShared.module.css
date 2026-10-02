@@ -109,6 +109,8 @@
 .primaryButton {
   composes: xnd-btn-primary from global;
   align-self: flex-start;
+  /* Also used on links (e.g. the shop's order form). */
+  text-decoration: none;
 }
 
 .secondaryLink {
