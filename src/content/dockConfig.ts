@@ -85,14 +85,16 @@ export const dockPosition: Vector2Like = {
 export const waterfallConfig = {
   enabled: true,
   assetSrc: '/assets/landmarks/cascada.png',
-  x: 1811,
+  // Moved 47 units downstream from the dock's river entry so the rocks'
+  // far end touches the south bank (segment values shifted +0.0064 to match).
+  x: 1858,
   y: 1215,
   scale: 0.32,
   rotation: 0,
   anchorX: 0.5,
   anchorY: 0.5,
-  segmentStart: 0.8354,
-  segmentEnd: 0.8654,
+  segmentStart: 0.8418,
+  segmentEnd: 0.8718,
   /** Degrees the boat's outer container tilts at the peak of the crossing envelope. */
   tilt: 8,
   speedMultiplier: 1.18,

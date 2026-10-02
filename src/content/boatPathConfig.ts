@@ -132,7 +132,7 @@ export const boatPathConfig = {
     { start: 0.0717, end: 0.1157 }, // railway bridge (top-right)
     { start: 0.3537, end: 0.3977 }, // stone arched bridge (top-left)
     { start: 0.7438, end: 0.7878 }, // straight causeway bridge (south)
-    { start: 0.8434, end: 0.8574 }, // waterfall rock cluster
+    { start: 0.8498, end: 0.8638 }, // waterfall rock cluster
   ] as OcclusionSegment[],
   /**
    * Progress range handed to waterfallConfig's tilt/speed/drop/splash
@@ -140,5 +140,5 @@ export const boatPathConfig = {
    * own segmentStart/segmentEnd directly), kept here in sync by hand for
    * anyone scanning this file to see the boat-path-side picture in one place.
    */
-  waterfallSegment: { start: 0.8354, end: 0.8654 } as OcclusionSegment | null,
+  waterfallSegment: { start: 0.8418, end: 0.8718 } as OcclusionSegment | null,
 };
