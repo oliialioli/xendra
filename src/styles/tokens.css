@@ -29,8 +29,8 @@
 
   /*
    * UI chrome palette -- soft field-guide cards floating over the map:
-   * cream surfaces, khaki for active/selected states, a single warm clay
-   * for the one thing to act on, pastel tag fills. Separate from the
+   * cream surfaces, khaki for active/selected states, a single soft sky
+   * blue for the one thing to act on, pastel tag fills. Separate from the
    * --color-* world palette above (used by the map art/ambient effects):
    * this set drives every panel, button and HUD control instead.
    */
@@ -44,8 +44,8 @@
   --ui-border: rgb(46 53 41 / 12%);
   --ui-khaki: #dcd6b6;
   --ui-khaki-strong: #cfc8a2;
-  /* Warm clay, like the map's roofs and the snail's shell. */
-  --ui-accent: #ca8b6f;
+  /* Soft sky blue, like the river on the map. */
+  --ui-accent: #c7d9e6;
   --ui-accent-ink: #2e3529;
   --ui-secondary: #8fa3ac;
   --ui-coral: #c97b5c;

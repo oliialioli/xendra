@@ -89,7 +89,7 @@ a {
  * Shared control system -- plain (non-module) classes so every panel, the
  * HUD, and the menu compose the same look without duplicating it per
  * component. Soft cream cards over the map: no ink outlines, one diffuse
- * shadow per floating surface, khaki for "active", clay for "act here".
+ * shadow per floating surface, khaki for "active", sky blue for "act here".
  */
 
 /* A floating cream surface (cards, the toolbar capsule, the logo). */
@@ -155,7 +155,7 @@ a {
 
 /*
  * Primary action: label on the left, the arrow in its own inset chip on
- * the right. The single clay element on screen at a time.
+ * the right. The single sky-blue element on screen at a time.
  */
 .xnd-btn-primary {
   display: inline-flex;
