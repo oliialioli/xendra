@@ -23,7 +23,7 @@ export const xendraContent: XendraContent = {
   members: [
     // Display order: the four on top, then the three below (see GroupPanel).
     { id: 'member-3', name: 'Leire Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Biolina', bio: '', photoPath: '/assets/members/leire-gorostiza.jpg' },
-    { id: 'member-4', name: 'Ainhoa Bandres Abadía', pronouns: 'TODO_CONTENT', instrument: 'Txeloa', bio: '', photoPath: '/assets/members/ainhoa.jpg' },
+    { id: 'member-4', name: 'Ainhoa Bandres Abadia', pronouns: 'TODO_CONTENT', instrument: 'Txeloa', bio: '', photoPath: '/assets/members/ainhoa.jpg' },
     { id: 'member-1', name: 'Leire Diges Izco', pronouns: 'TODO_CONTENT', instrument: 'Ahotsa eta gitarra', bio: '', photoPath: '/assets/members/leire-diges.jpg' },
     { id: 'member-2', name: 'Iratxo Gorostiza Etxeberria', pronouns: 'TODO_CONTENT', instrument: 'Gitarra eta ahotsa', bio: '', photoPath: '/assets/members/iratxo.jpg' },
     { id: 'member-6', name: 'Laida Beltzunegi Landa', pronouns: 'TODO_CONTENT', instrument: 'Teklatua', bio: '', photoPath: '/assets/members/laida.jpg' },
@@ -36,21 +36,30 @@ export const xendraContent: XendraContent = {
     coverPath: '/assets/music/bihia-azala.jpg',
     credits:
       'SIMA estudioan grabatua eta nahastua (Irunberri, Nafarroa), Ibai Osinagaren laguntzaz. Masterizazioa: Martxel Arkarazo (Garate estudioak, Andoain). 2025eko urtarrilaren 9an atera zen.',
-    externalLinks: [{ label: 'Apple Music', url: 'https://music.apple.com/es/album/bihia/1785223280' }],
-    tracks: [
-      'Amilena',
-      'Belar txarrak',
-      'Lurrazala',
-      'Hor',
-      'Errauts eskuak',
-      'Erregai',
-      'Hura',
-      'Bakoitzari berea',
-    ].map((title, index) => ({
+    bandcampAlbumId: '2903320457',
+    externalLinks: [
+      { label: 'Bandcamp', url: 'https://xendrataldea.bandcamp.com/album/bihia' },
+      { label: 'Badok', url: 'https://www.badok.eus/euskal-musika/xendra/bihia' },
+      { label: 'YouTube', url: 'https://www.youtube.com/channel/UCjGkN3mEifFsobvw9fztmaQ' },
+      { label: 'Apple Music', url: 'https://music.apple.com/es/album/bihia/1785223280' },
+    ],
+    // Durations from the album's Bandcamp page.
+    tracks: (
+      [
+        ['Amilena', '3:50'],
+        ['Belar txarrak', '2:20'],
+        ['Lurrazala', '3:45'],
+        ['Hor', '4:26'],
+        ['Errauts eskuak', '4:36'],
+        ['Erregai', '2:51'],
+        ['Hura', '2:31'],
+        ['Bakoitzari berea', '5:09'],
+      ] as const
+    ).map(([title, durationLabel], index) => ({
       id: `track-${index + 1}`,
       index: index + 1,
       title,
-      durationLabel: '--:--', // TODO_CONTENT: iraupen zehatzak (ez daude ez badok.eus ez Apple Music-en agerian)
+      durationLabel,
       previewUrl: null,
       fullTrackUrl: null,
     })),
@@ -77,15 +86,17 @@ export const xendraContent: XendraContent = {
   ],
 
   merch: [
-    { id: 'merch-1', name: 'Kamiseta naturala', imagePath: '/assets/merch/kamiseta-naturala.jpg', priceLabel: null, available: false, ctaMode: 'comingSoon', ctaUrl: null },
-    { id: 'merch-2', name: 'Kamiseta urdin iluna', imagePath: '/assets/merch/kamiseta-urdina.jpg', priceLabel: null, available: false, ctaMode: 'comingSoon', ctaUrl: null },
+    { id: 'merch-begira', name: 'BEGIRA kamiseta', imagePath: '/assets/merch/kamiseta-urdina.jpg', priceLabel: '15€', available: true, ctaMode: 'askUs', ctaUrl: null },
+    { id: 'merch-sua', name: 'SUA kamiseta', imagePath: '/assets/merch/kamiseta-naturala.jpg', priceLabel: '15€', available: true, ctaMode: 'askUs', ctaUrl: null },
+    { id: 'merch-bihia', name: 'BIHIA diska', imagePath: '/assets/music/bihia-azala.jpg', priceLabel: '10€', available: true, ctaMode: 'askUs', ctaUrl: null },
   ],
 
+  // "Xendraren bidea", split into the path's year stops.
   history: [
     { id: 'history-2020', year: '2020', description: 'Uharteko 4 lagun entsaio gelan elkartzen hasi ginen inongo helburu zehatzik gabe. Bizpairu kantu sortu eta beste batzuk bertsionatu genituen lehen urteetan. Ondoren ordea, 2 lagunek entsaiatzeari utzi eta pixkanaka taldekide eta instrumentu berriak sartzen joan ziren.' },
-    { id: 'history-2024', year: '2024', description: '6 taldekide ginen eta 8 abestiko disko bat grabatzea erabaki genuen. Grabaketa Irunberriko SIMA estudioan egin genuen udan, Ibai Osinagaren laguntzaz.' },
-    { id: 'history-2025', year: '2025', description: `Urtarrilean atera genuen “${albumTitle}” deituriko diska. Horrela, lehen kontzertuak ematen hasi ginen, esperientzia oso politak biziz. Urte bukaeran, 7. taldekide bat batu zen gure proiektura.` },
-    { id: 'history-2026', year: '2026', description: 'Kontzertu gehiago eman genituen, Euskal Herriko txoko ezberdinak ezagutuz, eta abestei berriak sortzen ere aritu ginen.' },
+    { id: 'history-2024', year: '2024', description: '6 taldekide ginen eta 8 abestiko disko bat grabatzea erabaki genuen. Grabaketa Irunberriko SIMA estudioan egin genuen udan.' },
+    { id: 'history-2025', year: '2025', description: 'Urtarrilean atera genuen diskoa. Horrela, lehen kontzertuak ematen hasi ginen, esperientzia oso politak biziz. Urte bukaeran, 7. taldekide bat batu zen gure proiektura.' },
+    { id: 'history-2026', year: '2026', description: 'Beste kontzertu batzuk ematen egon gara.' },
   ],
 
   media: [
@@ -157,7 +168,8 @@ export const xendraContent: XendraContent = {
   },
 
   kiosk: {
-    greetingTodo: 'TODO_CONTENT: testu zehatza berretsi («Aupa, egun on!» behin-behinekoa)',
+    intro:
+      'Aupa! Momentuz produktu hauek ditugu salgai. Hauetako bat nahi izatekotan idatziguzu gure instagram kontura edo gure emailera. Milesker!',
   },
 
   landmarks: [

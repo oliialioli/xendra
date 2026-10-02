@@ -1,0 +1,24 @@
+.player {
+  display: block;
+  width: 100%;
+  /* Bandcamp's large player: header plus 8 tracks of its list. */
+  height: 420px;
+  border: 0;
+  border-radius: var(--ui-radius-md);
+  background: #fff;
+  margin: var(--space-3) 0 var(--space-4);
+}
+
+.linksLabel {
+  margin: 0 0 var(--space-2);
+  color: var(--ui-ink-muted);
+}
+
+.links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+}

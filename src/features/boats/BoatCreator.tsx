@@ -129,7 +129,7 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
       >
         <header className={styles.header}>
           <h2 id="boat-creator-title" className={styles.title}>
-            {step === 'message' ? 'Mezuen kaia' : 'Marraztu zure ontzi papera'}
+            {step === 'message' ? 'Jendearen oharrak' : 'Marraztu zure ontzi papera'}
           </h2>
           <button type="button" className="xnd-btn-icon" onClick={handleClose} aria-label="Itxi" title="Itxi">
             <X size={20} aria-hidden="true" />

@@ -10,10 +10,10 @@ código.
 
 - [x] **`Bia` vs `Bihia`** — confirmado como "Bihia" (badok.eus y Apple Music).
       `album.albumTitle` en `xendraContent.ts`.
-- [ ] **Saludo exacto del kiosco** — actualmente `«Aupa, egun on!»` provisional.
-      Campo `kiosk.greetingTodo` en `xendraContent.ts`, usado en `MerchPanel.tsx`.
-- [ ] **Email de contacto/contratación** — campo `contact.email` (actualmente
-      `null`). Mientras sea `null`, el formulario de contacto valida pero no
+- [x] **Texto de la tienda (Denda)** — campo `kiosk.intro` en `xendraContent.ts`,
+      usado en `MerchPanel.tsx`.
+- [x] **Email de contacto/contratación** — `contact.email` (xendra.taldea@gmail.com)
+      y `contact.phone` (616 04 08 06). Si `contact.email` fuera `null`, el formulario de contacto valida pero no
       permite "enviar" nada (no finge un envío).
 
 ## Integrantes (7)
@@ -41,7 +41,8 @@ kontzertu erreal, taldeak berak emandakoak. `venue` hutsik dago leku askotan
 ## Merch
 
 Array `merch` en `xendraContent.ts`: nombre, imagen, precio y modo de CTA
-(`externalLink` a una tienda futura, o `comingSoon`).
+(`askUs`: se pide por Instagram o email; `externalLink` a una tienda futura;
+o `comingSoon`).
 
 ## Historia
 

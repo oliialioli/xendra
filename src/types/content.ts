@@ -64,6 +64,8 @@ export type Album = {
   albumTitle: string;
   coverPath: string | null;
   credits: string;
+  /** Bandcamp's numeric album id, for its embedded player (null hides the player). */
+  bandcampAlbumId: string | null;
   externalLinks: { label: string; url: string }[];
   tracks: Track[];
 };
@@ -86,7 +88,8 @@ export type MerchProduct = {
   imagePath: string | null;
   priceLabel: string | null;
   available: boolean;
-  ctaMode: 'externalLink' | 'comingSoon';
+  /** askUs: sold by writing to the band (Instagram or email), see KioskGreeting.intro. */
+  ctaMode: 'externalLink' | 'askUs' | 'comingSoon';
   ctaUrl: string | null;
 };
 
@@ -125,7 +128,8 @@ export type ContactInfo = {
 };
 
 export type KioskGreeting = {
-  greetingTodo: string;
+  /** The shop's opening note, above the products. */
+  intro: string;
 };
 
 export type PressLink = {

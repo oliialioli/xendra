@@ -47,6 +47,9 @@ export function MessageStep({ displayName, message, onDisplayNameChange, onMessa
   return (
     <form className={shared.form} onSubmit={handleSubmit} noValidate>
       <h3 className={styles.title}>Idatzi zure mezua</h3>
+      <p className={styles.intro}>
+        Mezu bat idatzi nahi baduzu hementxe duzu aukera, guk gogo handiz irakurriko dugu!
+      </p>
 
       <div className={shared.field}>
         <label htmlFor={`${formId}-name`}>Izena (aukerakoa)</label>

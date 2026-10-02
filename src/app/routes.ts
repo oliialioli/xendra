@@ -54,7 +54,7 @@ export const PANEL_ROUTES: PanelRouteConfig[] = [
   {
     route: '/historia',
     landmarkId: 'trainHistory',
-    title: 'Xendraren historia',
+    title: 'Xendraren bidea',
     Component: HistoryPanel,
     variant: 'wide',
     icon: '☖',
@@ -83,7 +83,7 @@ export const PANEL_ROUTES: PanelRouteConfig[] = [
     // and still lists correctly in the menu drawer.
     route: '/mezuak',
     landmarkId: 'dockMessages',
-    title: 'Mezuen kaia',
+    title: 'Jendearen oharrak',
     Component: BoatCreator,
     icon: '✎',
   },

@@ -2,14 +2,35 @@ import { xendraContent } from '../../content/xendraContent';
 import { assetPath } from '../../lib/assetPath';
 import shared from './panelShared.module.css';
 
+/** Mail to the band about one product, with its name already in the subject. */
+function askUsHref(email: string, productName: string): string {
+  return `mailto:${email}?subject=${encodeURIComponent(`Denda: ${productName}`)}`;
+}
+
 export function MerchPanel() {
-  const greeting = xendraContent.kiosk.greetingTodo;
+  const { kiosk, merch, contact } = xendraContent;
+  const instagram = contact.socialLinks.find((link) => link.label === 'Instagram');
 
   return (
     <div>
-      <p className={shared.lead}>«Aupa, egun on!» ({greeting})</p>
+      <p className={shared.lead}>{kiosk.intro}</p>
+      <p className={`${shared.statusText} ${shared.section}`}>
+        {instagram && (
+          <>
+            <a className={shared.secondaryLink} href={instagram.url} target="_blank" rel="noreferrer">
+              Instagram
+            </a>
+            {contact.email && ' · '}
+          </>
+        )}
+        {contact.email && (
+          <a className={shared.secondaryLink} href={`mailto:${contact.email}`}>
+            {contact.email}
+          </a>
+        )}
+      </p>
       <div className={shared.grid}>
-        {xendraContent.merch.map((product) => (
+        {merch.map((product) => (
           <article key={product.id} className={shared.card}>
             {product.imagePath ? (
               <img
@@ -40,6 +61,10 @@ export function MerchPanel() {
             {product.ctaMode === 'externalLink' && product.ctaUrl ? (
               <a className={shared.secondaryLink} href={product.ctaUrl}>
                 Ikusi dendan
+              </a>
+            ) : product.ctaMode === 'askUs' && contact.email ? (
+              <a className={shared.secondaryLink} href={askUsHref(contact.email, product.name)}>
+                Eskatu
               </a>
             ) : (
               <span className={shared.statusText}>Laster</span>

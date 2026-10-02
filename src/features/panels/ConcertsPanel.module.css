@@ -1,79 +1,168 @@
 /*
- * A vertical timeline ("bidea"): a connecting line down the left edge with a
- * dot per concert. Upcoming concerts are full-strength and lead the path;
- * past ones continue below, visually present but deliberately quieter
- * (smaller text, muted dot, reduced opacity) rather than hidden entirely.
+ * The concerts path: one thin line down the left with a dot per concert.
+ * Each stop draws its own stretch of the line (::before), so the stretch
+ * still ahead of the snail can be coloured and the stretch behind it grey.
  */
-.timeline {
+.stops {
+  --line-x: 9px;
+  --text-x: 34px;
+  --ahead: var(--ui-coral);
+  --behind: #c9c6b8;
   list-style: none;
   margin: 0;
   padding: 0;
-  position: relative;
 }
 
-.timeline::before {
+.stop {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding: 10px 0 10px var(--text-x);
+}
+
+.stop::before {
   content: '';
   position: absolute;
-  left: 10px;
-  top: 6px;
-  bottom: 6px;
-  width: 1px;
-  background: var(--ui-khaki-strong);
+  top: 0;
+  bottom: 0;
+  left: var(--line-x);
+  width: 2px;
+  transform: translateX(-50%);
+  background: var(--ahead);
 }
 
-.node {
-  position: relative;
-  padding-left: var(--space-6);
-  padding-bottom: var(--space-5);
+.stop[data-past]::before,
+.yearStop[data-past]::before {
+  background: var(--behind);
 }
 
-.node:last-child {
-  padding-bottom: 0;
+.stop:last-child::before {
+  bottom: 50%;
 }
 
 .dot {
   position: absolute;
-  left: 0;
-  top: 3px;
-  width: 22px;
-  height: 22px;
+  top: 50%;
+  left: var(--line-x);
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  background: var(--ui-surface);
-  box-shadow: var(--landmark-shadow);
-}
-
-.node.upcoming .dot {
+  transform: translate(-50%, -50%);
   background: var(--ui-accent);
+  box-shadow: 0 0 0 2px var(--ahead);
 }
 
-.node.past {
-  opacity: 0.62;
-}
-
-.node.past .dot {
-  background: var(--ui-background);
+.stop[data-past] .dot {
+  width: 7px;
+  height: 7px;
+  background: var(--behind);
   box-shadow: none;
 }
 
-.title {
-  margin: 0;
+.date {
+  flex: none;
+  width: 3.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--ahead);
+  font-weight: 600;
+}
+
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-3);
+  min-width: 0;
+}
+
+.city {
   font-family: var(--font-display);
-  font-weight: 500;
+  font-size: 1.05rem;
+  font-weight: 600;
   letter-spacing: -0.01em;
 }
 
-.node.past .title {
-  font-size: 0.95em;
+.details {
+  font-size: 0.88rem;
+  color: var(--ui-ink-muted);
 }
 
-.sectionLabel {
-  padding-left: var(--space-6);
-  margin: 0 0 var(--space-3);
+.stop[data-past] .date,
+.stop[data-past] .city,
+.stop[data-past] .details {
+  color: #9b998c;
+  font-weight: 400;
+}
+
+/* The year, written on the path where it changes. */
+.yearStop {
+  padding: 18px 0 6px var(--text-x);
+}
+
+.milestone {
   font-family: var(--font-mono);
   font-size: 0.78rem;
   color: var(--ui-ink-muted);
 }
 
-.sectionLabel:not(:first-child) {
-  margin-top: var(--space-2);
+/* Today: the snail on the path, heading up towards what's next. */
+.nowStop {
+  align-items: center;
+  padding: 22px 0 18px var(--text-x);
+}
+
+.nowStop::before {
+  background: linear-gradient(var(--ahead) 50%, var(--behind) 50%);
+}
+
+.snail {
+  position: absolute;
+  top: 50%;
+  left: var(--line-x);
+  width: 46px;
+  height: 46px;
+  transform: translate(-50%, -55%);
+  animation: inch 2.4s ease-in-out infinite;
+}
+
+.nowLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ui-ink);
+}
+
+@keyframes inch {
+  0%,
+  100% {
+    transform: translate(-50%, -55%);
+  }
+  50% {
+    transform: translate(-50%, calc(-55% - 3px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snail {
+    animation: none;
+  }
+}
+
+/* Nothing announced yet: the path ahead is dashed, still to be walked. */
+.soonStop {
+  padding: 14px 0 22px var(--text-x);
+}
+
+.soonStop::before {
+  background: none;
+  border-left: 2px dashed var(--ahead);
+  width: 0;
+  transform: translateX(-1px);
+}
+
+.soon {
+  font-size: 0.92rem;
+  color: var(--ui-ink-muted);
+  font-style: italic;
 }
