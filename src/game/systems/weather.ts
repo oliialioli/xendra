@@ -186,11 +186,13 @@ class RainShowers {
  */
 class WindGusts {
   private readonly scene: Phaser.Scene;
+  private readonly onGust: (fromLeft: boolean) => void;
   private timer: Phaser.Time.TimerEvent | null = null;
   private readonly flying = new Set<Phaser.GameObjects.Image>();
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, onGust: (fromLeft: boolean) => void) {
     this.scene = scene;
+    this.onGust = onGust;
     this.schedule(Phaser.Math.Between(8000, 15000));
   }
 
@@ -204,6 +206,7 @@ class WindGusts {
   private gust(): void {
     const view = this.scene.cameras.main.worldView;
     const fromLeft = Math.random() < 0.7;
+    this.onGust(fromLeft);
     const leaves = Phaser.Math.Between(6, 11);
     for (let i = 0; i < leaves; i += 1) {
       this.scene.time.delayedCall(Phaser.Math.Between(0, 1400), () => this.blowLeaf(view, fromLeft));
@@ -287,18 +290,21 @@ class WindGusts {
 /** Rain showers and wind gusts together, switched off entirely with reduced motion. */
 export class WeatherSystem {
   private readonly scene: Phaser.Scene;
+  private readonly onGust: (fromLeft: boolean) => void;
   private rain: RainShowers | null = null;
   private wind: WindGusts | null = null;
 
-  constructor(scene: Phaser.Scene, reducedMotion: boolean) {
+  /** `onGust` is told each time a gust starts and which way it blows (e.g. so the vegetation can lean with it). */
+  constructor(scene: Phaser.Scene, reducedMotion: boolean, onGust: (fromLeft: boolean) => void = () => {}) {
     this.scene = scene;
+    this.onGust = onGust;
     ensureTextures(scene);
     if (!reducedMotion) this.start();
   }
 
   private start(): void {
     this.rain = new RainShowers(this.scene);
-    this.wind = new WindGusts(this.scene);
+    this.wind = new WindGusts(this.scene, this.onGust);
   }
 
   setReducedMotion(reduced: boolean): void {

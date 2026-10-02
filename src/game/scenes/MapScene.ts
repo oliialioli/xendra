@@ -38,6 +38,7 @@ import { KioskVendor } from '../entities/KioskVendor';
 import { findNearestLandmark } from '../systems/proximity';
 import { AmbientEffectsSystem } from '../systems/ambient';
 import { WeatherSystem } from '../systems/weather';
+import { VegetationSystem } from '../systems/vegetation';
 import type { GameEventBus } from '../bridge/gameEvents';
 import { assetPath } from '../../lib/assetPath';
 
@@ -147,6 +148,7 @@ export class MapScene extends Phaser.Scene {
   private landmarkGlow = new Map<LandmarkId, LandmarkGlowState>();
   private ambient!: AmbientEffectsSystem;
   private weather!: WeatherSystem;
+  private vegetation!: VegetationSystem;
 
   private keyD!: Phaser.Input.Keyboard.Key;
   private debugGraphics: Phaser.GameObjects.Graphics | null = null;
@@ -224,7 +226,8 @@ export class MapScene extends Phaser.Scene {
       stageLightPositions: STAGE_LIGHT_OFFSETS,
       riverSparklePoints: ISLAND_POLYGON.filter((_, i) => i % 3 === 0),
     });
-    this.weather = new WeatherSystem(this, this.reducedMotion);
+    this.vegetation = new VegetationSystem(this);
+    this.weather = new WeatherSystem(this, this.reducedMotion, (fromLeft) => this.vegetation.sway(fromLeft));
 
     this.setUpBridgeListeners();
     // PhaserGame.tsx resizes the game whenever its container (or the screen
@@ -1015,6 +1018,7 @@ export class MapScene extends Phaser.Scene {
     this.unsubscribers = [];
     this.ambient.destroy();
     this.weather.destroy();
+    this.vegetation.destroy();
     this.campfire?.destroy();
     this.campfire = null;
     this.fountainSpray?.destroy();

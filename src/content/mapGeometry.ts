@@ -8,6 +8,7 @@
  * See docs/ASSETS.md for how this maps onto xendra-map-base.png.
  */
 import type { LandmarkId, Vector2Like } from '../types/content';
+import { VEGETATION, TRUNK_RADIUS, VEGETATION_KIND_SCALE } from './vegetationConfig';
 
 export const WORLD_WIDTH = 2560;
 export const WORLD_HEIGHT = 1440;
@@ -220,6 +221,11 @@ export const OBSTACLE_CIRCLES: ObstacleCircle[] = [
   { id: 'postbox-plinth', x: POSTBOX_POSITION.x, y: POSTBOX_POSITION.y - 9, radius: 18 },
   // The campfire's stone ring (see campfireConfig.ts).
   { id: 'campfire-ring', x: 2150, y: 680, radius: 24 },
+  // Tree trunks (see vegetationConfig.ts); bushes and reeds can be walked through.
+  ...VEGETATION.flatMap((item, i) => {
+    const radius = TRUNK_RADIUS[item.kind];
+    return radius ? [{ id: `trunk-${i}`, x: item.x, y: item.y - 2, radius: radius * item.scale * VEGETATION_KIND_SCALE[item.kind] }] : [];
+  }),
 ];
 
 export const SPAWN_POINT: Vector2Like = { x: 1150, y: 780 };

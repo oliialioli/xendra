@@ -74,8 +74,8 @@ water               (animable de forma independiente: brillo, olas)
 paths               (caminos, no interactivo)
 landmarks-back      (partes de un edificio detrás del personaje)
 landmarks-front     (partes de un edificio delante del personaje, para oclusión)
-vegetation-back     (árboles/arbustos detrás del personaje)
-vegetation-front    (vegetación delante, para profundidad)
+vegetation          (árboles, arbustos y juncos — ya implementado como sprites
+                      independientes, ver más abajo)
 ambient-effects     (hojas, humo, luces — ya implementado como sprites/partículas
                       independientes de la imagen del mapa, ver src/game/systems/ambient.ts)
 ```
@@ -93,3 +93,19 @@ Separar en capas permitirá:
   completamente separadas de la imagen. Esto significa que el mapa por capas puede
   sustituirse sin tocar ninguna lógica de movimiento o colisión, solo habrá que
   reajustar las coordenadas si cambia la composición.
+
+## Vegetación
+
+Cipreses, árboles redondos, arbustos y juncos son sprites independientes, no parte
+del mapa: el caracol pasa por detrás o por delante según su punto de apoyo, los
+troncos bloquean el paso y todo se inclina con las ráfagas de viento.
+
+- **Dibujo**: `src/game/utils/vegetationArt.ts` (formas planas con sombra y luz,
+  como la referencia del mapa), generado a 2x en texturas potencia de dos.
+- **Posiciones y tamaños**: `src/content/vegetationConfig.ts` (`VEGETATION`), sacadas
+  de la referencia del mapa (misma composición, x1.28) y comprobadas contra el mapa
+  real (hierba para árboles, orilla para juncos). `VEGETATION_KIND_SCALE` ajusta el
+  tamaño de cada tipo.
+- **Sustituir por PNG**: si se quieren ilustraciones propias, basta con cargar un PNG
+  por tipo con la misma clave (`vegetation-cypress`… ver `vegetationTextureKey`) en vez
+  de generarlo, manteniendo el punto de apoyo de `VEGETATION_FRAMES`.
