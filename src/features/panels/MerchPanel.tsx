@@ -1,6 +1,36 @@
+import { useState } from 'react';
+import type { MerchProduct } from '../../types/content';
 import { xendraContent } from '../../content/xendraContent';
 import { assetPath } from '../../lib/assetPath';
 import shared from './panelShared.module.css';
+import styles from './MerchPanel.module.css';
+
+/**
+ * The product photo. With a close-up, hovering it (or focusing it) fades the
+ * close-up in; on a touch screen, where there's no hover, tapping it swaps
+ * between the two.
+ */
+function ProductPhoto({ product }: { product: MerchProduct }) {
+  const [showDetail, setShowDetail] = useState(false);
+  if (!product.imagePath) return <div aria-hidden="true" className={styles.photo} />;
+  const photo = <img className={styles.image} src={assetPath(product.imagePath)} alt={product.name} />;
+  if (!product.detailImagePath) return <div className={styles.photo}>{photo}</div>;
+
+  return (
+    <button
+      type="button"
+      className={styles.photo}
+      data-detail={showDetail || undefined}
+      aria-pressed={showDetail}
+      aria-label={`${product.name}: ikusi xehetasuna`}
+      onClick={() => setShowDetail((shown) => !shown)}
+      onMouseLeave={() => setShowDetail(false)}
+    >
+      {photo}
+      <img className={`${styles.image} ${styles.detail}`} src={assetPath(product.detailImagePath)} alt="" loading="lazy" />
+    </button>
+  );
+}
 
 export function MerchPanel() {
   const { kiosk, merch, contact } = xendraContent;
@@ -33,28 +63,7 @@ export function MerchPanel() {
       <div className={shared.grid}>
         {merch.map((product) => (
           <article key={product.id} className={shared.card}>
-            {product.imagePath ? (
-              <img
-                src={assetPath(product.imagePath)}
-                alt={product.name}
-                style={{
-                  width: '100%',
-                  aspectRatio: '1 / 1',
-                  objectFit: 'cover',
-                  borderRadius: 'var(--radius-sm)',
-                }}
-              />
-            ) : (
-              <div
-                aria-hidden="true"
-                style={{
-                  width: '100%',
-                  aspectRatio: '1 / 1',
-                  borderRadius: 'var(--radius-sm)',
-                  background: 'var(--color-sand)',
-                }}
-              />
-            )}
+            <ProductPhoto product={product} />
             <h3 className={shared.cardTitle}>{product.name}</h3>
             <p className={shared.statusText}>
               {product.priceLabel ?? 'Prezioa zehazteke'}

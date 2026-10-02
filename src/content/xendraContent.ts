@@ -88,9 +88,9 @@ export const xendraContent: XendraContent = {
   ],
 
   merch: [
-    { id: 'merch-begira', name: 'BEGIRA kamiseta', imagePath: '/assets/merch/kamiseta-urdina.jpg', priceLabel: '15€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
-    { id: 'merch-sua', name: 'SUA kamiseta', imagePath: '/assets/merch/kamiseta-naturala.jpg', priceLabel: '15€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
-    { id: 'merch-bihia', name: 'BIHIA diska', imagePath: '/assets/music/bihia-azala.jpg', priceLabel: '10€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
+    { id: 'merch-begira', name: 'BEGIRA kamiseta', imagePath: '/assets/merch/kamiseta-urdina.jpg', detailImagePath: '/assets/merch/kamiseta-urdina-xehetasuna.jpg', priceLabel: '15€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
+    { id: 'merch-sua', name: 'SUA kamiseta', imagePath: '/assets/merch/kamiseta-naturala.jpg', detailImagePath: '/assets/merch/kamiseta-naturala-xehetasuna.jpg', priceLabel: '15€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
+    { id: 'merch-bihia', name: 'BIHIA diska', imagePath: '/assets/music/bihia-azala.jpg', detailImagePath: null, priceLabel: '10€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
   ],
 
   history: [
@@ -168,7 +168,7 @@ export const xendraContent: XendraContent = {
   },
 
   kiosk: {
-    intro: 'Aupa! Momentuz produktu hauek ditugu salgai. Hauetako bat nahi izatekotan, bete eskaera-orria. Milesker!',
+    intro: 'Aupa! Hauetako bat nahi izatekotan, bete eskaera-orria. Milesker!',
     orderUrl: MERCH_ORDER_FORM,
     orAskUs: 'Nahiago baduzu, idatziguzu gure Instagram kontura edo gure emailera:',
   },

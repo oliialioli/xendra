@@ -1,0 +1,46 @@
+.photo {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-sand);
+}
+
+button.photo {
+  cursor: zoom-in;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The close-up, laid over the photo, fading in on hover/focus (or after a tap). */
+.detail {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--duration-medium) var(--ease-organic);
+}
+
+.photo[data-detail] .detail,
+.photo:focus-visible .detail {
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .photo:hover .detail {
+    opacity: 1;
+  }
+}
+
+.photo:focus-visible {
+  outline: 2px solid var(--ui-ink);
+  outline-offset: 2px;
+}
