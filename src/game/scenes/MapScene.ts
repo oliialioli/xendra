@@ -30,6 +30,7 @@ import { analyzeOpaqueBuildingBounds, type OpaqueBounds } from '../utils/spriteB
 import { Snail, SNAIL_SPEED } from '../entities/Snail';
 import { Campfire } from '../entities/Campfire';
 import { FountainSpray } from '../entities/FountainSpray';
+import { NoticeBoardPapers } from '../entities/NoticeBoardPapers';
 import { findNearestLandmark } from '../systems/proximity';
 import { AmbientEffectsSystem } from '../systems/ambient';
 import type { GameEventBus } from '../bridge/gameEvents';
@@ -121,6 +122,7 @@ export class MapScene extends Phaser.Scene {
   private campfire: Campfire | null = null;
   private controlsEnabledAt = 0;
   private fountainSpray: FountainSpray | null = null;
+  private noticeBoardPapers: NoticeBoardPapers | null = null;
   private controlsEnabled = true;
 
   private snail!: Snail;
@@ -198,6 +200,7 @@ export class MapScene extends Phaser.Scene {
     this.setUpLandmarkVisuals();
     this.setUpLandmarkAssetSprites();
     this.setUpFountainSpray();
+    this.setUpNoticeBoardPapers();
     this.setUpWaterfallAsset();
     this.setUpGroundDecor(castleConfig, MapScene.castleAssetKey());
     this.setUpCampfire();
@@ -241,6 +244,7 @@ export class MapScene extends Phaser.Scene {
     this.updateLandmarkGlow();
     this.campfire?.update(this.snail.position);
     this.fountainSpray?.update(this.snail.position);
+    this.noticeBoardPapers?.update(this.snail.position, delta);
 
     if (!this.controlsEnabled) {
       this.snail.setVelocity(0, 0);
@@ -505,6 +509,27 @@ export class MapScene extends Phaser.Scene {
         x: renderX + (spoutPx.x - analysis.origin.x * analysis.imageWidth) * scale,
         y: renderY + (spoutPx.y - analysis.origin.y * analysis.imageHeight) * scale,
       },
+      depth: renderY,
+      isReducedMotion: () => this.reducedMotion,
+    });
+  }
+
+  /**
+   * The notice board's active state (see entities/NoticeBoardPapers.ts):
+   * papers come loose from its cork face, which sits roughly in the middle
+   * of tablon-anuncios.png's own silhouette -- derived here from the sprite's
+   * analyzed bounds so it follows any re-sizing.
+   */
+  private setUpNoticeBoardPapers(): void {
+    const info = this.landmarkSpriteRenderInfo.get('bulletinBoard');
+    if (!info) return;
+    const { analysis, renderX, renderY, displayWidth } = info;
+    const scale = displayWidth / analysis.imageWidth;
+    const width = (analysis.bbox.x1 - analysis.bbox.x0) * scale;
+    const height = (analysis.bbox.y1 - analysis.bbox.y0) * scale;
+    this.noticeBoardPapers = new NoticeBoardPapers(this, {
+      anchor: { x: renderX, y: renderY },
+      face: { x0: -0.3 * width, x1: 0.25 * width, y0: -0.72 * height, y1: -0.38 * height },
       depth: renderY,
       isReducedMotion: () => this.reducedMotion,
     });
@@ -939,5 +964,7 @@ export class MapScene extends Phaser.Scene {
     this.campfire = null;
     this.fountainSpray?.destroy();
     this.fountainSpray = null;
+    this.noticeBoardPapers?.destroy();
+    this.noticeBoardPapers = null;
   }
 }
