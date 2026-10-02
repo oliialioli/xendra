@@ -82,11 +82,10 @@ export const xendraContent: XendraContent = {
   ],
 
   history: [
-    { id: 'history-1', year: 'TODO_CONTENT', title: 'Xendraren sorrera', description: 'Bikote moduan hasitako proiektua da Xendra, pixkanaka handituz joan dena harik eta Uharten (Nafarroa) egoitza duen gaur egungo zazpikotea osatu arte.' },
-    { id: 'history-2', year: 'TODO_CONTENT', title: 'Abestiak prestatzen', description: 'Urtebete inguru eman zuten elkarrekin kantuak sortzen eta lantzen, diskoa grabatu aurretik.' },
-    { id: 'history-3', year: '2024', title: `"${albumTitle}" diskoaren grabaketa`, description: `2024ko uztailean grabatu zuten beraien lehen diskoa, "${albumTitle}" izenpean, SIMA estudioan, Ibai Osinagaren laguntzaz.` },
-    { id: 'history-4', year: '2025', title: `"${albumTitle}" diskoaren argitalpena`, description: `2025eko urtarrilaren 9an atera zuten "${albumTitle}" diskoa.` },
-    { id: 'history-5', year: '2026', title: 'Bira', description: '"Bihia" diskoa aurkezten, kontzertu bira eskaintzen dabiltza; besteak beste, Artziko Jauregian jo zuten 2026ko maiatzaren 16an.' },
+    { id: 'history-2020', year: '2020', description: 'Uharteko 4 lagun entsaio gelan elkartzen hasi ginen inongo helburu zehatzik gabe. Bizpairu kantu sortu eta beste batzuk bertsionatu genituen lehen urteetan. Ondoren ordea, 2 lagunek entsaiatzeari utzi eta pixkanaka taldekide eta instrumentu berriak sartzen joan ziren.' },
+    { id: 'history-2024', year: '2024', description: '6 taldekide ginen eta 8 abestiko disko bat grabatzea erabaki genuen. Grabaketa Irunberriko SIMA estudioan egin genuen udan, Ibai Osinagaren laguntzaz.' },
+    { id: 'history-2025', year: '2025', description: `Urtarrilean atera genuen “${albumTitle}” deituriko diska. Horrela, lehen kontzertuak ematen hasi ginen, esperientzia oso politak biziz. Urte bukaeran, 7. taldekide bat batu zen gure proiektura.` },
+    { id: 'history-2026', year: '2026', description: 'Kontzertu gehiago eman genituen, Euskal Herriko txoko ezberdinak ezagutuz, eta abestei berriak sortzen ere aritu ginen.' },
   ],
 
   media: [

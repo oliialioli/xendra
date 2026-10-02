@@ -93,7 +93,6 @@ export type MerchProduct = {
 export type HistoryMilestone = {
   id: string;
   year: string;
-  title: string;
   description: string;
 };
 
