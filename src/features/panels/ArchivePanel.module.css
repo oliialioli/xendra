@@ -7,6 +7,8 @@
 /* Linen pinboard: warm canvas tone with a faint fibre grain. */
 .board {
   position: relative;
+  /* Prints drift and overlap past the column edges; keep them on the board. */
+  overflow: clip;
   padding: var(--space-6) var(--space-5) var(--space-4);
   border-radius: var(--ui-radius-md);
   background-color: #e8e2d2;
@@ -25,22 +27,25 @@
 
 .item {
   position: relative;
+  z-index: var(--layer, 1);
   break-inside: avoid;
-  margin: 0 0 var(--space-6);
+  width: calc(100% * var(--size, 1));
+  /*
+   * The overlap is a negative *bottom* margin -- the next print in the
+   * column climbs onto this one -- so a print at the top of a column is
+   * never pulled up off the board.
+   */
+  margin: 0 0 calc(var(--space-5) - var(--overlap, 0px) * var(--overlap-scale, 1))
+    calc((100% - 100% * var(--size, 1)) * var(--align, 0.5));
   padding-top: var(--space-2);
-  transform: translateX(var(--drift, 0px)) rotate(var(--tilt, 0deg));
+  transform: translateX(calc(var(--drift, 0px) * var(--drift-scale, 1))) rotate(var(--tilt, 0deg));
   transition: transform var(--duration-fast) var(--ease-organic);
-}
-
-/* Stuck partly over the print above it in the column. */
-.item[data-overlap] {
-  margin-top: -64px;
 }
 
 .item:hover,
 .item:focus-within {
-  z-index: 2;
-  transform: translateX(var(--drift, 0px)) rotate(0deg) translateY(-3px);
+  z-index: 20;
+  transform: translateX(calc(var(--drift, 0px) * var(--drift-scale, 1))) rotate(0deg) translateY(-3px);
 }
 
 /* --- The print ----------------------------------------------------------- */
@@ -273,17 +278,17 @@
 
 .keepsake {
   position: absolute;
-  z-index: 3;
-  top: 150px;
-  left: 30%;
-  width: 46%;
-  transform: rotate(-6deg);
+  z-index: 30;
+  top: var(--top);
+  left: var(--left);
+  width: var(--width);
+  transform: rotate(var(--tilt));
   transition: transform var(--duration-fast) var(--ease-organic);
 }
 
 .keepsake:hover,
 .keepsake:focus-within {
-  transform: rotate(-3deg) translateY(-3px);
+  transform: rotate(calc(var(--tilt) / 2)) translateY(-3px);
 }
 
 .keepsakeButton {
@@ -328,14 +333,20 @@
     column-gap: var(--space-4);
   }
 
-  .item[data-overlap] {
-    margin-top: -44px;
+  .items {
+    --drift-scale: 0.5;
+    --overlap-scale: 0.6;
   }
 
-  .keepsake {
+  .keepsake[data-keepsake='ticket-first-concert'] {
     top: 110px;
     left: 12%;
     width: 76%;
+  }
+
+  .keepsake[data-keepsake='setlist'] {
+    left: 52%;
+    width: 42%;
   }
 }
 

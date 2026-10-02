@@ -127,8 +127,9 @@ export const xendraContent: XendraContent = {
     { id: 'poster-13', kind: 'poster', thumbnailPath: '/assets/media/poster-13-thumb.jpg', fullPath: '/assets/media/poster-13.jpg', altText: 'Tafallako jai herrikoien kartela' },
     { id: 'poster-14', kind: 'poster', thumbnailPath: '/assets/media/poster-14-thumb.jpg', fullPath: '/assets/media/poster-14.jpg', altText: 'Berdintasuna elkartearen jaiak 2026' },
     { id: 'poster-15', kind: 'poster', thumbnailPath: '/assets/media/poster-15-thumb.jpg', fullPath: '/assets/media/poster-15.jpg', altText: 'Rock & Roll 26, abuztuaren 14an' },
-    // Kept last so adding it doesn't shift how the other prints hang (see ArchivePanel's hangingFor).
-    { id: 'ticket-first-concert', kind: 'ticket', thumbnailPath: '/assets/media/entrada-thumb.webp', fullPath: '/assets/media/entrada-full.webp', altText: 'Xendraren lehen kontzerturako sarrera, Uharteko Kultur Etxean, 2025eko apirilaren 5ean' },
+    // Keepsakes, kept last so adding one doesn't shift how the other prints hang (see ArchivePanel's hangingFor).
+    { id: 'ticket-first-concert', kind: 'keepsake', thumbnailPath: '/assets/media/entrada-thumb.webp', fullPath: '/assets/media/entrada-full.webp', altText: 'Xendraren lehen kontzerturako sarrera, Uharteko Kultur Etxean, 2025eko apirilaren 5ean' },
+    { id: 'setlist', kind: 'keepsake', thumbnailPath: '/assets/media/setlist-thumb.webp', fullPath: '/assets/media/setlist-full.webp', altText: 'Kontzertu bateko abesti-zerrenda, eskuz idatzia' },
   ],
 
   press: [
