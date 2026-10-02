@@ -3,6 +3,7 @@ import type { GameBootData } from '../config/gameConfig';
 import type { Landmark, LandmarkId, Vector2Like } from '../../types/content';
 import {
   FOUNTAIN_CONFIG,
+  POSTBOX_SLOT_PX,
   ISLAND_EDGE_MARGIN,
   ISLAND_POLYGON,
   LANDMARK_ASSET_OVERRIDES,
@@ -31,6 +32,7 @@ import { Snail, SNAIL_SPEED } from '../entities/Snail';
 import { Campfire } from '../entities/Campfire';
 import { FountainSpray } from '../entities/FountainSpray';
 import { NoticeBoardPapers } from '../entities/NoticeBoardPapers';
+import { PostboxLetters } from '../entities/PostboxLetters';
 import { findNearestLandmark } from '../systems/proximity';
 import { AmbientEffectsSystem } from '../systems/ambient';
 import type { GameEventBus } from '../bridge/gameEvents';
@@ -123,6 +125,7 @@ export class MapScene extends Phaser.Scene {
   private controlsEnabledAt = 0;
   private fountainSpray: FountainSpray | null = null;
   private noticeBoardPapers: NoticeBoardPapers | null = null;
+  private postboxLetters: PostboxLetters | null = null;
   private controlsEnabled = true;
 
   private snail!: Snail;
@@ -201,6 +204,7 @@ export class MapScene extends Phaser.Scene {
     this.setUpLandmarkAssetSprites();
     this.setUpFountainSpray();
     this.setUpNoticeBoardPapers();
+    this.setUpPostboxLetters();
     this.setUpWaterfallAsset();
     this.setUpGroundDecor(castleConfig, MapScene.castleAssetKey());
     this.setUpCampfire();
@@ -245,6 +249,7 @@ export class MapScene extends Phaser.Scene {
     this.campfire?.update(this.snail.position);
     this.fountainSpray?.update(this.snail.position);
     this.noticeBoardPapers?.update(this.snail.position, delta);
+    this.postboxLetters?.update(this.snail.position);
 
     if (!this.controlsEnabled) {
       this.snail.setVelocity(0, 0);
@@ -530,6 +535,23 @@ export class MapScene extends Phaser.Scene {
     this.noticeBoardPapers = new NoticeBoardPapers(this, {
       anchor: { x: renderX, y: renderY },
       face: { x0: -0.3 * width, x1: 0.25 * width, y0: -0.72 * height, y1: -0.38 * height },
+      depth: renderY,
+      isReducedMotion: () => this.reducedMotion,
+    });
+  }
+
+  /** The postbox's active state (see entities/PostboxLetters.ts), its slot placed through the sprite's own scale and origin. */
+  private setUpPostboxLetters(): void {
+    const info = this.landmarkSpriteRenderInfo.get('postbox');
+    if (!info) return;
+    const { analysis, renderX, renderY, displayWidth } = info;
+    const scale = displayWidth / analysis.imageWidth;
+    this.postboxLetters = new PostboxLetters(this, {
+      anchor: { x: renderX, y: renderY },
+      slot: {
+        x: renderX + (POSTBOX_SLOT_PX.x - analysis.origin.x * analysis.imageWidth) * scale,
+        y: renderY + (POSTBOX_SLOT_PX.y - analysis.origin.y * analysis.imageHeight) * scale,
+      },
       depth: renderY,
       isReducedMotion: () => this.reducedMotion,
     });
@@ -966,5 +988,7 @@ export class MapScene extends Phaser.Scene {
     this.fountainSpray = null;
     this.noticeBoardPapers?.destroy();
     this.noticeBoardPapers = null;
+    this.postboxLetters?.destroy();
+    this.postboxLetters = null;
   }
 }

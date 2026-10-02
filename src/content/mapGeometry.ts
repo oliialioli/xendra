@@ -362,6 +362,9 @@ export const HOUSE_WIDTH_PERCENT = 5.86;
  */
 export const POSTBOX_WIDTH_PERCENT = 1.6;
 
+/** The postbox's letter slot in buzon.png's own pixels -- where its letters burst out (see entities/PostboxLetters.ts). */
+export const POSTBOX_SLOT_PX = { x: 313, y: 184 };
+
 /** Same convention, for the bulletin board (the photos & videos landmark). */
 export const BULLETIN_BOARD_WIDTH_PERCENT = 4;
 
