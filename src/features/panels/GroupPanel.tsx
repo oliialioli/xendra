@@ -1,38 +1,22 @@
 import { xendraContent } from '../../content/xendraContent';
 import { assetPath } from '../../lib/assetPath';
 import shared from './panelShared.module.css';
+import styles from './GroupPanel.module.css';
 
 export function GroupPanel() {
   return (
     <div>
       <p className={shared.lead}>{xendraContent.band.bio}</p>
-      <div className={shared.grid}>
+      <div className={styles.members}>
         {xendraContent.members.map((member) => (
-          <article key={member.id} className={shared.card}>
+          <article key={member.id} className={`${shared.card} ${styles.member}`}>
             {member.photoPath ? (
-              <img
-                src={assetPath(member.photoPath)}
-                alt={member.name}
-                style={{
-                  width: '100%',
-                  aspectRatio: '4 / 5',
-                  objectFit: 'cover',
-                  borderRadius: 'var(--radius-sm)',
-                }}
-              />
+              <img src={assetPath(member.photoPath)} alt={member.name} className={styles.portrait} />
             ) : (
-              <div
-                aria-hidden="true"
-                style={{
-                  width: '100%',
-                  aspectRatio: '4 / 5',
-                  borderRadius: 'var(--radius-sm)',
-                  background: 'var(--color-sage)',
-                }}
-              />
+              <div aria-hidden="true" className={styles.portrait} />
             )}
-            <h3 className={shared.cardTitle}>{member.name}</h3>
-            <p className={shared.statusText}>{member.instrument}</p>
+            <h3 className={`${shared.cardTitle} ${styles.name}`}>{member.name}</h3>
+            <p className={`${shared.statusText} ${styles.instrument}`}>{member.instrument}</p>
             {member.bio && <p className={shared.lead}>{member.bio}</p>}
           </article>
         ))}

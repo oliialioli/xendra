@@ -1,0 +1,45 @@
+/*
+ * Members in rows of four, the last row centred -- seven members read as
+ * four on top and three below. Phones get two per row instead: four
+ * portraits across a phone-width panel would be too small to recognise.
+ */
+.members {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.member {
+  flex: 0 0 calc((100% - var(--space-3) * 3) / 4);
+  min-width: 0;
+  padding: var(--space-2) var(--space-2) var(--space-3);
+  gap: var(--space-1);
+}
+
+.portrait {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--ui-radius-sm);
+  background: var(--ui-khaki);
+}
+
+.name {
+  margin-top: var(--space-1);
+  padding: 0 var(--space-1);
+  font-size: 0.92rem;
+}
+
+.instrument {
+  margin: 0;
+  padding: 0 var(--space-1);
+  font-size: 0.74rem;
+}
+
+@media (max-width: 720px) {
+  .member {
+    flex-basis: calc((100% - var(--space-3)) / 2);
+  }
+}
