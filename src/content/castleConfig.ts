@@ -1,8 +1,9 @@
 /**
  * Ruined castle sitting on the island's hill, rendered by MapScene's
- * setUpCastleAsset() the same way the waterfall is overlaid (see
- * dockConfig's waterfallConfig) -- decorative only, no interaction/proximity,
- * no LandmarkId. Its own opaque bounds are analyzed the same way a real
+ * setUpGroundDecor() the same way the waterfall is overlaid (see
+ * dockConfig's waterfallConfig). Walking up to it is the 'castle' landmark
+ * (LANDMARK_POSITIONS.castle, same anchor), which opens the platform
+ * minigame (features/castleGame). Its own opaque bounds are analyzed the same way a real
  * landmark building's are (see LANDMARK_ASSET_OVERRIDES in mapGeometry.ts),
  * so `approvedWidth` sizes just the visible ruin silhouette, not the PNG's
  * padded canvas.

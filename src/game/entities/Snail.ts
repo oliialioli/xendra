@@ -31,6 +31,16 @@ export class Snail {
     return { x: this.sprite.x, y: this.sprite.y };
   }
 
+  /** Moves the snail straight to a world point, standing still and facing the viewer. */
+  placeAt(x: number, y: number): void {
+    this.sprite.body?.reset(x, y);
+    this.sprite.setDepth(y);
+    this.bounceTween?.stop();
+    this.sprite.setScale(BASE_SCALE, BASE_SCALE);
+    this.facing = 'down';
+    this.sprite.setTexture('snail-down');
+  }
+
   setVelocity(x: number, y: number): void {
     this.sprite.setVelocity(x, y);
     this.sprite.setDepth(this.sprite.y);

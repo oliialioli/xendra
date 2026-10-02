@@ -8,6 +8,7 @@ import { MerchPanel } from '../features/panels/MerchPanel';
 import { ArchivePanel } from '../features/panels/ArchivePanel';
 import { BoatCreator } from '../features/boats/BoatCreator';
 import { ContactPanel } from '../features/panels/ContactPanel';
+import { CastleGame } from '../features/castleGame/CastleGame';
 
 export const MAP_ROUTE = '/mapa';
 
@@ -86,6 +87,15 @@ export const PANEL_ROUTES: PanelRouteConfig[] = [
     title: 'Jendearen oharrak',
     Component: BoatCreator,
     icon: '✎',
+  },
+  {
+    // Like '/mezuak', rendered by MapLayout as its own full-screen modal
+    // (the minigame) instead of the generic <Panel> shell.
+    route: '/gaztelua',
+    landmarkId: 'castle',
+    title: 'Gaztelu hondatua',
+    Component: CastleGame,
+    icon: '♜',
   },
   {
     route: '/contacto',

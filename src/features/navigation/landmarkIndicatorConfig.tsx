@@ -1,4 +1,5 @@
 import {
+  CastleTurret,
   EnvelopeSimple,
   ImagesSquare,
   MicrophoneStage,
@@ -109,5 +110,13 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     // Roughly buzon.png's own analyzed height (cap to anchor) at
     // POSTBOX_WIDTH_PERCENT, so the badge sits just over the cap.
     visualHeight: 88,
+  },
+  castle: {
+    icon: CastleTurret,
+    label: 'Jokoa',
+    revealRadius: LANDMARK_REVEAL_RADIUS,
+    // Just over the tall corner tower of castillo.png (its anchor sits near
+    // the top of the map, so a higher badge would be cut off by the edge).
+    visualHeight: 120,
   },
 };

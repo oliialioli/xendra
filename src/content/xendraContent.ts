@@ -243,6 +243,15 @@ export const xendraContent: XendraContent = {
       interactionRadius: dockConfig.interactionRadius,
     },
     {
+      id: 'castle',
+      route: '/gaztelua',
+      title: 'Gaztelu hondatua',
+      shortLabel: 'Jokoa',
+      description: 'Xendraren minijokoa: zeharkatu gaztelu hondatua eta garaitu Gatz-zaindaria.',
+      position: LANDMARK_POSITIONS.castle,
+      interactionRadius: LANDMARK_INTERACTION_RADIUS,
+    },
+    {
       id: 'postbox',
       route: '/contacto',
       title: 'Postontzi horia',

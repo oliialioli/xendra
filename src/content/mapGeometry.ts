@@ -413,7 +413,14 @@ export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   // launch/river-entry logic without this file importing that one.
   dockMessages: { x: 1800, y: 1025 },
   postbox: POSTBOX_POSITION,
+  // The ruin's own anchor (castleConfig.x/y, kept in sync by hand like the
+  // 'castle-ruins' obstacle above): the bottom of its walls, where the
+  // hill path passes in front of it.
+  castle: { x: 1500, y: 230 },
 };
+
+/** Where the snail stands when it comes back out of the castle minigame: on the path just in front of the ruin. */
+export const CASTLE_ENTRANCE: Vector2Like = { x: 1500, y: 272 };
 
 export const LANDMARK_INTERACTION_RADIUS = 110;
 

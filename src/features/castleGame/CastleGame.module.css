@@ -1,0 +1,443 @@
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-panel);
+  background: var(--color-overlay-scrim);
+}
+
+/* A big window over the map on desktop; the whole screen on phones. */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: var(--z-panel);
+  display: flex;
+  flex-direction: column;
+  width: min(1120px, calc(100vw - var(--space-5) * 2));
+  height: min(700px, calc(100dvh - var(--space-5) * 2));
+  overflow: hidden;
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  border-radius: var(--ui-radius-lg);
+  box-shadow: var(--ui-shadow-raised);
+}
+
+@media (max-width: 720px), (max-height: 520px) {
+  .modal {
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
+  flex-shrink: 0;
+}
+
+.title {
+  margin: 0;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.backButton {
+  gap: var(--space-2);
+  flex-shrink: 0;
+  padding: 0 var(--space-4);
+}
+
+/* The play area: no scrolling, zooming or text selection from touches here. */
+.stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #f4eedb;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  outline: none;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ------------------------------------------------------------------ HUD */
+
+.hud {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  pointer-events: none;
+}
+
+.hud > * {
+  pointer-events: auto;
+}
+
+.hudStats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 4px var(--space-3) 4px var(--space-2);
+  background: rgb(246 241 223 / 88%);
+  border-radius: var(--ui-radius-md);
+  box-shadow: var(--ui-shadow);
+}
+
+.lives {
+  display: inline-flex;
+}
+
+.lifeIcon {
+  width: 28px;
+  height: 28px;
+  margin: 0 -2px;
+}
+
+.score {
+  min-width: 4ch;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.pauseButton {
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.bossBar {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 6px var(--space-4) 8px;
+  background: rgb(246 241 223 / 88%);
+  border-radius: var(--ui-radius-md);
+  box-shadow: var(--ui-shadow);
+}
+
+.bossName {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.bossHp {
+  display: flex;
+  gap: 4px;
+}
+
+.bossHpSegment {
+  width: 34px;
+  height: 9px;
+  border-radius: 3px;
+  background: #ddd6c4;
+  transition: background-color var(--duration-medium) var(--ease-organic);
+}
+
+.bossHpSegment[data-full] {
+  background: var(--ui-coral);
+}
+
+@media (max-width: 560px) {
+  .bossBar {
+    top: 52px;
+  }
+}
+
+.bossIntro {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: var(--space-3) var(--space-6);
+  background: var(--ui-ink);
+  color: var(--ui-surface);
+  border-radius: var(--ui-radius-lg);
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+  animation: introIn 0.45s var(--ease-organic);
+}
+
+@keyframes introIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -30%) scale(0.92);
+  }
+}
+
+.notice {
+  position: absolute;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px var(--space-4);
+  background: var(--ui-accent);
+  border-radius: var(--ui-radius-md);
+  box-shadow: var(--ui-shadow);
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ touch */
+
+.touchControls {
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: var(--space-3);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.touchMove {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.touchButton {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 1.5px solid rgb(46 53 41 / 14%);
+  border-radius: 50%;
+  background: rgb(246 241 223 / 68%);
+  color: var(--ui-ink);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.touchButton:active {
+  background: rgb(242 219 157 / 90%);
+}
+
+/* ------------------------------------------------------------------ menus */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  overflow-y: auto;
+  background: rgb(239 233 211 / 30%);
+  touch-action: auto;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: min(400px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  margin: auto;
+  padding: var(--space-5);
+  background: var(--ui-surface);
+  border-radius: var(--ui-radius-lg);
+  box-shadow: var(--ui-shadow-raised);
+  text-align: center;
+}
+
+.cardSnail {
+  width: 76px;
+  height: 76px;
+  margin: -6px 0 -10px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.cardText {
+  margin: 0;
+  max-width: 36ch;
+  color: var(--ui-ink-muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.finalScore {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  color: var(--ui-ink-muted);
+  font-size: 0.85rem;
+}
+
+.finalScore strong {
+  color: var(--ui-ink);
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.board {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--ui-well);
+  border-radius: var(--ui-radius-md);
+  text-align: left;
+}
+
+.boardTitle {
+  margin: 0 0 var(--space-2);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.boardList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.boardRow {
+  display: grid;
+  grid-template-columns: 1.6rem 1fr auto;
+  gap: var(--space-2);
+  padding: 4px 6px;
+  border-radius: var(--ui-radius-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.boardRow[data-new] {
+  background: var(--ui-accent);
+}
+
+.boardPos {
+  color: var(--ui-ink-muted);
+}
+
+.boardAlias {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.boardScore {
+  font-family: var(--font-mono);
+}
+
+.boardEmpty,
+.boardNote {
+  margin: 0;
+  color: var(--ui-ink-muted);
+  font-size: 0.82rem;
+}
+
+.boardNote {
+  margin-top: var(--space-2);
+  font-size: 0.74rem;
+}
+
+.aliasForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.aliasRow {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.aliasRow input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--hud-touch-target);
+  padding: 0 var(--space-3);
+  border: 1.5px solid var(--ui-khaki-strong);
+  border-radius: var(--ui-radius-md);
+  background: var(--ui-background);
+  color: var(--ui-ink);
+  font: inherit;
+  font-weight: 500;
+}
+
+.aliasRow input:focus-visible {
+  outline: 2px solid var(--ui-ink);
+  outline-offset: 1px;
+}
+
+.aliasHint,
+.aliasError {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--ui-ink-muted);
+}
+
+.aliasError {
+  color: var(--ui-danger);
+}
+
+.saved {
+  margin: 0;
+  font-weight: 600;
+}

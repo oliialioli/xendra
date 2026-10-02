@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { xendraContent } from './xendraContent';
 
 describe('xendraContent landmarks', () => {
-  it('has exactly eight destinations', () => {
-    expect(xendraContent.landmarks).toHaveLength(8);
+  it('has exactly nine destinations', () => {
+    expect(xendraContent.landmarks).toHaveLength(9);
   });
 
   it('has unique landmark ids', () => {

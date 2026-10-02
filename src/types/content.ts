@@ -18,7 +18,9 @@ export type LandmarkId =
    * icon (see landmarkIndicatorConfig.tsx) until a definitive icon exists.
    */
   | 'dockMessages'
-  | 'postbox';
+  | 'postbox'
+  /** The ruined castle on the hill: opens the platform minigame (features/castleGame). */
+  | 'castle';
 
 export type Vector2Like = { x: number; y: number };
 

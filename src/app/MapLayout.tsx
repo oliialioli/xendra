@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Question } from '@phosphor-icons/react';
 import { LANDMARK_INDICATOR_CONFIG } from '../features/navigation/landmarkIndicatorConfig';
@@ -16,6 +16,8 @@ import { Toast } from '../components/Toast';
 import { BoatFleet } from '../features/boats/BoatFleet';
 import { BoatCreator } from '../features/boats/BoatCreator';
 import { useBoatFleet } from '../features/boats/useBoatFleet';
+import { CastleGame } from '../features/castleGame/CastleGame';
+import { CASTLE_ENTRANCE } from '../content/mapGeometry';
 import { useGameBridge } from './providers/GameBridgeContext';
 import { useSettings } from './providers/SettingsContext';
 import { useProgress } from './providers/ProgressContext';
@@ -59,6 +61,19 @@ export function MapLayout() {
   useEffect(() => {
     bus.emit('controls:setEnabled', { enabled: !controlsBlocked });
   }, [controlsBlocked, bus]);
+
+  // The map scene starts after this layout, so on a direct visit to a panel
+  // (or the castle game) the message above goes out before anything is
+  // listening -- the map would keep its controls, and keep swallowing keys
+  // (Enter, Space, WASD) typed into the panel. Tell it again once it's up.
+  const controlsBlockedRef = useRef(controlsBlocked);
+  useEffect(() => {
+    controlsBlockedRef.current = controlsBlocked;
+  }, [controlsBlocked]);
+  useEffect(
+    () => bus.on('game:ready', () => bus.emit('controls:setEnabled', { enabled: !controlsBlockedRef.current })),
+    [bus],
+  );
 
   useEffect(() => {
     bus.emit('motion:setReduced', { reduced: settings.effectiveReducedMotion });
@@ -216,7 +231,15 @@ export function MapLayout() {
 
       {menuOpen && <MenuDrawer onClose={() => setMenuOpen(false)} />}
 
-      {panelEntry && panelEntry.landmarkId === 'dockMessages' ? (
+      {panelEntry && panelEntry.landmarkId === 'castle' ? (
+        <CastleGame
+          onClose={() => {
+            // Back out of the castle's door, wherever the game was opened from.
+            bus.emit('snail:placeAt', CASTLE_ENTRANCE);
+            navigate(MAP_ROUTE);
+          }}
+        />
+      ) : panelEntry && panelEntry.landmarkId === 'dockMessages' ? (
         <BoatCreator
           onClose={() => navigate(MAP_ROUTE)}
           onBoatCreated={(boat) => {

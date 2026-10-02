@@ -672,6 +672,10 @@ export class MapScene extends Phaser.Scene {
         this.joystickVector = { x, y };
       }),
       this.bus.on('controls:interactPressed', () => this.tryInteract()),
+      this.bus.on('snail:placeAt', ({ x, y }) => {
+        this.snail.placeAt(x, y);
+        this.cameras.main.centerOn(x, y);
+      }),
       this.bus.on('motion:setReduced', ({ reduced }) => {
         this.reducedMotion = reduced;
         this.ambient.setReducedMotion(reduced);

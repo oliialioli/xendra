@@ -39,6 +39,8 @@ export type GameToAppEvents = {
 /** Events React sends down into the Phaser world. */
 export type AppToGameEvents = {
   'controls:setEnabled': { enabled: boolean };
+  /** Puts the snail down at a world point (and the camera on it) -- e.g. back in front of the castle after its minigame. */
+  'snail:placeAt': { x: number; y: number };
   'controls:joystick': { x: number; y: number };
   'controls:interactPressed': void;
   'motion:setReduced': { reduced: boolean };
