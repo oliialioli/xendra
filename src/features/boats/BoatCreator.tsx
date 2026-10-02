@@ -6,6 +6,7 @@ import { MAP_ROUTE } from '../../app/routes';
 import { MessageStep } from './MessageStep';
 import { BoatDrawingCanvas } from './BoatDrawingCanvas';
 import { BoatPreview } from './BoatPreview';
+import { PaperBoatSketch } from './PaperBoatSketch';
 import { createEmptyDrawing, isDrawingEmpty, validateDrawingSize } from './drawingUtils';
 import { validateBoatMessageInput } from './boatValidation';
 import { getBoatRepository } from './boatRepository';
@@ -143,7 +144,12 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
             />
           ) : (
             <div className={styles.drawStep}>
-              <p className={styles.helpText}>Eskuinera begira →</p>
+              <div className={styles.reference}>
+                <PaperBoatSketch className={styles.referenceSketch} />
+                <p className={styles.helpText}>
+                  Adibidez: paperezko ontzi bat, <strong>eskuinera begira →</strong>
+                </p>
+              </div>
               <div className={styles.canvasArea}>
                 <BoatDrawingCanvas drawing={drawing} onChange={setDrawing} />
               </div>
