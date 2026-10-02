@@ -183,6 +183,7 @@ export function MapLayout() {
       <BoatFleet
         bus={bus}
         boats={fleet.boats}
+        loaded={!fleet.loading}
         reducedMotion={settings.effectiveReducedMotion}
         suppressed={controlsBlocked}
         onBoatCardOpenChange={setBoatCardOpen}

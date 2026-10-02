@@ -12,6 +12,7 @@
 
 .outer {
   position: absolute;
+  z-index: 3;
   top: 0;
   left: 0;
   /* transform-origin stays the default (50% 50%) so the translate(-50%,-50%)
@@ -58,4 +59,22 @@
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
+}
+
+/*
+ * A bridge cut out of the map image (see boatPathConfig.bridges), sized in
+ * world units and scaled by the camera zoom from its top-left corner. It
+ * sits between boats passing under it (z-index 1) and every other boat (3).
+ */
+.bridge {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  pointer-events: none;
+  user-select: none;
+  /* Shown by BoatFleet only while a boat is passing under it. */
+  visibility: hidden;
 }

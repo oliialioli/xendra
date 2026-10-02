@@ -7,6 +7,7 @@ import { computeBoatMotionParams } from './boatHash';
 import { samplePathAtProgress, offsetPerpendicular, segmentFraction } from './boatPath';
 import { getBoatBitmapDataUrl } from './boatBitmap';
 import { BoatMessageCard } from './BoatMessageCard';
+import { assetPath } from '../../lib/assetPath';
 import styles from './BoatFleet.module.css';
 
 export type BoatFleetProps = {
@@ -15,6 +16,14 @@ export type BoatFleetProps = {
   reducedMotion: boolean;
   /** Hides/disarms selection, e.g. while a panel/menu/intro is open -- mirrors DiscoveryIndicators' own `suppressed`. */
   suppressed: boolean;
+  /**
+   * False while the boat list is still being fetched. The boats present once
+   * it's loaded are the "already sailing" fleet -- spread around the river
+   * from the first frame -- and only boats arriving after that launch from
+   * the dock; without waiting for this, the empty pre-fetch list counted as
+   * the initial one and every fetched boat launched from the dock at once.
+   */
+  loaded: boolean;
   /**
    * Fires whenever a boat's message card opens/closes. The card is
    * non-modal by design (the map stays visible/interactive around it -- see
@@ -60,6 +69,8 @@ const LAUNCH_FADE_MS = 300;
 const FLOAT_AMPLITUDE_PX = 3;
 const FLOAT_SPEED = 1.6;
 const OCCLUDED_OPACITY = 0.08;
+/** World units around a bridge cut-out's bounds within which the snail counts as "on the bridge". */
+const SNAIL_BRIDGE_MARGIN = 24;
 
 type RuntimeState = {
   motionParams: ReturnType<typeof computeBoatMotionParams>;
@@ -90,18 +101,21 @@ function lerpAngle(a: number, b: number, t: number): number {
  * (via a ref, updated as it arrives) for the current world->screen
  * projection.
  */
-export function BoatFleet({ bus, boats, reducedMotion, suppressed, onBoatCardOpenChange }: BoatFleetProps) {
+export function BoatFleet({ bus, boats, loaded, reducedMotion, suppressed, onBoatCardOpenChange }: BoatFleetProps) {
   const elementRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const innerRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const bridgeRefs = useRef<Map<string, HTMLImageElement>>(new Map());
   const runtimeRef = useRef<Map<string, RuntimeState>>(new Map());
   const hasLoadedInitialRef = useRef(false);
   // Set once, inside the tick-loop effect below (not here -- reading
   // performance.now() during render itself is impure/disallowed).
   const fleetStartTimeRef = useRef<number | null>(null);
-  const cameraRef = useRef<{ worldViewX: number; worldViewY: number; zoom: number }>({
+  const cameraRef = useRef<{ worldViewX: number; worldViewY: number; zoom: number; snailX: number; snailY: number }>({
     worldViewX: 0,
     worldViewY: 0,
     zoom: 1,
+    snailX: -Infinity,
+    snailY: -Infinity,
   });
   const rafRef = useRef<number | null>(null);
   const [selectedBoat, setSelectedBoat] = useState<Boat | null>(null);
@@ -146,6 +160,7 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed, onBoatCardOpe
   // (this tab's own submission, or another visitor's, arriving live) gets
   // the dock->river launch animation.
   useEffect(() => {
+    if (!loaded) return;
     const runtime = runtimeRef.current;
     const isFirstPopulation = !hasLoadedInitialRef.current;
     boats.forEach((boat) => {
@@ -161,11 +176,17 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed, onBoatCardOpe
       if (!currentIds.has(id)) runtime.delete(id);
     });
     hasLoadedInitialRef.current = true;
-  }, [boats, laneCount]);
+  }, [boats, laneCount, loaded]);
 
   useEffect(() => {
     return bus.on('camera:frame', (frame: BridgeEvents['camera:frame']) => {
-      cameraRef.current = { worldViewX: frame.worldViewX, worldViewY: frame.worldViewY, zoom: frame.zoom };
+      cameraRef.current = {
+        worldViewX: frame.worldViewX,
+        worldViewY: frame.worldViewY,
+        zoom: frame.zoom,
+        snailX: frame.snailX,
+        snailY: frame.snailY,
+      };
     });
   }, [bus]);
 
@@ -177,7 +198,17 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed, onBoatCardOpe
       if (document.hidden) return;
 
       const now = performance.now();
-      const { worldViewX, worldViewY, zoom } = cameraRef.current;
+      const { worldViewX, worldViewY, zoom, snailX, snailY } = cameraRef.current;
+      const bridgesInUse = new Set<string>();
+
+      // Bridge cut-outs follow the camera exactly like the map under them.
+      boatPathConfig.bridges.forEach((bridge) => {
+        const img = bridgeRefs.current.get(bridge.id);
+        if (!img) return;
+        const x = (bridge.bounds.x - worldViewX) * zoom;
+        const y = (bridge.bounds.y - worldViewY) * zoom;
+        img.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${zoom})`;
+      });
 
       // Shared by every currently-launching boat, so computed once per
       // frame rather than per boat -- see the launch branch below for why.
@@ -203,6 +234,7 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed, onBoatCardOpe
         let opacity = 1;
         let floatOffset = 0;
         let waterfallEnvelope = 0;
+        let underBridge = false;
 
         const launchElapsed = state.launchStartedAt === null ? Infinity : now - state.launchStartedAt;
 
@@ -267,11 +299,20 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed, onBoatCardOpe
             angleRad += ((waterfallConfig.tilt * Math.PI) / 180) * waterfallEnvelope;
           }
 
-          // Smooth fade toward each segment's own center (same envelope
-          // shape as the waterfall above) instead of a hard on/off cut, so
-          // a boat crossing under a bridge deck reads as passing beneath it
-          // rather than blinking out and back. When segments overlap, the
-          // deepest fade wins.
+          // Under a bridge: drawn beneath the bridge cut-outs (see the
+          // zIndex below and boatPathConfig.bridges), so the deck really
+          // covers it instead of the boat fading on top of the bridge.
+          const bridgeAbove = boatPathConfig.bridges.find(
+            (bridge) => segmentFraction(sample.progress, bridge.segment) !== null,
+          );
+          if (bridgeAbove) {
+            underBridge = true;
+            bridgesInUse.add(bridgeAbove.id);
+          }
+
+          // Behind the waterfall's rocks (which live on the map canvas, not
+          // in this layer): a smooth fade toward the segment's center, so it
+          // reads as passing behind them rather than blinking out and back.
           let occlusionEnvelope = 0;
           boatPathConfig.occlusionSegments.forEach((segment) => {
             const fraction = segmentFraction(sample.progress, segment);
@@ -305,7 +346,24 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed, onBoatCardOpe
         // since CSS composes the transform list right-to-left).
         el.style.transform = `translate3d(${screenX}px, ${screenY}px, 0) translate(-50%, -50%) rotate(${tiltDeg}deg) scale(${scaleX}, ${scale})`;
         el.style.opacity = String(opacity);
+        el.style.zIndex = underBridge ? '1' : '3';
         inner.style.transform = `translateY(${floatOffset}px)`;
+      });
+
+      // A cut-out is identical to the map beneath it, so it only needs to be
+      // showing while a boat is actually passing under that bridge. It's
+      // hidden while the snail is on the bridge, though: this layer sits
+      // above the game canvas, so it would otherwise cover the snail too.
+      boatPathConfig.bridges.forEach((bridge) => {
+        const img = bridgeRefs.current.get(bridge.id);
+        if (!img) return;
+        const { x, y, width, height } = bridge.bounds;
+        const snailOnBridge =
+          snailX > x - SNAIL_BRIDGE_MARGIN &&
+          snailX < x + width + SNAIL_BRIDGE_MARGIN &&
+          snailY > y - SNAIL_BRIDGE_MARGIN &&
+          snailY < y + height + SNAIL_BRIDGE_MARGIN;
+        img.style.visibility = bridgesInUse.has(bridge.id) && !snailOnBridge ? 'visible' : 'hidden';
       });
     }
 
@@ -324,6 +382,21 @@ export function BoatFleet({ bus, boats, reducedMotion, suppressed, onBoatCardOpe
   return (
     <>
       <div className={styles.root}>
+        {boatPathConfig.bridges.map((bridge) => (
+          <img
+            key={bridge.id}
+            ref={(el) => {
+              if (el) bridgeRefs.current.set(bridge.id, el);
+              else bridgeRefs.current.delete(bridge.id);
+            }}
+            src={assetPath(bridge.src)}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className={styles.bridge}
+            style={{ width: bridge.bounds.width, height: bridge.bounds.height }}
+          />
+        ))}
         {boats.map((boat) => (
           <div
             key={boat.id}

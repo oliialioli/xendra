@@ -66,6 +66,13 @@ function buildClosedSvgPath(points: Vector2Like[]): string {
 
 export type OcclusionSegment = { start: number; end: number };
 
+export type BridgeOverlay = {
+  id: string;
+  src: string;
+  bounds: { x: number; y: number; width: number; height: number };
+  segment: OcclusionSegment;
+};
+
 /**
  * Centralized configuration for the closed river loop every boat travels.
  * Nothing outside this file needs to change to retune the route -- see each
@@ -108,30 +115,52 @@ export const boatPathConfig = {
    */
   launchProgress: 0.8504,
   /**
-   * Progress ranges (0-1) where a boat should fade out because the route
-   * passes under a bridge deck, or visually behind a solid obstruction like
-   * the waterfall's rock cluster, at that point on the real map. BoatFleet
-   * fades smoothly (not a hard cut) toward the segment's center via
-   * boatPath's segmentFraction, so a boat reads as sailing *under* the deck
-   * rather than blinking away.
+   * The three bridges the river runs under, drawn *over* the boats so a boat
+   * really disappears beneath the deck instead of fading on top of it.
+   * Boats are DOM elements above the whole map canvas, so the bridges baked
+   * into the map image can't cover them; each `src` is that bridge cut out
+   * of xendra-map-base-v7-4k.png itself (deck, arches and piers only -- the
+   * water and the bridge's shadow on it are left transparent), placed at
+   * `bounds` (world units) in BoatFleet's own layer.
    *
-   * Each bridge entry's center is the nearest path progress to that
-   * bridge's own world position (found by sampling boatPath's own
-   * samplePathAtProgress against the bridge's coordinates on
-   * xendra-map-base-v7-4k.png, not guessed from a screenshot), with a
-   * half-width covering that bridge's actual deck span.
-   *
-   * The last entry is the waterfall's rock cluster -- narrower than
-   * dockConfig.waterfallConfig's own segmentStart/segmentEnd (which also
-   * drives the tilt/speed/drop effect over a wider approach+exit window),
-   * kept here rather than imported from dockConfig.ts to avoid a circular
-   * import (dockConfig.ts already imports from this file's sibling,
-   * mapGeometry.ts); update both by hand together if the falls ever move.
+   * `segment` is the stretch of path progress where the river actually runs
+   * beneath that bridge (sampled from boatPath against the cut-out's own
+   * outline), with a little margin either side: inside it a boat is drawn
+   * *under* the bridge cut-outs, outside it on top of them -- so a boat
+   * sailing in front of a bridge is never clipped by it, and the swap
+   * happens where the boat isn't overlapping the bridge, so it never pops.
+   */
+  bridges: [
+    {
+      id: 'railway',
+      src: '/assets/map/bridge-rail.png',
+      bounds: { x: 1894, y: 89, width: 360, height: 327 },
+      segment: { start: 0.08, end: 0.11 },
+    },
+    {
+      id: 'stone',
+      src: '/assets/map/bridge-stone.png',
+      bounds: { x: 36, y: 126, width: 318, height: 140 },
+      segment: { start: 0.362, end: 0.388 },
+    },
+    {
+      id: 'causeway',
+      src: '/assets/map/bridge-causeway.png',
+      bounds: { x: 1054, y: 1156, width: 150, height: 284 },
+      segment: { start: 0.733, end: 0.76 },
+    },
+  ] as BridgeOverlay[],
+  /**
+   * Progress ranges (0-1) where a boat fades out because it passes visually
+   * behind a solid obstruction that isn't a bridge -- just the waterfall's
+   * rock cluster. BoatFleet fades smoothly toward the segment's centre via
+   * boatPath's segmentFraction. Narrower than dockConfig.waterfallConfig's
+   * own segmentStart/segmentEnd (which also drives the tilt/speed/drop
+   * effect over a wider approach+exit window), kept here rather than
+   * imported from dockConfig.ts to avoid a circular import; update both by
+   * hand together if the falls ever move.
    */
   occlusionSegments: [
-    { start: 0.0717, end: 0.1157 }, // railway bridge (top-right)
-    { start: 0.3537, end: 0.3977 }, // stone arched bridge (top-left)
-    { start: 0.7438, end: 0.7878 }, // straight causeway bridge (south)
     { start: 0.8498, end: 0.8638 }, // waterfall rock cluster
   ] as OcclusionSegment[],
   /**

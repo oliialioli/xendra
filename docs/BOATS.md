@@ -60,18 +60,20 @@ else needs to change:
 | Boat speed | `features/boats/boatHash.ts` | `BASE_SPEED` / `SPEED_VARIATION` |
 | Floating bob | `features/boats/BoatFleet.tsx` | `FLOAT_AMPLITUDE_PX` / `FLOAT_SPEED` |
 | How boats are posed (always upright, mirrored when heading left, tilted in curves) | `features/boats/BoatFleet.tsx` | `MAX_BOAT_TILT_RAD` (max tilt), `uprightPose()` |
-| Bridge under-crossings (hide/fade a boat) | `content/boatPathConfig.ts` | `boatPathConfig.occlusionSegments` (the three river crossings plus the waterfall's rock cluster) |
+| Bridge under-crossings (boat drawn beneath the bridge) | `content/boatPathConfig.ts` | `boatPathConfig.bridges` (cut-out image, world bounds, and the path stretch under each of the three bridges) |
+| Fading behind the waterfall's rocks | `content/boatPathConfig.ts` | `boatPathConfig.occlusionSegments` |
 | House landmark (Mensajes/Mezuak) position/size | `content/mapGeometry.ts` | position: `dockConfig.xPercent`/`yPercent` (shared with the landmark hotspot below); size: `HOUSE_WIDTH_PERCENT` |
 | Waterfall art position/scale/rotation | `content/dockConfig.ts` | `waterfallConfig.x`/`y`/`scale`/`rotation`/`anchorX`/`anchorY` |
 | Waterfall boat effect (tilt/speed/drop/splash) | `content/dockConfig.ts` | `waterfallConfig.tilt`/`speedMultiplier`/`dropDistance`/`splashEnabled`, over `segmentStart`/`segmentEnd` |
 
 ## Needs a visual pass once real assets/art exist
 
-- **`boatPathConfig.occlusionSegments`**'s two real bridges aren't at a
-  known progress range yet -- use the map's own debug overlay (press `D`
-  in-game) as a starting point for where the path crosses a bridge deck,
-  then add `{ start, end }` progress entries (0-1) here (the existing
-  waterfall entry is a good template).
+- **`boatPathConfig.bridges`**: each bridge is a cut-out of
+  `xendra-map-base-v7-4k.png` (`public/assets/map/bridge-*.png`) laid over
+  the boats. If the base map changes, re-cut them from the new map at the
+  same `bounds` (bridge pixels only -- water and the bridge's shadow on it
+  transparent) and re-check each `segment` against where the river path
+  actually runs under the deck.
 - **`waterfallConfig`**: the house (landmark artwork, `LANDMARK_ASSET_OVERRIDES.dockMessages`
   in `mapGeometry.ts`) and the waterfall (`content/landmarks/cascada.png`,
   placed via `waterfallConfig`) are both live, positioned and verified
