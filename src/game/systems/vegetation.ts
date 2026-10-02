@@ -13,7 +13,10 @@ const SWAY_DEGREES: Record<VegetationKind, number> = {
   cypress: 2.5,
   tree: 2,
   bush: 1.5,
-  reeds: 7,
+  reedsSpears: 6,
+  reedsCattails: 7,
+  reedsCurved: 8,
+  reedsBroad: 4,
 };
 /** Speed the gust's front crosses the island (world units/s), so plants further downwind lean a little later. */
 const GUST_FRONT_SPEED = 900;

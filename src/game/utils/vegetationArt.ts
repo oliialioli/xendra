@@ -1,6 +1,10 @@
 import Phaser from 'phaser';
 
-export type VegetationKind = 'cypress' | 'tree' | 'bush' | 'reeds';
+/** The bank plants come in four looks, as in the reference: spear leaves, cattails, curved rushes and broad leaves. */
+export type ReedKind = 'reedsSpears' | 'reedsCattails' | 'reedsCurved' | 'reedsBroad';
+export type VegetationKind = 'cypress' | 'tree' | 'bush' | ReedKind;
+
+export const REED_KINDS: ReedKind[] = ['reedsSpears', 'reedsCattails', 'reedsCurved', 'reedsBroad'];
 
 /** Textures are drawn at this many pixels per world unit and shown at 1/this scale, so they stay crisp on retina screens. */
 export const VEGETATION_TEXTURE_RES = 2;
@@ -15,7 +19,10 @@ export const VEGETATION_FRAMES: Record<VegetationKind, { width: number; height: 
   cypress: { width: 32, height: 128, baseX: 16, baseY: 124 },
   tree: { width: 64, height: 64, baseX: 32, baseY: 61 },
   bush: { width: 32, height: 32, baseX: 16, baseY: 28 },
-  reeds: { width: 32, height: 64, baseX: 16, baseY: 60 },
+  reedsSpears: { width: 32, height: 64, baseX: 16, baseY: 60 },
+  reedsCattails: { width: 32, height: 64, baseX: 16, baseY: 60 },
+  reedsCurved: { width: 32, height: 64, baseX: 16, baseY: 60 },
+  reedsBroad: { width: 32, height: 64, baseX: 16, baseY: 60 },
 };
 
 /** Colours sampled from the approved map reference: one muted green for foliage (with a soft shade), near-black trunks. */
@@ -26,7 +33,11 @@ const COLORS = {
   trunk: 0x2f2721,
   shadow: 0x2a3a26,
   reedStem: 0x3f5545,
-  cattail: 0x6b5a48,
+  reedDark: 0x34463a,
+  reedFill: 0x587060,
+  cattailGreen: 0x4a5e4f,
+  cattailBrown: 0x6e665c,
+  cattailTan: 0xc9a77c,
 };
 
 export function vegetationTextureKey(kind: VegetationKind): string {
@@ -119,43 +130,116 @@ const drawBush: Draw = (g, r) => {
 };
 
 /**
- * Reeds as in the reference: a few tall, slender dark blades standing
- * apart, each ending in a long pointed leaf, one or two topped with a
- * brown cattail instead.
+ * One leaf or blade along a gently bent centreline: narrow at the base,
+ * fullest at `fullAt` (fraction of its length), tapering to a point. `bend`
+ * pushes the middle sideways (world units) for curved rushes.
  */
-const drawReeds: Draw = (g, r) => {
-  g.fillStyle(COLORS.shadow, 0.14);
-  g.fillEllipse(20 * r, 60 * r, 22 * r, 3.4 * r);
-  const blades: [number, number, number, 'leaf' | 'cattail'][] = [
-    // base x, tip x, tip y, top
-    [7, 5, 30, 'leaf'],
-    [12, 10.5, 14, 'cattail'],
-    [16.5, 17, 22, 'leaf'],
-    [21, 22.5, 8, 'leaf'],
-    [25.5, 28, 26, 'cattail'],
+function leaf(
+  g: Phaser.GameObjects.Graphics,
+  r: number,
+  base: [number, number],
+  tip: [number, number],
+  width: number,
+  bend: number,
+  fill: number,
+  outline?: number,
+  fullAt = 0.35,
+): void {
+  const steps = 16;
+  const [bx, by] = base;
+  const [tx, ty] = tip;
+  const length = Math.hypot(tx - bx, ty - by) || 1;
+  // Unit normal to the base->tip line, for the half-width and the bend.
+  const nx = -(ty - by) / length;
+  const ny = (tx - bx) / length;
+  const left: Phaser.Math.Vector2[] = [];
+  const right: Phaser.Math.Vector2[] = [];
+  for (let i = 0; i <= steps; i += 1) {
+    const t = i / steps;
+    const curve = Math.sin(t * Math.PI) * bend;
+    const cx = bx + (tx - bx) * t + nx * curve;
+    const cy = by + (ty - by) * t + ny * curve;
+    const half = (width / 2) * (t < fullAt ? 0.45 + 0.55 * (t / fullAt) : Math.pow((1 - t) / (1 - fullAt), 0.8));
+    left.push(v(cx + nx * half, cy + ny * half, r));
+    right.push(v(cx - nx * half, cy - ny * half, r));
+  }
+  const outlinePoints = [...left, ...right.reverse()];
+  g.fillStyle(fill, 1);
+  g.fillPoints(outlinePoints, true);
+  if (outline !== undefined) {
+    g.lineStyle(0.9 * r, outline, 1);
+    g.strokePoints(outlinePoints, true);
+  }
+}
+
+/** A thin stem with an oval head on top -- a cattail. */
+function cattail(g: Phaser.GameObjects.Graphics, r: number, baseX: number, tip: [number, number], bend: number, head: number): void {
+  const [tx, ty] = tip;
+  const midX = (baseX + tx) / 2 + bend;
+  g.lineStyle(1.3 * r, COLORS.reedStem, 1);
+  g.strokePoints([v(baseX, 60, r), v(midX, (60 + ty) / 2, r), v(tx, ty + 6, r)]);
+  g.fillStyle(head, 1);
+  g.fillEllipse(tx * r, (ty + 3) * r, 4.4 * r, 9.5 * r);
+  g.lineStyle(0.9 * r, COLORS.reedStem, 1);
+  g.lineBetween(tx * r, (ty - 1) * r, tx * r, (ty - 4.5) * r);
+}
+
+function reedShadow(g: Phaser.GameObjects.Graphics, r: number): void {
+  g.fillStyle(COLORS.shadow, 0.13);
+  g.fillEllipse(19 * r, 60 * r, 24 * r, 3.2 * r);
+}
+
+/** A row of narrow, upright spear leaves of different heights, two-tone like the reference's. */
+const drawReedsSpears: Draw = (g, r) => {
+  reedShadow(g, r);
+  const leaves: [number, number][] = [
+    [5, 34],
+    [10, 22],
+    [15.5, 14],
+    [21, 26],
+    [26.5, 18],
   ];
-  blades.forEach(([baseX, tipX, tipY, top]) => {
-    const headY = tipY + 12;
-    g.lineStyle(1.7 * r, COLORS.reedStem, 1);
-    g.strokePoints([v(baseX, 60, r), v((baseX + tipX) / 2, (60 + headY) / 2, r), v(tipX, headY, r)]);
-    if (top === 'leaf') {
-      // A long pointed leaf: wide just above the stem, tapering to a tip.
-      g.fillStyle(COLORS.reedStem, 1);
-      g.fillPoints([v(tipX, tipY, r), v(tipX + 2.2, tipY + 9, r), v(tipX, headY + 2, r), v(tipX - 2.2, tipY + 9, r)], true);
-    } else {
-      g.fillStyle(COLORS.cattail, 1);
-      g.fillEllipse(tipX * r, (tipY + 7) * r, 4.2 * r, 11 * r);
-      g.lineStyle(1 * r, COLORS.reedStem, 1);
-      g.lineBetween(tipX * r, (tipY + 1.5) * r, tipX * r, (tipY - 3) * r);
-    }
-  });
+  leaves.forEach(([x, top]) => leaf(g, r, [x, 60], [x + 0.6, top], 3.8, 0, COLORS.reedFill, COLORS.reedDark, 0.6));
+};
+
+/** Cattails on thin stems, some leaning -- heads dark green, grey-brown or pale tan -- among a couple of leaves. */
+const drawReedsCattails: Draw = (g, r) => {
+  reedShadow(g, r);
+  leaf(g, r, [9, 60], [7.5, 32], 3.4, -1, COLORS.reedStem);
+  leaf(g, r, [22, 60], [24, 36], 3.2, 1, COLORS.reedStem);
+  cattail(g, r, 12, [10, 10], -1.5, COLORS.cattailBrown);
+  cattail(g, r, 16, [17.5, 18], 1, COLORS.cattailGreen);
+  cattail(g, r, 20, [25, 8], 2.5, COLORS.cattailTan);
+  cattail(g, r, 26, [29, 24], 1.5, COLORS.cattailTan);
+};
+
+/** Rushes bent this way and that, with a pair opening in a V. */
+const drawReedsCurved: Draw = (g, r) => {
+  reedShadow(g, r);
+  leaf(g, r, [7, 60], [3, 26], 3, -4, COLORS.reedStem);
+  leaf(g, r, [11, 60], [15, 16], 3.2, 5, COLORS.reedStem);
+  leaf(g, r, [17, 60], [11, 24], 3, -5, COLORS.reedStem);
+  // The V pair.
+  leaf(g, r, [22, 60], [18.5, 30], 3, -1.5, COLORS.reedStem);
+  leaf(g, r, [22.5, 60], [29, 28], 3, 2, COLORS.reedStem);
+};
+
+/** Two or three broad, solid, dark leaves -- like a young iris. */
+const drawReedsBroad: Draw = (g, r) => {
+  reedShadow(g, r);
+  leaf(g, r, [9, 60], [9.5, 24], 6.4, 0, COLORS.reedDark);
+  leaf(g, r, [17, 60], [17.5, 16], 7, 0.5, COLORS.reedStem);
+  leaf(g, r, [24.5, 60], [25, 34], 5.6, 0, COLORS.reedDark);
 };
 
 const DRAWERS: Record<VegetationKind, Draw> = {
   cypress: drawCypress,
   tree: drawTree,
   bush: drawBush,
-  reeds: drawReeds,
+  reedsSpears: drawReedsSpears,
+  reedsCattails: drawReedsCattails,
+  reedsCurved: drawReedsCurved,
+  reedsBroad: drawReedsBroad,
 };
 
 /** Draws every vegetation kind's texture once. */
