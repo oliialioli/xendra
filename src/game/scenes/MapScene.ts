@@ -27,6 +27,7 @@ import {
 } from '../utils/placeholderTextures';
 import { analyzeOpaqueBuildingBounds, type OpaqueBounds } from '../utils/spriteBounds';
 import { Snail, SNAIL_SPEED } from '../entities/Snail';
+import { Campfire } from '../entities/Campfire';
 import { findNearestLandmark } from '../systems/proximity';
 import { AmbientEffectsSystem } from '../systems/ambient';
 import type { GameEventBus } from '../bridge/gameEvents';
@@ -113,6 +114,7 @@ export class MapScene extends Phaser.Scene {
   private landmarks: Landmark[] = [];
   private visited = new Set<LandmarkId>();
   private reducedMotion = false;
+  private campfire: Campfire | null = null;
   private controlsEnabled = true;
 
   private snail!: Snail;
@@ -164,6 +166,7 @@ export class MapScene extends Phaser.Scene {
 
     if (campfireConfig.enabled && campfireConfig.assetSrc) {
       this.load.image(MapScene.campfireAssetKey(), assetPath(campfireConfig.assetSrc));
+      this.load.image(MapScene.campfireFlameKey(), assetPath(campfireConfig.flameSrc));
     }
   }
 
@@ -190,7 +193,7 @@ export class MapScene extends Phaser.Scene {
     this.setUpLandmarkAssetSprites();
     this.setUpWaterfallAsset();
     this.setUpGroundDecor(castleConfig, MapScene.castleAssetKey());
-    this.setUpGroundDecor(campfireConfig, MapScene.campfireAssetKey());
+    this.setUpCampfire();
 
     this.ambient = new AmbientEffectsSystem(this, {
       reducedMotion: this.reducedMotion,
@@ -230,6 +233,7 @@ export class MapScene extends Phaser.Scene {
   update(_time: number, delta: number): void {
     this.updateLandmarkLights();
     this.updateLandmarkGlow();
+    this.campfire?.update(this.snail.position);
 
     if (!this.controlsEnabled) {
       this.snail.setVelocity(0, 0);
@@ -482,6 +486,36 @@ export class MapScene extends Phaser.Scene {
     return 'campfire-asset';
   }
 
+  private static campfireFlameKey(): string {
+    return 'campfire-flame';
+  }
+
+  /**
+   * The campfire's unlit base as ground decor, plus its flame (see
+   * entities/Campfire.ts), placed with the base sprite's own scale and
+   * origin so the two textures -- drawn on the same canvas -- line up exactly.
+   */
+  private setUpCampfire(): void {
+    const placed = this.setUpGroundDecor(campfireConfig, MapScene.campfireAssetKey());
+    if (!placed) return;
+    const { sprite, imageWidth, imageHeight } = placed;
+    const scale = sprite.displayWidth / imageWidth;
+    const originX = sprite.originX * imageWidth;
+    const originY = sprite.originY * imageHeight;
+    const { flameBasePx } = campfireConfig;
+    this.campfire = new Campfire(this, {
+      flameBase: {
+        x: sprite.x + (flameBasePx.x - originX) * scale,
+        y: sprite.y + (flameBasePx.y - originY) * scale,
+      },
+      flameScale: scale,
+      flameKey: MapScene.campfireFlameKey(),
+      flameOrigin: { x: flameBasePx.x / imageWidth, y: flameBasePx.y / imageHeight },
+      depth: sprite.depth,
+      isReducedMotion: () => this.reducedMotion,
+    });
+  }
+
   /**
    * Overlays a decorative ground-standing artwork -- the ruined castle on
    * the hill (castleConfig), the campfire by the train (campfireConfig) --
@@ -494,8 +528,8 @@ export class MapScene extends Phaser.Scene {
   private setUpGroundDecor(
     config: { enabled: boolean; assetSrc: string; x: number; y: number; approvedWidth: number },
     key: string,
-  ): void {
-    if (!config.enabled || !config.assetSrc) return;
+  ): { sprite: Phaser.GameObjects.Image; imageWidth: number; imageHeight: number } | null {
+    if (!config.enabled || !config.assetSrc) return null;
 
     const source = this.textures.get(key).source[0];
     const analysis = analyzeOpaqueBuildingBounds(source.image as HTMLImageElement | HTMLCanvasElement, 'bottom-center');
@@ -508,6 +542,7 @@ export class MapScene extends Phaser.Scene {
     sprite.setOrigin(analysis.origin.x, analysis.origin.y);
     sprite.setDisplaySize(displayWidth, displayHeight);
     sprite.setDepth(config.y);
+    return { sprite, imageWidth: analysis.imageWidth, imageHeight: analysis.imageHeight };
   }
 
   private setUpBridgeListeners(): void {
@@ -870,5 +905,7 @@ export class MapScene extends Phaser.Scene {
     this.unsubscribers.forEach((unsub) => unsub());
     this.unsubscribers = [];
     this.ambient.destroy();
+    this.campfire?.destroy();
+    this.campfire = null;
   }
 }
