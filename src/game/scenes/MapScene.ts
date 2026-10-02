@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import type { GameBootData } from '../config/gameConfig';
 import type { Landmark, LandmarkId, Vector2Like } from '../../types/content';
 import {
+  FOUNTAIN_CONFIG,
   ISLAND_EDGE_MARGIN,
   ISLAND_POLYGON,
   LANDMARK_ASSET_OVERRIDES,
@@ -28,6 +29,7 @@ import {
 import { analyzeOpaqueBuildingBounds, type OpaqueBounds } from '../utils/spriteBounds';
 import { Snail, SNAIL_SPEED } from '../entities/Snail';
 import { Campfire } from '../entities/Campfire';
+import { FountainSpray } from '../entities/FountainSpray';
 import { findNearestLandmark } from '../systems/proximity';
 import { AmbientEffectsSystem } from '../systems/ambient';
 import type { GameEventBus } from '../bridge/gameEvents';
@@ -115,6 +117,7 @@ export class MapScene extends Phaser.Scene {
   private visited = new Set<LandmarkId>();
   private reducedMotion = false;
   private campfire: Campfire | null = null;
+  private fountainSpray: FountainSpray | null = null;
   private controlsEnabled = true;
 
   private snail!: Snail;
@@ -191,6 +194,7 @@ export class MapScene extends Phaser.Scene {
     this.setUpInput();
     this.setUpLandmarkVisuals();
     this.setUpLandmarkAssetSprites();
+    this.setUpFountainSpray();
     this.setUpWaterfallAsset();
     this.setUpGroundDecor(castleConfig, MapScene.castleAssetKey());
     this.setUpCampfire();
@@ -234,6 +238,7 @@ export class MapScene extends Phaser.Scene {
     this.updateLandmarkLights();
     this.updateLandmarkGlow();
     this.campfire?.update(this.snail.position);
+    this.fountainSpray?.update(this.snail.position);
 
     if (!this.controlsEnabled) {
       this.snail.setVelocity(0, 0);
@@ -484,6 +489,24 @@ export class MapScene extends Phaser.Scene {
 
   private static campfireAssetKey(): string {
     return 'campfire-asset';
+  }
+
+  /** The fountain's active state (see entities/FountainSpray.ts), placed from its sprite's own scale and origin. */
+  private setUpFountainSpray(): void {
+    const info = this.landmarkSpriteRenderInfo.get('fountain');
+    if (!info) return;
+    const { analysis, renderX, renderY, displayWidth } = info;
+    const scale = displayWidth / analysis.imageWidth;
+    const { spoutPx } = FOUNTAIN_CONFIG;
+    this.fountainSpray = new FountainSpray(this, {
+      center: { x: renderX, y: renderY },
+      spout: {
+        x: renderX + (spoutPx.x - analysis.origin.x * analysis.imageWidth) * scale,
+        y: renderY + (spoutPx.y - analysis.origin.y * analysis.imageHeight) * scale,
+      },
+      depth: renderY,
+      isReducedMotion: () => this.reducedMotion,
+    });
   }
 
   private static campfireFlameKey(): string {
@@ -907,5 +930,7 @@ export class MapScene extends Phaser.Scene {
     this.ambient.destroy();
     this.campfire?.destroy();
     this.campfire = null;
+    this.fountainSpray?.destroy();
+    this.fountainSpray = null;
   }
 }

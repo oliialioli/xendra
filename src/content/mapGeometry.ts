@@ -214,7 +214,7 @@ export const OBSTACLE_RECTS: ObstacleRect[] = [
 const POSTBOX_POSITION: Vector2Like = { x: 552, y: 831 };
 
 export const OBSTACLE_CIRCLES: ObstacleCircle[] = [
-  { id: 'fountain-basin', x: 1235, y: 692, radius: 85 },
+  { id: 'fountain-basin', x: 1228, y: 692, radius: 85 },
   // The postbox's round plinth (see POSTBOX_WIDTH_PERCENT below), centered a
   // little above its anchor so the snail can still walk right up to its front.
   { id: 'postbox-plinth', x: POSTBOX_POSITION.x, y: POSTBOX_POSITION.y - 9, radius: 18 },
@@ -315,7 +315,8 @@ export const SCHOOL_CONFIG = {
  */
 export const FOUNTAIN_CONFIG = {
   /** Horizontal position, 0-100, percentage of WORLD_WIDTH -- the plaza's own center. */
-  xPercent: 48.24,
+  // 1228 world units: the plaza circle's centre, least-squares fitted to its edge on the map.
+  xPercent: 47.97,
   /** Vertical position, 0-100, percentage of WORLD_HEIGHT -- the plaza's own center. */
   yPercent: 48.06,
   /**
@@ -332,6 +333,12 @@ export const FOUNTAIN_CONFIG = {
    * interaction/collision anchor (LANDMARK_POSITIONS.fountain) is derived
    * from {xPercent, yPercent} alone and is untouched by this.
    */
+  /**
+   * Where the water comes out: the top of the column, in fuente-xendra.png's
+   * own pixels (measured from the texture). The spray is placed from this
+   * through the sprite's own scale and origin, so it follows any re-sizing.
+   */
+  spoutPx: { x: 1533, y: 396 },
   offsetX: 0,
   offsetY: 0,
 };
