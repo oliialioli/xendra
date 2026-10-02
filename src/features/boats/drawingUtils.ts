@@ -2,9 +2,9 @@ import type { BoatDrawing, DrawingPoint, DrawingStroke } from './boatTypes';
 
 /** Minimum distance (fraction of canvas width, 0-1) between two consecutive stored points. */
 export const MIN_POINT_DISTANCE = 0.004;
-export const MAX_STROKES = 60;
+export const MAX_STROKES = 150;
 export const MAX_POINTS_PER_STROKE = 400;
-export const MAX_TOTAL_POINTS = 4000;
+export const MAX_TOTAL_POINTS = 6000;
 /** Serialized JSON byte budget -- comfortably under any reasonable jsonb column/payload limit. */
 export const MAX_DRAWING_JSON_BYTES = 60_000;
 
@@ -113,4 +113,88 @@ export function validateDrawingSize(drawing: BoatDrawing): DrawingSizeError | nu
   if (countTotalPoints(drawing) > MAX_TOTAL_POINTS) return 'tooManyPoints';
   if (estimateDrawingJsonBytes(drawing) > MAX_DRAWING_JSON_BYTES) return 'tooLarge';
   return null;
+}
+
+/** Coordinates (0-1 of the canvas) are kept to this many decimals once compacted -- a thousandth of the canvas is finer than any drawn line. */
+const COORDINATE_DECIMALS = 3;
+/** Increasingly strong simplification tolerances (fraction of the canvas) tried by compactDrawingToFit, gentlest first. */
+const SIMPLIFY_TOLERANCES = [0.0012, 0.0025, 0.004, 0.0065, 0.01];
+
+function round(value: number, decimals: number): number {
+  const factor = 10 ** decimals;
+  return Math.round(value * factor) / factor;
+}
+
+function distanceToSegment(p: DrawingPoint, a: DrawingPoint, b: DrawingPoint): number {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const lengthSq = dx * dx + dy * dy;
+  if (lengthSq === 0) return Math.hypot(p.x - a.x, p.y - a.y);
+  const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / lengthSq));
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
+}
+
+/** Ramer-Douglas-Peucker: drops points that sit within `tolerance` of the line through their neighbours. */
+export function simplifyPoints(points: DrawingPoint[], tolerance: number): DrawingPoint[] {
+  if (points.length <= 2) return points.slice();
+  const keep = new Array<boolean>(points.length).fill(false);
+  keep[0] = true;
+  keep[points.length - 1] = true;
+  const stack: [number, number][] = [[0, points.length - 1]];
+  while (stack.length > 0) {
+    const [start, end] = stack.pop()!;
+    let farthest = -1;
+    let farthestDistance = tolerance;
+    for (let i = start + 1; i < end; i += 1) {
+      const distance = distanceToSegment(points[i], points[start], points[end]);
+      if (distance > farthestDistance) {
+        farthest = i;
+        farthestDistance = distance;
+      }
+    }
+    if (farthest !== -1) {
+      keep[farthest] = true;
+      stack.push([start, farthest], [farthest, end]);
+    }
+  }
+  return points.filter((_, i) => keep[i]);
+}
+
+/**
+ * The drawing as it's stored: every stroke simplified to `tolerance` and
+ * every coordinate rounded to COORDINATE_DECIMALS. Visually the same at any
+ * size a boat is ever shown, but a fraction of the bytes -- raw pointer
+ * coordinates carry ~16 decimals each.
+ */
+export function compactDrawing(drawing: BoatDrawing, tolerance: number): BoatDrawing {
+  return {
+    version: drawing.version,
+    strokes: drawing.strokes.map((stroke) => ({
+      color: stroke.color,
+      size: round(stroke.size, 4),
+      tool: stroke.tool,
+      points: simplifyPoints(stroke.points, tolerance).map((p) => ({
+        x: round(p.x, COORDINATE_DECIMALS),
+        y: round(p.y, COORDINATE_DECIMALS),
+      })),
+    })),
+  };
+}
+
+/**
+ * Compacts a drawing just enough to fit MAX_TOTAL_POINTS and
+ * MAX_DRAWING_JSON_BYTES: tries the gentlest simplification first and only
+ * goes stronger if it still doesn't fit, so a detailed drawing is kept as
+ * detailed as the limits allow instead of being rejected. Returns the most
+ * compact attempt if even that doesn't fit (validateDrawingSize then
+ * reports why).
+ */
+export function compactDrawingToFit(drawing: BoatDrawing): BoatDrawing {
+  let compacted = drawing;
+  for (const tolerance of SIMPLIFY_TOLERANCES) {
+    compacted = compactDrawing(drawing, tolerance);
+    const error = validateDrawingSize(compacted);
+    if (error === null || error === 'tooManyStrokes') return compacted;
+  }
+  return compacted;
 }

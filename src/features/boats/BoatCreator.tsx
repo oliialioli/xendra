@@ -7,7 +7,7 @@ import { MessageStep } from './MessageStep';
 import { BoatDrawingCanvas } from './BoatDrawingCanvas';
 import { BoatPreview } from './BoatPreview';
 import { PaperBoatSketch } from './PaperBoatSketch';
-import { createEmptyDrawing, isDrawingEmpty, validateDrawingSize } from './drawingUtils';
+import { compactDrawingToFit, createEmptyDrawing, isDrawingEmpty, validateDrawingSize } from './drawingUtils';
 import { validateBoatMessageInput } from './boatValidation';
 import { getBoatRepository } from './boatRepository';
 import type { BoatDrawing, Boat } from './boatTypes';
@@ -85,7 +85,10 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
       setSubmitError(SUBMIT_ERROR_MESSAGES.drawingEmpty);
       return;
     }
-    const sizeError = validateDrawingSize(drawing);
+    // Stored compacted (simplified strokes, rounded coordinates) so a
+    // detailed drawing still fits the size limits instead of being refused.
+    const compactDrawing = compactDrawingToFit(drawing);
+    const sizeError = validateDrawingSize(compactDrawing);
     if (sizeError) {
       setSubmitError(SUBMIT_ERROR_MESSAGES[sizeError]);
       return;
@@ -98,7 +101,7 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
       const boat = await repository.add({
         displayName: displayName.trim() || null,
         message: message.trim(),
-        drawing,
+        drawing: compactDrawing,
       });
       // Drawing/message are only ever cleared on success -- a failed save
       // (below) must leave both exactly as the person left them.
