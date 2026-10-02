@@ -134,7 +134,7 @@ a {
   gap: var(--space-1);
   padding: 6px;
   background: var(--ui-surface);
-  border-radius: calc(var(--ui-radius-md) + 6px);
+  border-radius: var(--ui-radius-lg);
   box-shadow: var(--ui-shadow);
 }
 

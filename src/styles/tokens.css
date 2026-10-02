@@ -52,9 +52,10 @@
   --ui-danger: #a4463a;
   --ui-shadow: 0 1px 2px rgb(46 53 41 / 8%), 0 8px 24px rgb(46 53 41 / 12%);
   --ui-shadow-raised: 0 2px 4px rgb(46 53 41 / 10%), 0 18px 44px rgb(46 53 41 / 18%);
-  --ui-radius-sm: 9px;
-  --ui-radius-md: 12px;
-  --ui-radius-lg: 20px;
+  /* Floating surfaces (logo, toolbar, panels, drawer, cards) are 8px; what sits inside them steps down. */
+  --ui-radius-sm: 4px;
+  --ui-radius-md: 6px;
+  --ui-radius-lg: 8px;
 
   /* Tag fills (see .xnd-tag[data-tone]). */
   --ui-tag-peach: #f1cbad;

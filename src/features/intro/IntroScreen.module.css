@@ -67,7 +67,7 @@
 }
 
 .stage {
-  width: clamp(170px, 34vh, 300px);
+  width: clamp(88px, 14vh, 120px);
   margin-top: clamp(var(--space-3), 3vh, var(--space-5));
 }
 

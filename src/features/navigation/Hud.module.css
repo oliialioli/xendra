@@ -22,7 +22,7 @@
   min-height: 52px;
   background: var(--ui-surface);
   padding: var(--space-2) var(--space-4);
-  border-radius: calc(var(--ui-radius-md) + 6px);
+  border-radius: var(--ui-radius-lg);
   box-shadow: var(--ui-shadow);
 }
 
@@ -44,7 +44,7 @@
   background: var(--ui-surface);
   color: var(--ui-ink);
   padding: 6px 6px 6px var(--space-5);
-  border-radius: calc(var(--ui-radius-md) + 6px);
+  border-radius: var(--ui-radius-lg);
   box-shadow: var(--ui-shadow-raised);
   max-width: min(90vw, 420px);
   font-family: var(--font-ui);
