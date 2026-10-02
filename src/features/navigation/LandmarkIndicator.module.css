@@ -67,7 +67,7 @@
   padding-right: 14px;
 }
 
-/* The landmark you can open right now gets the one yellow on screen. */
+/* The landmark you can open right now gets the one pistachio accent on screen. */
 .badge.interactable {
   background: var(--landmark-accent);
 }

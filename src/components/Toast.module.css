@@ -26,7 +26,7 @@
   animation: toastIn var(--duration-medium) var(--ease-organic);
 }
 
-/* Small yellow dot -- the same "this just happened" highlight as the primary button. */
+/* Small pistachio dot -- the same "this just happened" highlight as the primary button. */
 .pill::before {
   content: '';
   flex-shrink: 0;
@@ -34,7 +34,7 @@
   height: 10px;
   border-radius: 50%;
   background: var(--ui-accent);
-  box-shadow: 0 0 0 3px rgb(233 236 130 / 35%);
+  box-shadow: 0 0 0 3px rgb(188 188 143 / 40%);
 }
 
 @keyframes toastIn {
