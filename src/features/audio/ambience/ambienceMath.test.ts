@@ -62,7 +62,7 @@ describe('ambience math', () => {
     expect(fountainProximity({ x: 1050, y: 1000 }, at, 1000, 400).level).toBe(1);
     expect(fountainProximity({ x: 1000 + REACH.fountainEdge + 10, y: 1000 }, at, 1000, 400).level).toBe(0);
     const near = schoolProximity({ x: 1100, y: 1000 }, at, 1000, 400).level;
-    const mid = schoolProximity({ x: 1400, y: 1000 }, at, 1000, 400).level;
+    const mid = schoolProximity({ x: 1000 + (REACH.schoolFull + REACH.schoolEdge) / 2, y: 1000 }, at, 1000, 400).level;
     expect(near).toBe(1);
     expect(mid).toBeGreaterThan(0);
     expect(mid).toBeLessThan(near);
