@@ -45,6 +45,21 @@ select {
 
 button {
   cursor: pointer;
+  /* No double-tap-to-zoom on buttons (it also drops the tap delay). */
+  touch-action: manipulation;
+}
+
+/*
+ * iOS zooms the whole page in when a text field under 16px gets focus, and
+ * stays zoomed -- which leaves full-screen views (the castle game, the boat
+ * creator) cut off at the side. On touch screens every field is 16px.
+ */
+@media (hover: none) and (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
 }
 
 a {

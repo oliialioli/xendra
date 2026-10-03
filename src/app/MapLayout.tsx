@@ -168,6 +168,21 @@ export function MapLayout() {
     return () => window.clearTimeout(timer);
   }, [mapReady, showIntro]);
 
+  // After typing on a phone (an alias, a boat's message), iOS can leave the
+  // page scrolled where the keyboard pushed it; this layout never scrolls, so
+  // put it back once the field loses focus.
+  useEffect(() => {
+    const onFocusOut = (event: FocusEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target || !['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
+      window.requestAnimationFrame(() => {
+        if (window.scrollX !== 0 || window.scrollY !== 0) window.scrollTo(0, 0);
+      });
+    };
+    document.addEventListener('focusout', onFocusOut);
+    return () => document.removeEventListener('focusout', onFocusOut);
+  }, []);
+
   useEffect(() => {
     bus.emit('visited:hydrate', { ids: Array.from(progress.visited) });
   }, [progress.visited, bus]);

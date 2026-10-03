@@ -272,7 +272,8 @@
   padding: var(--space-4);
   overflow-y: auto;
   background: rgb(239 233 211 / 30%);
-  touch-action: auto;
+  /* Scrolling the card is fine; zooming the page in by double-tapping isn't. */
+  touch-action: pan-y;
 }
 
 .card {
