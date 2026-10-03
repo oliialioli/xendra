@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { useSettings } from '../../app/providers/SettingsContext';
 import { sendAnalyticsEvent } from '../../lib/analytics';
+import { ambienceEngine } from './ambience/AmbienceEngine';
 
 type AudioContextValue = {
   soundEnabled: boolean;
@@ -68,6 +69,9 @@ export function AudioProvider({ children }: { children: ReactNode }) {
           audioRef.current?.pause();
           setIsPlaying(false);
         }
+        // Right here, inside the click: the gesture mobile browsers need before any sound can start.
+        ambienceEngine.setEnabled(next);
+        if (next) ambienceEngine.unlock();
         setSoundEnabled(next);
       },
       setVolume,

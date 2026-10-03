@@ -17,6 +17,7 @@ import { Toast } from '../components/Toast';
 import { BoatFleet } from '../features/boats/BoatFleet';
 import { BoatCreator } from '../features/boats/BoatCreator';
 import { useBoatFleet } from '../features/boats/useBoatFleet';
+import { useWorldAmbience } from '../features/audio/ambience/useWorldAmbience';
 import { CastleGame } from '../features/castleGame/CastleGame';
 import { CASTLE_ENTRANCE, DOCK_FRONT } from '../content/mapGeometry';
 import { useGameBridge } from './providers/GameBridgeContext';
@@ -58,6 +59,7 @@ export function MapLayout() {
   // "the thing you just opened".
   const PanelIcon = panelEntry ? LANDMARK_INDICATOR_CONFIG[panelEntry.landmarkId].icon : null;
   const isMapRoute = location.pathname === MAP_ROUTE;
+  useWorldAmbience(bus, panelEntry ? panelEntry.route : null);
   const isUnknownRoute = !isMapRoute && !panelEntry;
   // The intro opens on every visit (every page load), not just the first --
   // it's the way into the island. Only leaving it dismisses it, for this load.

@@ -40,7 +40,7 @@ import { Beaver } from '../entities/Beaver';
 import { RIVER_PATH_POLYGON, boatPathConfig } from '../../content/boatPathConfig';
 import { findNearestLandmark } from '../systems/proximity';
 import { AmbientEffectsSystem } from '../systems/ambient';
-import { WeatherSystem } from '../systems/weather';
+import { MAX_GLOOM, WeatherSystem } from '../systems/weather';
 import { VegetationSystem } from '../systems/vegetation';
 import type { GameEventBus } from '../bridge/gameEvents';
 import { assetPath } from '../../lib/assetPath';
@@ -249,8 +249,14 @@ export class MapScene extends Phaser.Scene {
     this.weather = new WeatherSystem(
       this,
       this.reducedMotion,
-      (fromLeft) => this.vegetation.sway(fromLeft),
-      (amount) => this.bus.emit('weather:gloom', { amount }),
+      (fromLeft) => {
+        this.vegetation.sway(fromLeft);
+        this.bus.emit('weather:gust', { fromLeft });
+      },
+      (amount) => {
+        this.bus.emit('weather:gloom', { amount });
+        this.bus.emit('weather:rain', { intensity: amount / MAX_GLOOM });
+      },
     );
 
     this.setUpBridgeListeners();
@@ -619,6 +625,7 @@ export class MapScene extends Phaser.Scene {
       armOrigin: KIOSK_VENDOR.armPivot,
       depth: renderY,
       isReducedMotion: () => this.reducedMotion,
+      onGreet: () => this.bus.emit('kiosk:greet', undefined),
     });
   }
 

@@ -18,7 +18,8 @@ const RAIN_VELOCITY = { x: -140, y: 720 };
 const DROPS_PER_MEGA_UNIT = 9;
 const SPLASHES_PER_MEGA_UNIT = 2.2;
 /** How dark the sky gets at the peak of a shower. */
-const MAX_GLOOM = 0.16;
+/** The rain veil's opacity at a shower's peak (exported so listeners can turn gloom back into intensity). */
+export const MAX_GLOOM = 0.16;
 /** Draw order: above every landmark and the snail (the in-world maximum is the map height). */
 const WEATHER_DEPTH = 5000;
 

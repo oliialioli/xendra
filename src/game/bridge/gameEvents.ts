@@ -43,6 +43,12 @@ export type AppToGameEvents = {
   'controls:setEnabled': { enabled: boolean };
   /** How dark a rain shower has made the map (the veil's opacity, 0 when dry), so DOM layers over it can match. */
   'weather:gloom': { amount: number };
+  /** How hard it's raining, 0 (dry) to 1 (a shower's peak) -- for the rain's sound. */
+  'weather:rain': { intensity: number };
+  /** A gust of wind starts, blowing from the left or the right side of the view. */
+  'weather:gust': { fromLeft: boolean };
+  /** The kiosk vendor has just leaned out to greet the snail (once per approach). */
+  'kiosk:greet': void;
   /** Puts the snail down at a world point (and the camera on it) -- e.g. back in front of the castle after its minigame. */
   'snail:placeAt': { x: number; y: number };
   'controls:joystick': { x: number; y: number };

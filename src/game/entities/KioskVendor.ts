@@ -22,6 +22,8 @@ export type KioskVendorOptions = {
   armOrigin: Vector2Like;
   depth: number;
   isReducedMotion: () => boolean;
+  /** Called each time he leans out to greet (once per approach) -- e.g. to play his "Aupa, egunon!". */
+  onGreet?: () => void;
 };
 
 /**
@@ -71,7 +73,8 @@ export class KioskVendor {
 
   private show(): void {
     this.shown = true;
-    const { windowTopLeft, shoulder, isReducedMotion } = this.options;
+    const { windowTopLeft, shoulder, isReducedMotion, onGreet } = this.options;
+    onGreet?.();
     this.scene.tweens.killTweensOf([this.windowImage, this.body, this.arm]);
 
     if (isReducedMotion()) {
