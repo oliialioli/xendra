@@ -30,8 +30,13 @@
   display: flex;
   overflow-y: auto;
   background-color: var(--intro-paper);
-  background-position: center;
-  background-size: cover;
+  /* A soft light in the middle, darker at the edges, over the paper tile at its own size (384 px shows the 768 px tile sharp on retina screens). */
+  background-image:
+    radial-gradient(ellipse 120% 90% at 50% 42%, rgb(255 236 205 / 6%), rgb(20 14 8 / 28%)),
+    var(--paper);
+  background-repeat: no-repeat, repeat;
+  background-size: cover, 384px 384px;
+  background-position: center, center;
   color: var(--intro-cream);
 }
 
@@ -63,7 +68,8 @@
   display: block;
   width: clamp(150px, 20vw, 210px);
   height: auto;
-  animation: rise 700ms var(--ease-organic) var(--t-logo) both;
+  /* Its letters animate themselves (IntroLogo.module.css). */
+  overflow: visible;
 }
 
 .stage {
@@ -196,11 +202,42 @@
   display: none;
 }
 
-.soundNote {
-  margin: var(--space-3) 0 0;
+/* The sound starts on; one tap here turns it off (or on again). */
+.soundToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: 7px var(--space-2) 7px var(--space-3);
+  border: 1px solid rgb(215 198 175 / 35%);
+  border-radius: 999px;
+  background: rgb(215 198 175 / 8%);
+  color: var(--intro-cream);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-organic);
+}
+
+.soundToggle:hover {
+  background: rgb(215 198 175 / 16%);
+}
+
+.soundToggle:focus-visible {
+  outline: 2px solid var(--intro-cream-strong);
+  outline-offset: 2px;
+}
+
+.soundToggle[aria-pressed='false'] {
   color: var(--intro-cream-muted);
+}
+
+.soundAction {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgb(215 198 175 / 16%);
+  color: var(--intro-cream-strong);
 }
 
 @media (pointer: coarse), (max-width: 720px) {

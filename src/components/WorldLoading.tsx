@@ -4,7 +4,7 @@ import { SnailFigure } from './SnailFigure';
 import styles from './WorldLoading.module.css';
 
 const LOGO_SRC = assetPath('/assets/brand/xendra-logo-cream.svg');
-const PAPER_SRC = assetPath('/assets/brand/intro-paper.jpg');
+const PAPER_SRC = assetPath('/assets/brand/intro-paper-tile.jpg');
 
 /** Little things the island is "doing" while it loads, one after another. */
 const MESSAGES = [
@@ -44,7 +44,7 @@ export function WorldLoading({ progress, done }: WorldLoadingProps) {
     <div
       className={styles.root}
       data-done={done || undefined}
-      style={{ backgroundImage: `url(${PAPER_SRC})` }}
+      style={{ ['--paper' as string]: `url(${PAPER_SRC})` }}
       role="status"
       aria-live="polite"
       aria-busy={!done}

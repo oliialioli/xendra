@@ -21,7 +21,10 @@ type SettingsContextValue = SettingsState & SettingsActions;
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
-const SOUND_KEY = storageKey('sound');
+// v2: sound now starts on. Under the old key everyone has `false` stored --
+// written on their first visit, not chosen -- so a fresh key lets the new
+// default reach them; whatever they pick from here on is remembered.
+const SOUND_KEY = storageKey('sound-v2');
 const VOLUME_KEY = storageKey('volume');
 const MOTION_KEY = storageKey('reducedMotionExtra');
 const NAVIGATION_HINT_KEY = storageKey('seenNavigationHint');
@@ -29,7 +32,7 @@ const NAVIGATION_HINT_KEY = storageKey('seenNavigationHint');
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const systemReducedMotion = useSystemReducedMotion();
 
-  const [soundEnabled, setSoundEnabledState] = useState(() => readJSON(SOUND_KEY, false));
+  const [soundEnabled, setSoundEnabledState] = useState(() => readJSON(SOUND_KEY, true));
   const [volume, setVolumeState] = useState(() => readJSON(VOLUME_KEY, 0.6));
   const [extraReducedMotion, setExtraReducedMotionState] = useState(() =>
     readJSON(MOTION_KEY, false),

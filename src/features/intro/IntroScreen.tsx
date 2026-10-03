@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, type AnimationEvent, type CSSProperties } from 'react';
-import { HandSwipeRight, HandTap, MouseLeftClick } from '@phosphor-icons/react';
+import { HandSwipeRight, HandTap, MouseLeftClick, SpeakerHigh, SpeakerSlash } from '@phosphor-icons/react';
 import { useSettings } from '../../app/providers/SettingsContext';
 import { xendraContent } from '../../content/xendraContent';
 import { assetPath } from '../../lib/assetPath';
 import { IntroSnail } from './IntroSnail';
+import { IntroLogo } from './IntroLogo';
+import { useAudioPlayer } from '../audio/AudioContext';
 import styles from './IntroScreen.module.css';
 
 export type IntroScreenProps = {
@@ -11,8 +13,8 @@ export type IntroScreenProps = {
   onOpenMenu: () => void;
 };
 
-const LOGO_SRC = assetPath('/assets/brand/xendra-logo-cream.svg');
-const PAPER_SRC = assetPath('/assets/brand/intro-paper.jpg');
+/** A seamless kraft-paper tile, repeated at its own size so it's sharp on any screen (see IntroScreen.module.css). */
+const PAPER_SRC = assetPath('/assets/brand/intro-paper-tile.jpg');
 
 /** Never hold the intro back longer than this waiting on images/fonts. */
 const PRELOAD_TIMEOUT_MS = 1500;
@@ -53,13 +55,14 @@ const KEY_CLUSTERS = [
 export function IntroScreen({ onEnter, onOpenMenu }: IntroScreenProps) {
   const settings = useSettings();
   const mode = settings.effectiveReducedMotion ? 'static' : 'play';
+  const { soundEnabled, toggleSound } = useAudioPlayer();
   const [ready, setReady] = useState(false);
   const enterButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     let cancelled = false;
     const timeout = new Promise<void>((resolve) => window.setTimeout(resolve, PRELOAD_TIMEOUT_MS));
-    const assets = Promise.all([preloadImage(LOGO_SRC), preloadImage(PAPER_SRC), document.fonts?.ready]);
+    const assets = Promise.all([preloadImage(PAPER_SRC), document.fonts?.ready]);
     void Promise.race([assets, timeout]).then(() => {
       if (!cancelled) setReady(true);
     });
@@ -79,7 +82,7 @@ export function IntroScreen({ onEnter, onOpenMenu }: IntroScreenProps) {
   return (
     <div
       className={styles.root}
-      style={{ backgroundImage: `url(${PAPER_SRC})` }}
+      style={{ ['--paper' as string]: `url(${PAPER_SRC})` }}
       data-mode={mode}
       data-ready={ready}
       role="dialog"
@@ -87,7 +90,7 @@ export function IntroScreen({ onEnter, onOpenMenu }: IntroScreenProps) {
       aria-labelledby="intro-title"
     >
       <div className={styles.column}>
-        <img src={LOGO_SRC} alt="Xendra" className={styles.logo} />
+        <IntroLogo className={styles.logo} />
 
         <div className={styles.stage}>
           <IntroSnail />
@@ -139,7 +142,23 @@ export function IntroScreen({ onEnter, onOpenMenu }: IntroScreenProps) {
             <p className={styles.controlsLabel}>Ukitu edo irristatu mugitzeko</p>
           </div>
 
-          <p className={styles.soundNote}>Soinua itzalita hasten da.</p>
+          <button
+            type="button"
+            className={styles.soundToggle}
+            onClick={toggleSound}
+            aria-pressed={soundEnabled}
+            aria-label={soundEnabled ? 'Soinua aktibatuta. Desaktibatu' : 'Soinua desaktibatuta. Aktibatu'}
+          >
+            {soundEnabled ? (
+              <SpeakerHigh size={18} weight="fill" aria-hidden="true" />
+            ) : (
+              <SpeakerSlash size={18} weight="fill" aria-hidden="true" />
+            )}
+            <span>{soundEnabled ? 'Soinua aktibatuta' : 'Soinua desaktibatuta'}</span>
+            <span className={styles.soundAction} aria-hidden="true">
+              {soundEnabled ? 'Desaktibatu' : 'Aktibatu'}
+            </span>
+          </button>
         </div>
       </div>
     </div>
