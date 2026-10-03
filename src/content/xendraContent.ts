@@ -240,7 +240,7 @@ export const xendraContent: XendraContent = {
     {
       id: 'castle',
       route: '/gaztelua',
-      title: 'Gaztelu hondatua',
+      title: 'Gaztelu magikoa',
       shortLabel: 'Jokoa',
       description: 'Xendraren minijokoa: zeharkatu gaztelu hondatua eta garaitu Gatz-zaindaria.',
       position: LANDMARK_POSITIONS.castle,

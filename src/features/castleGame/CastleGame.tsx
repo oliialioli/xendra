@@ -91,7 +91,7 @@ export type CastleGameProps = {
 };
 
 /**
- * "Xendra: Gaztelu Hondatua" -- the castle's platform minigame, as a
+ * "Gaztelu magikoa" -- the castle's platform minigame, as a
  * full-screen modal over the map (MapLayout renders it for /gaztelua and
  * blocks the map's controls meanwhile).
  *
@@ -524,8 +524,9 @@ export function CastleGame({ onClose }: CastleGameProps) {
               <div className={styles.card}>
                 <SnailFigure direction="right" className={styles.cardSnail} />
                 <h3 className={styles.cardTitle}>{COPY.title}</h3>
-                <p className={styles.cardText}>{howTo}</p>
+                <p className={styles.cardIntro}>{COPY.intro}</p>
                 <p className={styles.cardText}>{COPY.howToGoal}</p>
+                <p className={styles.cardHint}>{howTo}</p>
                 <button type="button" className="xnd-btn-primary" onClick={startGame} autoFocus>
                   {COPY.start}
                 </button>

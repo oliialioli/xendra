@@ -93,7 +93,7 @@ export const PANEL_ROUTES: PanelRouteConfig[] = [
     // (the minigame) instead of the generic <Panel> shell.
     route: '/gaztelua',
     landmarkId: 'castle',
-    title: 'Gaztelu hondatua',
+    title: 'Gaztelu magikoa',
     Component: CastleGame,
     icon: '♜',
   },

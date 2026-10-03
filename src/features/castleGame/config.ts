@@ -111,7 +111,7 @@ export const GESTURE = {
 
 /** The game's words, in Euskera like the rest of the site. */
 export const COPY = {
-  title: 'Xendra: Gaztelu Hondatua',
+  title: 'Gaztelu magikoa',
   start: 'Hasi',
   backToMap: 'Itzuli mapara',
   playAgain: 'Berriro jokatu',
@@ -139,8 +139,9 @@ export const COPY = {
   points: 'puntu',
   howToKeys: 'Mugitu geziekin edo A/D teklekin, eta egin salto zuriunearekin edo gora geziarekin. Erori etsaien gainera haiek garaitzeko.',
   howToTouch: 'Arrastatu hatza alboetara mugitzeko, eta ukitu pantaila edo irristatu gora salto egiteko. Erori etsaien gainera haiek garaitzeko.',
-  howToGoal:
-    'Bildu musika-notak, garaitu Gatz-zaindaria buruan salto eginez eta sartu tronuaren atetik. Zenbat eta azkarrago, orduan eta puntu gehiago!',
+  /** The menu's invitation, the band's own words. */
+  intro: 'Zure burua lehen postuan uztea lortzen baduzu oparia izango duzu!',
+  howToGoal: 'Horretarako, bildu notak, etsaiak gainditu eta iritsi ahalik eta azkarren bukaerara.',
   time: 'Denbora',
   timeBonus: 'Abiadura-saria',
   touchLeft: 'Ezkerrera',

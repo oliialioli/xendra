@@ -306,6 +306,23 @@
   line-height: 1.15;
 }
 
+.cardIntro {
+  margin: 0;
+  max-width: 34ch;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* The controls, quietly underneath. */
+.cardHint {
+  margin: 0;
+  max-width: 40ch;
+  color: var(--ui-ink-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
 .cardText {
   margin: 0;
   max-width: 36ch;
