@@ -100,6 +100,9 @@ export function useWorldAmbience(bus: GameEventBus, panelRoute: string | null): 
     let lastProximity = 0;
     let fire: { x: number; y: number; lit: boolean } | null = null;
     let view = { centerX: 0, halfWidth: 1 };
+    // The rehearsal follows the school landmark's own state (see AmbienceEngine.setSchool).
+    let schoolActive = false;
+    let schoolNear = { level: 0, pan: 0 };
     const offFrame = bus.on('camera:frame', ({ worldViewX, zoom, viewportWidth, snailX, snailY }) => {
       const now = performance.now();
       if (now - lastProximity < PROXIMITY_EVERY_MS) return;
@@ -112,12 +115,16 @@ export function useWorldAmbience(bus: GameEventBus, panelRoute: string | null): 
       ambienceEngine.setFire(fireNear.level, fireNear.pan);
       const fountainNear = fountainProximity(snail, LANDMARK_POSITIONS.fountain, worldViewX + halfWidth, halfWidth);
       ambienceEngine.setFountain(fountainNear.level, fountainNear.pan);
-      const schoolNear = schoolProximity(snail, SCHOOL, worldViewX + halfWidth, halfWidth);
-      ambienceEngine.setSchool(schoolNear.level, schoolNear.pan);
+      schoolNear = schoolProximity(snail, SCHOOL, worldViewX + halfWidth, halfWidth);
+      ambienceEngine.setSchool(schoolActive, schoolNear.level, schoolNear.pan);
     });
     const offFire = bus.on('campfire:lit', (state) => {
       fire = state;
       if (!state.lit) ambienceEngine.setFire(0, 0);
+    });
+    const offNearest = bus.on('landmark:proximityChanged', ({ nearestId }) => {
+      schoolActive = nearestId === 'school';
+      ambienceEngine.setSchool(schoolActive, schoolNear.level, schoolNear.pan);
     });
     const offSplash = bus.on('beaver:splash', ({ x, startled }) =>
       ambienceEngine.splash(panFor(x, view.centerX, view.halfWidth), startled),
@@ -131,6 +138,7 @@ export function useWorldAmbience(bus: GameEventBus, panelRoute: string | null): 
       offFire();
       offSpray();
       offSplash();
+      offNearest();
       offRain();
       offGust();
       offGreet();

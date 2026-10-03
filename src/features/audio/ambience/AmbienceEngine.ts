@@ -44,8 +44,10 @@ export class AmbienceEngine {
   private fountainLevel = 0;
   private fountainSpraying = false;
   private school!: { input: GainNode; gain: GainNode; muffle: BiquadFilterNode; pan: StereoPannerNode };
-  private schoolLevel = 0;
+  private schoolActive = false;
   private schoolBusy = false;
+  private schoolSource: AudioBufferSourceNode | null = null;
+  private schoolGap = 0;
   private schoolSrc = SCHOOL_REHEARSAL_SRC;
   private birdBus!: GainNode;
   private timers = new Set<number>();
@@ -127,19 +129,36 @@ export class AmbienceEngine {
   }
 
   /**
-   * 0-1: how near the music school is, and where it sits left-right. The
-   * band starts a run-through of the chorus whenever you're in earshot and
-   * they aren't already playing; nearer, the walls muffle it less.
+   * The rehearsal follows the school itself: `active` while it's the landmark
+   * that can be opened (its badge lit, Ireki showing). Then the band starts
+   * the chorus from the top -- clearly, if a little muffled by the walls --
+   * and keeps running through it with short breaks; `nearness` (0-1) makes
+   * it more present right beside the building. Walking away fades it out and
+   * stops it, so the next visit starts from the top again.
    */
-  setSchool(level: number, pan: number): void {
-    this.schoolLevel = level;
+  setSchool(active: boolean, nearness: number, pan: number): void {
+    // Fetch the recording as soon as the snail is heading that way, so it's ready on arrival.
+    if (active || nearness > 0) void this.loadVoice(this.schoolSrc);
+    const wasActive = this.schoolActive;
+    this.schoolActive = active;
     if (!this.ctx) return;
     const t = this.ctx.currentTime;
-    this.school.gain.gain.setTargetAtTime(MIX.school * level, t, GLIDE.proximity);
-    // Through the walls from afar (only the low end gets out), opening up close by.
-    this.school.muffle.frequency.setTargetAtTime(380 + 1500 * level * level, t, GLIDE.proximity);
+    const level = active ? 0.7 + 0.3 * nearness : 0;
+    this.school.gain.gain.setTargetAtTime(MIX.school * level, t, active ? 0.3 : 0.6);
+    // Still heard through the walls, but never so muffled it's lost; opening up beside it.
+    this.school.muffle.frequency.setTargetAtTime(600 + 1600 * level * level, t, GLIDE.proximity);
     this.school.pan.pan.setTargetAtTime(pan, t, GLIDE.proximity);
-    if (level > 0.02 && !this.schoolBusy) void this.rehearse();
+    if (active && !this.schoolBusy) void this.rehearse();
+    if (!active && wasActive) this.stopRehearsal();
+  }
+
+  /** Lets the fade-out finish, then stops the run-through and any break before the next. */
+  private stopRehearsal(): void {
+    window.clearTimeout(this.schoolGap);
+    const source = this.schoolSource;
+    this.schoolSource = null;
+    this.schoolBusy = false;
+    if (source && this.ctx) source.stop(this.ctx.currentTime + 1.6);
   }
 
   /** Where the rehearsal recording lives (resolved for the deploy's base path). */
@@ -193,26 +212,26 @@ export class AmbienceEngine {
     }
   }
 
-  /** One run-through of the chorus; then, after a pause, another -- while you're still in earshot. */
+  /** One run-through of the chorus; then, after a short break, another -- while the school stays active. */
   private async rehearse(): Promise<void> {
     if (!this.isRunning()) return;
     this.schoolBusy = true;
     const buffer = await this.loadVoice(this.schoolSrc);
-    if (!buffer || !this.isRunning()) {
+    if (!buffer || !this.isRunning() || !this.schoolActive) {
       this.schoolBusy = false;
       return;
     }
     const source = this.ctx!.createBufferSource();
     source.buffer = buffer;
     source.connect(this.school.input);
+    this.schoolSource = source;
     source.onended = () => {
-      const gap = rand(...TIMING.rehearsalGap) * 1000;
-      const id = window.setTimeout(() => {
-        this.timers.delete(id);
+      if (this.schoolSource !== source) return; // stopped on the way out
+      this.schoolSource = null;
+      this.schoolGap = window.setTimeout(() => {
         this.schoolBusy = false;
-        if (this.schoolLevel > 0.02) void this.rehearse();
-      }, gap);
-      this.timers.add(id);
+        if (this.schoolActive) void this.rehearse();
+      }, rand(...TIMING.rehearsalGap) * 1000);
     };
     source.start();
   }
@@ -282,6 +301,7 @@ export class AmbienceEngine {
   }
 
   destroy(): void {
+    window.clearTimeout(this.schoolGap);
     this.timers.forEach((id) => window.clearTimeout(id));
     this.timers.clear();
     window.clearTimeout(this.suspendTimer);

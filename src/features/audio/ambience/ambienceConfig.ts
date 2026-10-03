@@ -100,6 +100,6 @@ export const TIMING = {
   leaves: [9, 20] as [number, number],
   /** Birds go quieter in the rain: their gaps stretch by up to this factor at its peak. */
   birdsRainFactor: 3,
-  /** The band pausing between run-throughs of the chorus. */
-  rehearsalGap: [4, 9] as [number, number],
+  /** The band's short break between run-throughs of the chorus. */
+  rehearsalGap: [1.5, 3] as [number, number],
 } as const;
