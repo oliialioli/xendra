@@ -69,6 +69,15 @@ describe('BoatCreator', () => {
     expect(screen.getByLabelText('Zure mezua')).toHaveValue('Kaixo Xendra!');
   });
 
+  it("doesn't focus any field (or open a phone's keyboard) on reaching the message step", async () => {
+    const { user } = setup();
+    await user.click(screen.getByRole('button', { name: 'marraztu' }));
+    await user.click(screen.getByRole('button', { name: 'Gehitu zure mezua' }));
+    expect(screen.getByLabelText('Zure mezua')).not.toHaveFocus();
+    expect(screen.getByLabelText('Izena (aukerakoa)')).not.toHaveFocus();
+    expect(['INPUT', 'TEXTAREA']).not.toContain(document.activeElement?.tagName);
+  });
+
   it('sends the boat with its message, then closes', async () => {
     add.mockResolvedValueOnce({ id: 'b1', displayName: 'Ane', message: 'Kaixo Xendra!', drawing: { version: 1, strokes: [] }, createdAtIso: '' });
     const { user, onClose, onBoatCreated } = setup();

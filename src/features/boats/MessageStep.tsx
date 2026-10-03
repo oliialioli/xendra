@@ -81,7 +81,6 @@ export function MessageStep({
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${formId}-error` : `${formId}-counter`}
           required
-          autoFocus
         />
         <div className={styles.counterRow}>
           <span id={`${formId}-counter`} className={styles.counter} data-over={over}>

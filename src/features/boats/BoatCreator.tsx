@@ -81,7 +81,15 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   useFocusTrap(containerRef, true);
+
+  // Each step starts from its top. Nothing is focused on the way in: on a
+  // phone that would open the keyboard over the step before it's been seen --
+  // the keyboard only comes up when a field is tapped.
+  useEffect(() => {
+    if (bodyRef.current) bodyRef.current.scrollTop = 0;
+  }, [step]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -168,7 +176,7 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
         </header>
         <StepIndicator step={step} />
 
-        <div className={styles.body}>
+        <div ref={bodyRef} className={styles.body}>
           {step === 'draw' ? (
             <div className={styles.drawStep}>
               <div className={styles.reference}>
