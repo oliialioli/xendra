@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import type { GameEventBus, BridgeEvents } from '../../game/bridge/gameEvents';
 import type { Landmark, LandmarkId } from '../../types/content';
 import { LANDMARK_INDICATOR_CONFIG } from './landmarkIndicatorConfig';
@@ -64,9 +64,6 @@ export function DiscoveryIndicators({
     return map;
   }, [landmarks]);
 
-  const autoRevealedRef = useRef<LandmarkId | null>(null);
-  const [autoRevealedId, setAutoRevealedId] = useState<LandmarkId | null>(null);
-
   useEffect(() => {
     if (suppressed) return undefined;
 
@@ -75,12 +72,7 @@ export function DiscoveryIndicators({
       worldViewY,
       zoom,
       viewportWidth,
-      snailX,
-      snailY,
     }: BridgeEvents['camera:frame']) => {
-      let nearestRevealId: LandmarkId | null = null;
-      let nearestRevealDist = Infinity;
-
       landmarks.forEach((landmark) => {
         const config = LANDMARK_INDICATOR_CONFIG[landmark.id];
         // Lift the anchor above the landmark's own ground point by its
@@ -100,18 +92,7 @@ export function DiscoveryIndicators({
             el.setAttribute('data-flip', String(shouldFlip));
           }
         }
-
-        const dist = Math.hypot(landmark.position.x - snailX, landmark.position.y - snailY);
-        if (dist <= config.revealRadius && dist < nearestRevealDist) {
-          nearestRevealDist = dist;
-          nearestRevealId = landmark.id;
-        }
       });
-
-      if (autoRevealedRef.current !== nearestRevealId) {
-        autoRevealedRef.current = nearestRevealId;
-        setAutoRevealedId(nearestRevealId);
-      }
     };
 
     return bus.on('camera:frame', handleFrame);
@@ -124,7 +105,8 @@ export function DiscoveryIndicators({
           key={landmark.id}
           title={landmark.title}
           config={LANDMARK_INDICATOR_CONFIG[landmark.id]}
-          autoRevealed={autoRevealedId === landmark.id}
+          // Its label opens exactly when it can be opened -- the same landmark the Hud's bar offers.
+          autoRevealed={nearestId === landmark.id}
           interactable={nearestId === landmark.id}
           reducedMotion={reducedMotion}
           suppressed={suppressed}

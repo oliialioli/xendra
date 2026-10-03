@@ -8,7 +8,8 @@ import {
   ISLAND_EDGE_MARGIN,
   ISLAND_POLYGON,
   LANDMARK_ASSET_OVERRIDES,
-  LANDMARK_REVEAL_RADIUS,
+  FOOTPRINT_REACH,
+  LANDMARK_FOOTPRINTS,
   OBSTACLE_CIRCLES,
   OBSTACLE_RECTS,
   SPAWN_POINT,
@@ -64,9 +65,9 @@ type LandmarkSpriteRenderInfo = {
 
 /**
  * Tracks a landmark's optional lights-overlay sprite (see
- * LandmarkAssetConfig.lightsPath) so updateLandmarkLights() can compare the
- * snail's distance against LANDMARK_REVEAL_RADIUS once per frame and only
- * react on an actual enter/exit transition, never mid-tween.
+ * LandmarkAssetConfig.lightsPath) so updateLandmarkLights() can check once
+ * per frame whether it's the landmark that can be opened, and only react on
+ * an actual on/off transition, never mid-tween.
  */
 type LandmarkLightState = {
   sprite: Phaser.GameObjects.Image;
@@ -704,7 +705,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private updateProximity(): void {
-    const nearest = findNearestLandmark(this.snail.position, this.landmarks);
+    const nearest = findNearestLandmark(this.snail.position, this.landmarks, LANDMARK_FOOTPRINTS, FOOTPRINT_REACH);
     if (nearest === this.nearestId) return;
 
     this.nearestId = nearest;
@@ -721,20 +722,15 @@ export class MapScene extends Phaser.Scene {
 
   /**
    * Drives each landmark's optional lights-overlay sprite (see
-   * LandmarkAssetConfig.lightsPath) purely off distance to
-   * LANDMARK_REVEAL_RADIUS -- independent of nearestId/interaction, so the
-   * lights react before the player is close enough to open any panel. Runs
-   * every frame but only starts a new tween on an actual enter/exit edge
+   * LandmarkAssetConfig.lightsPath): lit exactly while it's the landmark that
+   * can be opened (nearestId) -- lighting up is the promise that it opens.
+   * Runs every frame but only starts a new tween on an actual enter/exit edge
    * (`withinRange !== state.isLit`), never while already lit/unlit, so the
    * ignite sequence can't restart mid-flight while the snail lingers inside.
    */
   private updateLandmarkLights(): void {
     this.landmarkLights.forEach((state) => {
-      const distance = Math.hypot(
-        this.snail.position.x - state.landmark.position.x,
-        this.snail.position.y - state.landmark.position.y,
-      );
-      const withinRange = distance <= LANDMARK_REVEAL_RADIUS;
+      const withinRange = this.nearestId === state.landmark.id;
       if (withinRange === state.isLit) return;
 
       state.isLit = withinRange;
@@ -768,11 +764,8 @@ export class MapScene extends Phaser.Scene {
    */
   private updateLandmarkGlow(): void {
     this.landmarkGlow.forEach((state) => {
-      const distance = Math.hypot(
-        this.snail.position.x - state.landmark.position.x,
-        this.snail.position.y - state.landmark.position.y,
-      );
-      const withinRange = distance <= LANDMARK_REVEAL_RADIUS;
+      // Same rule as the lights: glowing means it can be opened right now.
+      const withinRange = this.nearestId === state.landmark.id;
       if (withinRange === state.isLit) return;
 
       state.isLit = withinRange;

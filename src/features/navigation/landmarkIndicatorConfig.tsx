@@ -10,7 +10,6 @@ import {
 } from '@phosphor-icons/react';
 import type { LandmarkId } from '../../types/content';
 import { CastleRuinIcon, SteamTrainIcon } from './landmarkIcons';
-import { LANDMARK_REVEAL_RADIUS } from '../../content/mapGeometry';
 
 export type LandmarkIndicatorConfig = {
   /** Phosphor icon shown inside the closed circle / expanded pill. */
@@ -21,14 +20,6 @@ export type LandmarkIndicatorConfig = {
    * enough to never compete visually with the building it points at.
    */
   label: string;
-  /**
-   * World-unit distance at which the badge auto-expands to show its label
-   * (before the snail is close enough to interact) -- always larger than the
-   * landmark's own `interactionRadius`, so the label anticipates what the
-   * player is about to reach rather than only confirming it once they're
-   * already there.
-   */
-  revealRadius: number;
   /**
    * Approximate world-unit height of the landmark's visual structure, used
    * to lift the badge above its roofline rather than off the bare ground
@@ -45,13 +36,11 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
   kiosk: {
     icon: TShirt,
     label: 'Denda',
-    revealRadius: LANDMARK_REVEAL_RADIUS,
     visualHeight: 118,
   },
   stage: {
     icon: MicrophoneStage,
     label: 'Kontzertuak',
-    revealRadius: LANDMARK_REVEAL_RADIUS,
     // Matches escenario-xendra.png's own analyzed height (roof to anchor),
     // so the badge clears the roofline -- and the lamps/spiral below it --
     // entirely, rather than sitting over them.
@@ -60,7 +49,6 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
   school: {
     icon: VinylRecord,
     label: 'Musika',
-    revealRadius: LANDMARK_REVEAL_RADIUS,
     // Slightly less than escuela-musica-xendra-default.png's own analyzed
     // height (roof to anchor, 260) -- clearing the roofline entirely left
     // the badge looking disconnected, floating well above the building;
@@ -70,7 +58,6 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
   fountain: {
     icon: UsersThree,
     label: 'Taldea',
-    revealRadius: LANDMARK_REVEAL_RADIUS,
     // The fountain's own anchor is its analyzed *center* (see
     // LANDMARK_ASSET_OVERRIDES.fountain's anchorMode), not a ground-contact
     // point -- so this is half fuente-xendra.png's own analyzed height (to
@@ -81,14 +68,12 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
   trainHistory: {
     icon: SteamTrainIcon,
     label: 'Historia',
-    revealRadius: LANDMARK_REVEAL_RADIUS,
     // Clears the middle carriage's roof above tren.png's anchor.
     visualHeight: 150,
   },
   bulletinBoard: {
     icon: ImagesSquare,
     label: 'Galeria',
-    revealRadius: LANDMARK_REVEAL_RADIUS,
     // Roughly tablon-anuncios.png's own height (roof to anchor) at
     // BULLETIN_BOARD_WIDTH_PERCENT, so the badge sits just over the roof.
     visualHeight: 100,
@@ -99,13 +84,11 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
   dockMessages: {
     icon: Pencil,
     label: 'Mezuak',
-    revealRadius: LANDMARK_REVEAL_RADIUS,
     visualHeight: 65,
   },
   postbox: {
     icon: EnvelopeSimple,
     label: 'Kontaktua',
-    revealRadius: LANDMARK_REVEAL_RADIUS,
     // Roughly buzon.png's own analyzed height (cap to anchor) at
     // POSTBOX_WIDTH_PERCENT, so the badge sits just over the cap.
     visualHeight: 88,
@@ -113,7 +96,6 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
   castle: {
     icon: CastleRuinIcon,
     label: 'Jokoa',
-    revealRadius: LANDMARK_REVEAL_RADIUS,
     // Just over the tall corner tower of castillo.png (its anchor sits near
     // the top of the map, so a higher badge would be cut off by the edge).
     visualHeight: 120,

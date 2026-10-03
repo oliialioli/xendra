@@ -5,7 +5,7 @@ import styles from './LandmarkIndicator.module.css';
 export type LandmarkIndicatorProps = {
   title: string;
   config: LandmarkIndicatorConfig;
-  /** True when this is the single nearest badge within its own revealRadius -- see DiscoveryIndicators. */
+  /** True when this is the landmark that can be opened right now (the map's nearestId) -- see DiscoveryIndicators. */
   autoRevealed: boolean;
   /** True when the snail is within the landmark's real `interactionRadius` -- same signal the Hud's bottom bar already uses. */
   interactable: boolean;

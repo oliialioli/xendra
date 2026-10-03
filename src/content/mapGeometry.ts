@@ -435,14 +435,33 @@ export const LANDMARK_INTERACTION_RADIUS = 110;
  */
 export const FOUNTAIN_INTERACTION_RADIUS = 130;
 
+const obstacleRects = (...ids: string[]) => OBSTACLE_RECTS.filter((r) => ids.includes(r.id));
+const obstacleCircles = (...ids: string[]) => OBSTACLE_CIRCLES.filter((c) => ids.includes(c.id));
+
 /**
- * World-unit distance at which a landmark's discovery badge auto-expands
- * (see landmarkIndicatorConfig.tsx) and, for landmarks with a lights overlay
- * (see LandmarkAssetConfig.lightsPath below), at which that overlay ignites.
- * Always larger than LANDMARK_INTERACTION_RADIUS so both anticipate what the
- * player is about to reach rather than only confirming it once they arrive.
+ * The ground each landmark actually takes up (its own obstacle shapes), so
+ * nearness is measured from the building's edge rather than from its single
+ * anchor point: walking up to any side of a big building like the music
+ * school counts, not just its front door. A landmark without one (the
+ * riverside house) uses its anchor alone.
  */
-export const LANDMARK_REVEAL_RADIUS = 180;
+export const LANDMARK_FOOTPRINTS: Partial<Record<LandmarkId, (ObstacleRect | ObstacleCircle)[]>> = {
+  kiosk: obstacleRects('kiosk-building'),
+  stage: obstacleRects('stage-structure'),
+  school: obstacleRects('school-building'),
+  castle: obstacleRects('castle-ruins'),
+  bulletinBoard: obstacleRects('bulletin-board'),
+  trainHistory: TRAIN_FOOTPRINT,
+  fountain: obstacleCircles('fountain-basin'),
+  postbox: obstacleCircles('postbox-plinth'),
+};
+
+/**
+ * Distance from a footprint's edge counts as this much further than the same
+ * distance from the anchor -- so `interactionRadius` (110) reaches about 70
+ * units out from a building's walls: right up against it, or close by.
+ */
+export const FOOTPRINT_REACH = 40;
 
 export type LandmarkAssetConfig = {
   /** Path under /public to a real artwork PNG (transparent padding, and a baked semi-transparent drop shadow, are both fine -- see analyzeOpaqueBuildingBounds). */
