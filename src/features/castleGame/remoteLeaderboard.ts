@@ -46,26 +46,37 @@ export async function startSharedRun(): Promise<string | null> {
   }
 }
 
-/** Sends a finished game's score. False if it couldn't be saved (or was refused as implausible). */
+export type SubmitResult = {
+  /** False if it couldn't be saved (offline, or refused as implausible). */
+  ok: boolean;
+  /**
+   * The discount code (XENDRA1, XENDRA2...) when this score took first place
+   * from everyone -- handed out by Supabase, in order (migration 0003).
+   */
+  prizeCode: string | null;
+};
+
+/** Sends a finished game's score to everyone's ranking. */
 export async function submitSharedScore(
   runId: string,
   alias: string,
   score: number,
   seconds: number,
   won: boolean,
-): Promise<boolean> {
+): Promise<SubmitResult> {
   const supabase = getSupabaseClient();
-  if (!supabase) return false;
+  if (!supabase) return { ok: false, prizeCode: null };
   try {
-    const { error } = await supabase.rpc('submit_castle_score', {
+    const { data, error } = await supabase.rpc('submit_castle_score', {
       p_run: runId,
       p_alias: alias,
       p_score: score,
       p_seconds: Math.round(seconds * 10) / 10,
       p_won: won,
     });
-    return !error;
+    if (error) return { ok: false, prizeCode: null };
+    return { ok: true, prizeCode: typeof data === 'string' && /^XENDRA\d+$/.test(data) ? data : null };
   } catch {
-    return false;
+    return { ok: false, prizeCode: null };
   }
 }

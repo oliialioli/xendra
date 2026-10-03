@@ -9,6 +9,7 @@ import { advance, createGame, type GameState } from './engine';
 import { InputController, isGameKey, type TouchButton } from './input';
 import { cleanAlias, loadLeaderboard, qualifies, saveScore, type LeaderboardEntry } from './leaderboard';
 import { fetchSharedTop, startSharedRun, submitSharedScore } from './remoteLeaderboard';
+import { loadPrizeCodes, rememberPrizeCode } from './prize';
 import { Camera, Effects, computeView, drawFrame, type View } from './render';
 import styles from './CastleGame.module.css';
 
@@ -128,6 +129,10 @@ export function CastleGame({ onClose }: CastleGameProps) {
   /** Whether `board` is everyone's ranking (Supabase) rather than this browser's. */
   const [boardShared, setBoardShared] = useState(false);
   const [saving, setSaving] = useState(false);
+  /** The discount code this game won, if it took first place from everyone. */
+  const [prizeCode, setPrizeCode] = useState<string | null>(null);
+  const [prizeCopied, setPrizeCopied] = useState(false);
+  const [prizeCodes, setPrizeCodes] = useState<string[]>(() => loadPrizeCodes());
   /** This game's run id from Supabase (null until it arrives, or if unavailable). */
   const runIdRef = useRef<string | null>(null);
   const gameSeqRef = useRef(0);
@@ -159,6 +164,7 @@ export function CastleGame({ onClose }: CastleGameProps) {
     ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
     drawFrame(ctx, gameRef.current, viewRef.current, cameraRef.current, effectsRef.current);
   }, []);
+
 
 
 
@@ -198,6 +204,8 @@ export function CastleGame({ onClose }: CastleGameProps) {
     setHud(HUD_START);
     setSavedRun(null);
     setSavedEntry(null);
+    setPrizeCode(null);
+    setPrizeCopied(false);
     setAlias('');
     setAliasError(null);
     setNotice(null);
@@ -394,7 +402,13 @@ export function CastleGame({ onClose }: CastleGameProps) {
     // Into everyone's ranking; if that fails (offline, refused), into this browser's instead.
     setSaving(true);
     void submitSharedScore(runId, clean, finalScore, finalTime, won)
-      .then((ok) => (ok ? fetchSharedTop() : null))
+      .then(({ ok, prizeCode: code }) => {
+        if (code) {
+          setPrizeCode(code);
+          setPrizeCodes(rememberPrizeCode(code));
+        }
+        return ok ? fetchSharedTop() : null;
+      })
       .then((top) => {
         if (top) setBoard(top);
         else saveHere();
@@ -531,6 +545,11 @@ export function CastleGame({ onClose }: CastleGameProps) {
                   {COPY.start}
                 </button>
                 <Leaderboard entries={board} saved={null} shared={boardShared} />
+                {prizeCodes.length > 0 && (
+                  <p className={styles.yourPrizes}>
+                    {COPY.yourPrizes}: <strong>{prizeCodes.join(', ')}</strong>
+                  </p>
+                )}
               </div>
             </div>
           )}
@@ -574,7 +593,9 @@ export function CastleGame({ onClose }: CastleGameProps) {
 
                 {canSave && (
                   <form className={styles.aliasForm} onSubmit={submitAlias} noValidate>
-                    <label htmlFor="castle-alias">{COPY.newRecord}</label>
+                    <label htmlFor="castle-alias">
+                      {boardShared && (board.length === 0 || finalScore > board[0].score) ? COPY.newTopRecord : COPY.newRecord}
+                    </label>
                     <div className={styles.aliasRow}>
                       <input
                         id="castle-alias"
@@ -596,6 +617,22 @@ export function CastleGame({ onClose }: CastleGameProps) {
                   </form>
                 )}
                 {savedRun === run && <p className={styles.saved} role="status">{COPY.saved}</p>}
+                {prizeCode && (
+                  <div className={styles.prize} role="status">
+                    <p className={styles.prizeTitle}>{COPY.prize}</p>
+                    <p className={styles.prizeCode}>{prizeCode}</p>
+                    <p className={styles.prizeKeep}>{COPY.prizeKeep}</p>
+                    <button
+                      type="button"
+                      className="xnd-btn-secondary"
+                      onClick={() => {
+                        void navigator.clipboard?.writeText(prizeCode).then(() => setPrizeCopied(true), () => {});
+                      }}
+                    >
+                      {prizeCopied ? COPY.prizeCopied : COPY.prizeCopy}
+                    </button>
+                  </div>
+                )}
 
                 <Leaderboard entries={board} saved={savedEntry} shared={boardShared} />
                 <div className={styles.actions}>

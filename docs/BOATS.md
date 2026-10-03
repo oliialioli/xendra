@@ -28,6 +28,10 @@ one exists.
    minigame's shared top 3 (`castle_scores`, readable by all, written only
    through the `submit_castle_score()` check -- see that file). Until it
    exists, the game keeps a per-browser ranking.
+   Then `supabase/migrations/0003_castle_prizes.sql`: whoever beats
+   everyone's best score wins a 10% discount code (XENDRA1, XENDRA2...),
+   handed out in order and recorded in the private `castle_prizes` table
+   (Table Editor -> castle_prizes) with alias, score and date.
 3. Copy `.env.example` to `.env.local` and fill in:
    ```
    VITE_SUPABASE_URL=https://<your-project>.supabase.co

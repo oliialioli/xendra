@@ -476,6 +476,50 @@
   color: var(--ui-danger);
 }
 
+.prize {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-4);
+  background: var(--ui-accent);
+  border-radius: var(--ui-radius-md);
+}
+
+.prizeTitle {
+  margin: 0;
+  font-weight: 700;
+}
+
+.prizeCode {
+  margin: 0;
+  padding: var(--space-1) var(--space-4);
+  border: 2px dashed var(--ui-ink);
+  border-radius: var(--ui-radius-sm);
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  user-select: all;
+}
+
+.prizeKeep {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.yourPrizes {
+  margin: 0;
+  color: var(--ui-ink-muted);
+  font-size: 0.85rem;
+}
+
+.yourPrizes strong {
+  font-family: var(--font-mono);
+  color: var(--ui-ink);
+}
+
 .saved {
   margin: 0;
   font-weight: 600;
