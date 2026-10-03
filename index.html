@@ -22,21 +22,54 @@
       rel="stylesheet"
     />
     <style>
+      /* Before the app's code has arrived: the intro's kraft paper, the cream logo and a gently pulsing line. */
       #initial-loading {
         position: fixed;
         inset: 0;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        font: 500 1rem 'Instrument Sans', system-ui, sans-serif;
-        color: #d7c6af;
+        gap: 22px;
+        font: 600 1.05rem 'Instrument Sans', system-ui, sans-serif;
+        color: #ebdfca;
         background: #4c4032;
+      }
+      #initial-loading img {
+        width: min(220px, 60vw);
+        height: auto;
+      }
+      #initial-loading .line {
+        width: min(240px, 64vw);
+        height: 2px;
+        background: repeating-linear-gradient(90deg, rgb(215 198 175 / 45%) 0 6px, transparent 6px 12px);
+        position: relative;
+        overflow: hidden;
+      }
+      #initial-loading .line::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        width: 30%;
+        background: #ebdfca;
+        animation: initial-loading-run 1.4s ease-in-out infinite;
+      }
+      @keyframes initial-loading-run {
+        from { transform: translateX(-100%); }
+        to { transform: translateX(340%); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #initial-loading .line::after { animation: none; width: 100%; }
       }
     </style>
   </head>
   <body>
     <div id="root">
-      <div id="initial-loading">Xendra kargatzen ari da…</div>
+      <div id="initial-loading" role="status">
+        <img src="/assets/brand/xendra-logo-cream.svg" alt="Xendra" />
+        <div class="line" aria-hidden="true"></div>
+        <span>Uhartea prestatzen…</span>
+      </div>
     </div>
     <noscript>
       Xendra Nafarroako pop-rock talde bat da. Webgune honek JavaScript behar du mapa

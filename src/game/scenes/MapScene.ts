@@ -164,6 +164,10 @@ export class MapScene extends Phaser.Scene {
   }
 
   preload(): void {
+    // How far along the island's images are, for the loading screen (WorldLoading).
+    const { bus } = this.registry.get('bootData') as GameBootData;
+    this.load.on(Phaser.Loader.Events.PROGRESS, (progress: number) => bus.emit('map:loadProgress', { progress }));
+
     this.load.image('xendra-map', assetPath('/assets/map/xendra-map-base-v7-4k.png'));
     this.load.svg('xendra-map-fallback', assetPath('/assets/map/placeholder-map.svg'), {
       width: WORLD_WIDTH,

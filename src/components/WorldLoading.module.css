@@ -1,0 +1,123 @@
+/*
+ * The loading screen: the intro's kraft paper and cream ink (see
+ * IntroScreen.module.css), a dashed trail with the snail crawling along it
+ * as far as the island has loaded.
+ */
+.root {
+  position: fixed;
+  inset: 0;
+  /* Under the HUD (the menu still works while it loads) and any open panel. */
+  z-index: calc(var(--z-hud) - 1);
+  display: flex;
+  background-color: #4c4032;
+  background-position: center;
+  background-size: cover;
+  color: #d7c6af;
+  transition: opacity 500ms var(--ease-organic), visibility 0s linear 0s;
+}
+
+.root[data-done] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 500ms var(--ease-organic), visibility 0s linear 500ms;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 360px;
+  margin: auto;
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.logo {
+  width: min(220px, 60vw);
+  height: auto;
+  margin-bottom: var(--space-6);
+}
+
+/* The trail: a dashed line, solid where the snail has already been. */
+.trail {
+  --snail: 44px;
+  position: relative;
+  width: 100%;
+  height: var(--snail);
+  margin-bottom: var(--space-3);
+}
+
+.trail::before,
+.trailDone {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 6px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.trail::before {
+  right: 0;
+  background: repeating-linear-gradient(90deg, rgb(215 198 175 / 45%) 0 6px, transparent 6px 12px);
+}
+
+.trailDone {
+  width: calc((100% - var(--snail)) * var(--progress, 0) + var(--snail) / 2);
+  background: #ebdfca;
+  transition: width 400ms var(--ease-organic);
+}
+
+.snail {
+  position: absolute;
+  bottom: -4px;
+  left: calc((100% - var(--snail)) * var(--progress, 0));
+  width: var(--snail);
+  height: var(--snail);
+  transition: left 400ms var(--ease-organic);
+  animation: crawl 900ms ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+
+@keyframes crawl {
+  0%,
+  100% {
+    transform: scaleX(1) translateY(0);
+  }
+  50% {
+    transform: scaleX(1.06) translateY(-1px);
+  }
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #ebdfca;
+}
+
+.message {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: rgb(215 198 175 / 72%);
+  animation: messageIn 400ms var(--ease-organic);
+}
+
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snail,
+  .message {
+    animation: none;
+  }
+}

@@ -12,6 +12,7 @@ import { IntroScreen } from '../features/intro/IntroScreen';
 import { Panel } from '../components/Panel';
 import { LiveRegion } from '../components/LiveRegion';
 import { DevWarningBanner } from '../components/DevWarningBanner';
+import { WorldLoading } from '../components/WorldLoading';
 import { Toast } from '../components/Toast';
 import { BoatFleet } from '../features/boats/BoatFleet';
 import { BoatCreator } from '../features/boats/BoatCreator';
@@ -41,6 +42,9 @@ export function MapLayout() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [boatCardOpen, setBoatCardOpen] = useState(false);
   const [gloom, setGloom] = useState(0);
+  const [mapReady, setMapReady] = useState(false);
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [loaderShown, setLoaderShown] = useState(false);
 
   const fleet = useBoatFleet();
   /** The last landmark opened from the map itself (not the menu or a link) -- so we know where the snail is standing. */
@@ -139,6 +143,8 @@ export function MapLayout() {
     });
 
     const offGloom = bus.on('weather:gloom', ({ amount }) => setGloom(amount));
+    const offProgress = bus.on('map:loadProgress', ({ progress }) => setLoadProgress(progress));
+    const offReady = bus.on('game:ready', () => setMapReady(true));
 
     return () => {
       offInteract();
@@ -146,8 +152,19 @@ export function MapLayout() {
       offProximity();
       offAsset();
       offGloom();
+      offProgress();
+      offReady();
     };
   }, [bus, navigate, progress]);
+
+  // The loading screen, once the island would be on screen (past the intro)
+  // but isn't ready yet -- after a short beat, so a quick (cached) load never
+  // flashes it. Once shown it stays mounted to fade out.
+  useEffect(() => {
+    if (mapReady || showIntro) return undefined;
+    const timer = window.setTimeout(() => setLoaderShown(true), 250);
+    return () => window.clearTimeout(timer);
+  }, [mapReady, showIntro]);
 
   useEffect(() => {
     bus.emit('visited:hydrate', { ids: Array.from(progress.visited) });
@@ -195,6 +212,8 @@ export function MapLayout() {
       />
 
       {usingFallbackMap && <DevWarningBanner />}
+
+      {loaderShown && <WorldLoading progress={loadProgress} done={mapReady} />}
 
       <DiscoveryIndicators
         bus={bus}

@@ -3,6 +3,8 @@ import type { LandmarkId } from '../../types/content';
 /** Events emitted by the Phaser world for React to react to. */
 export type GameToAppEvents = {
   'game:ready': void;
+  /** The map's assets loading, 0-1 (before 'game:ready'). */
+  'map:loadProgress': { progress: number };
   'map:assetStatus': { usingFallback: boolean };
   'landmark:proximityChanged': { nearestId: LandmarkId | null };
   'landmark:discovered': { id: LandmarkId };
