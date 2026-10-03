@@ -72,7 +72,7 @@ function ensureTextures(scene: Phaser.Scene): void {
 }
 
 /**
- * A rain shower every minute or two: it builds up over a few seconds, rains
+ * A rain shower every two to four minutes: it builds up over a few seconds, rains
  * for a while and eases off again. Slanted drops and small splashes fill
  * whatever part of the island is in view, and the scene dims slightly under
  * a translucent grey-blue veil while it lasts.
@@ -122,18 +122,18 @@ class RainShowers {
     } as Phaser.Types.GameObjects.Particles.ParticleEmitterConfig);
     this.splashes.setDepth(WEATHER_DEPTH);
 
-    this.schedule(Phaser.Math.Between(20000, 35000));
+    this.schedule(Phaser.Math.Between(60000, 100000));
   }
 
   private schedule(delay: number): void {
     this.timer = this.scene.time.delayedCall(delay, () => {
       this.startShower();
-      this.schedule(Phaser.Math.Between(60000, 110000));
+      this.schedule(Phaser.Math.Between(130000, 230000));
     });
   }
 
   private startShower(): void {
-    const hold = Phaser.Math.Between(8000, 16000);
+    const hold = Phaser.Math.Between(6000, 11000);
     this.drops.start();
     this.splashes.start();
     this.showerTween = this.scene.tweens.chain({
