@@ -36,6 +36,7 @@ import { FountainSpray } from '../entities/FountainSpray';
 import { NoticeBoardPapers } from '../entities/NoticeBoardPapers';
 import { PostboxLetters } from '../entities/PostboxLetters';
 import { KioskVendor } from '../entities/KioskVendor';
+import { TrainSteam } from '../entities/TrainSteam';
 import { Beaver } from '../entities/Beaver';
 import { RIVER_PATH_POLYGON, boatPathConfig } from '../../content/boatPathConfig';
 import { findNearestLandmark } from '../systems/proximity';
@@ -130,6 +131,7 @@ export class MapScene extends Phaser.Scene {
   private reducedMotion = false;
   private campfire: Campfire | null = null;
   private beaver: Beaver | null = null;
+  private trainSteam: TrainSteam | null = null;
   private controlsEnabledAt = 0;
   private fountainSpray: FountainSpray | null = null;
   private noticeBoardPapers: NoticeBoardPapers | null = null;
@@ -225,6 +227,7 @@ export class MapScene extends Phaser.Scene {
     this.setUpNoticeBoardPapers();
     this.setUpPostboxLetters();
     this.setUpKioskVendor();
+    this.setUpTrainSteam();
     this.setUpWaterfallAsset();
     this.setUpGroundDecor(castleConfig, MapScene.castleAssetKey());
     this.setUpCampfire();
@@ -297,6 +300,7 @@ export class MapScene extends Phaser.Scene {
     this.noticeBoardPapers?.update(this.snail.position, delta);
     this.postboxLetters?.update(this.snail.position);
     this.kioskVendor?.update(this.snail.position);
+    this.trainSteam?.update(this.nearestId === 'trainHistory');
     this.beaver?.update(this.snail.position);
     this.weather.update();
 
@@ -606,6 +610,25 @@ export class MapScene extends Phaser.Scene {
     });
   }
 
+  /** The train's active state (see entities/TrainSteam.ts): steam from the chimney, placed on tren.png's own pixel grid. */
+  private setUpTrainSteam(): void {
+    const info = this.landmarkSpriteRenderInfo.get('trainHistory');
+    if (!info) return;
+    const { analysis, renderX, renderY, displayWidth } = info;
+    const scale = displayWidth / analysis.imageWidth;
+    // The chimney's mouth in tren.png.
+    const chimneyPx = { x: 924, y: 736 };
+    this.trainSteam = new TrainSteam(this, {
+      chimney: {
+        x: renderX + (chimneyPx.x - analysis.origin.x * analysis.imageWidth) * scale,
+        y: renderY + (chimneyPx.y - analysis.origin.y * analysis.imageHeight) * scale,
+      },
+      scale,
+      depth: renderY + 1,
+      isReducedMotion: () => this.reducedMotion,
+    });
+  }
+
   /** The kiosk's active state (see entities/KioskVendor.ts), placed on the kiosk sprite's own pixel grid. */
   private setUpKioskVendor(): void {
     const info = this.landmarkSpriteRenderInfo.get('kiosk');
@@ -646,16 +669,18 @@ export class MapScene extends Phaser.Scene {
     const originX = sprite.originX * imageWidth;
     const originY = sprite.originY * imageHeight;
     const { flameBasePx } = campfireConfig;
+    const flameBase = {
+      x: sprite.x + (flameBasePx.x - originX) * scale,
+      y: sprite.y + (flameBasePx.y - originY) * scale,
+    };
     this.campfire = new Campfire(this, {
-      flameBase: {
-        x: sprite.x + (flameBasePx.x - originX) * scale,
-        y: sprite.y + (flameBasePx.y - originY) * scale,
-      },
+      flameBase,
       flameScale: scale,
       flameKey: MapScene.campfireFlameKey(),
       flameOrigin: { x: flameBasePx.x / imageWidth, y: flameBasePx.y / imageHeight },
       depth: sprite.depth,
       isReducedMotion: () => this.reducedMotion,
+      onLitChange: (lit) => this.bus.emit('campfire:lit', { lit, ...flameBase }),
     });
   }
 
@@ -1054,6 +1079,7 @@ export class MapScene extends Phaser.Scene {
     this.weather.destroy();
     this.vegetation.destroy();
     this.campfire?.destroy();
+    this.trainSteam?.destroy();
     this.beaver?.destroy();
     this.campfire = null;
     this.fountainSpray?.destroy();

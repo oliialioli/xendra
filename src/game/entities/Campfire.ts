@@ -18,6 +18,8 @@ export type CampfireOptions = {
   /** Depth just above the campfire base sprite. */
   depth: number;
   isReducedMotion: () => boolean;
+  /** Told when the fire lights up and when it goes out (e.g. for its crackle). */
+  onLitChange?: (lit: boolean) => void;
 };
 
 function ensureEmberTexture(scene: Phaser.Scene): void {
@@ -93,6 +95,7 @@ export class Campfire {
 
   private ignite(): void {
     this.lit = true;
+    this.options.onLitChange?.(true);
     this.scene.tweens.killTweensOf([this.flame, this.glow]);
 
     if (this.options.isReducedMotion()) {
@@ -116,6 +119,7 @@ export class Campfire {
 
   private douse(): void {
     this.lit = false;
+    this.options.onLitChange?.(false);
     this.stopFlicker();
     this.embers.stop();
     this.scene.tweens.killTweensOf([this.flame, this.glow]);

@@ -26,6 +26,9 @@ export const MIX = {
   birdMin: 0.018,
   birdMax: 0.04,
   leaves: 0.03,
+  /** The campfire's soft roar right beside it; its crackles and snaps come on top. */
+  fire: 0.07,
+  fireCracklesPerSecond: 11,
   voice: 0.95,
 } as const;
 
@@ -36,6 +39,9 @@ export const REACH = {
   riverEdge: 420,
   waterfallFull: 60,
   waterfallEdge: 520,
+  /** The campfire, once lit (it lights when the snail comes near). */
+  fireFull: 50,
+  fireEdge: 320,
 } as const;
 
 /** Seconds: the time constant every level glides with, so nothing jumps. */

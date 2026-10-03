@@ -6,7 +6,7 @@ import { waterfallConfig } from '../../../content/dockConfig';
 import { useAudioPlayer } from '../AudioContext';
 import { ambienceEngine } from './AmbienceEngine';
 import { VENDOR_VOICE_SRC } from './ambienceConfig';
-import { ambienceDuck, waterProximity } from './ambienceMath';
+import { ambienceDuck, fireProximity, waterProximity } from './ambienceMath';
 import { assetPath } from '../../../lib/assetPath';
 
 /** How often the snail's position is turned into water levels (the levels themselves glide). */
@@ -88,20 +88,27 @@ export function useWorldAmbience(bus: GameEventBus, panelRoute: string | null): 
 
   useEffect(() => {
     let lastProximity = 0;
+    let fire: { x: number; y: number; lit: boolean } | null = null;
     const offFrame = bus.on('camera:frame', ({ worldViewX, zoom, viewportWidth, snailX, snailY }) => {
       const now = performance.now();
       if (now - lastProximity < PROXIMITY_EVERY_MS) return;
       lastProximity = now;
       const halfWidth = viewportWidth / zoom / 2;
-      ambienceEngine.setProximity(
-        waterProximity({ x: snailX, y: snailY }, ISLAND_POLYGON, WATERFALL, worldViewX + halfWidth, halfWidth),
-      );
+      const snail = { x: snailX, y: snailY };
+      ambienceEngine.setProximity(waterProximity(snail, ISLAND_POLYGON, WATERFALL, worldViewX + halfWidth, halfWidth));
+      const { level, pan } = fireProximity(snail, fire, worldViewX + halfWidth, halfWidth);
+      ambienceEngine.setFire(level, pan);
+    });
+    const offFire = bus.on('campfire:lit', (state) => {
+      fire = state;
+      if (!state.lit) ambienceEngine.setFire(0, 0);
     });
     const offRain = bus.on('weather:rain', ({ intensity }) => ambienceEngine.setRain(intensity));
     const offGust = bus.on('weather:gust', ({ fromLeft }) => ambienceEngine.gust(fromLeft));
     const offGreet = bus.on('kiosk:greet', () => void ambienceEngine.playVoice(assetPath(VENDOR_VOICE_SRC)));
     return () => {
       offFrame();
+      offFire();
       offRain();
       offGust();
       offGreet();

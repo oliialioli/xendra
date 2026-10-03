@@ -15,6 +15,7 @@ type Noise = 'white' | 'pink' | 'brown';
  *   rain       a hiss plus a patter of single drops, following the showers
  *   wind       a whoosh sweeping across the stereo field on each gust
  *   leaves     short rustles now and then, and in every gust
+ *   fire       the campfire once lit: a soft roar with crackles and the odd snap
  *   birds      chirps, whistles and trills from a few made-up species, with
  *              a touch of echo so they sound far off; quieter in the rain
  *
@@ -31,6 +32,8 @@ export class AmbienceEngine {
   private river!: { gain: GainNode; pan: StereoPannerNode };
   private waterfall!: { gain: GainNode; pan: StereoPannerNode };
   private rain!: GainNode;
+  private fire!: { gain: GainNode; pan: StereoPannerNode };
+  private fireLevel = 0;
   private birdBus!: GainNode;
   private timers = new Set<number>();
   private suspendTimer = 0;
@@ -79,6 +82,15 @@ export class AmbienceEngine {
     this.river.pan.pan.setTargetAtTime(riverPan, t, GLIDE.proximity);
     this.waterfall.gain.gain.setTargetAtTime(MIX.waterfallNear * Math.pow(waterfall, 1.6), t, GLIDE.proximity);
     this.waterfall.pan.pan.setTargetAtTime(waterfallPan, t, GLIDE.proximity);
+  }
+
+  /** 0-1: how loud the campfire is (0 while it's out), and where it sits left-right. */
+  setFire(level: number, pan: number): void {
+    this.fireLevel = level;
+    if (!this.ctx) return;
+    const t = this.ctx.currentTime;
+    this.fire.gain.gain.setTargetAtTime(MIX.fire * level, t, level > 0 ? 0.5 : 0.8);
+    this.fire.pan.pan.setTargetAtTime(pan, t, GLIDE.proximity);
   }
 
   /** 0-1, following the map's rain showers. */
@@ -170,11 +182,13 @@ export class AmbienceEngine {
     this.buildRiver();
     this.buildWaterfall();
     this.buildRain();
+    this.buildFire();
     this.buildBirds();
     this.setRain(this.rainIntensity);
     this.loop(TIMING.birds, () => this.bird(), () => 1 + (TIMING.birdsRainFactor - 1) * this.rainIntensity);
     this.loop(TIMING.leaves, () => this.rustle(rand(0.7, 1.3), this.ctx!.currentTime, rand(-0.6, 0.6)));
     this.loop([0.04, 0.04], () => this.rainDrops(0.04));
+    this.loop([0.04, 0.04], () => this.crackles(0.04));
   }
 
   private makeNoise(kind: Noise): AudioBuffer {
@@ -284,6 +298,55 @@ export class AmbienceEngine {
     const hiss = this.noiseSource('white', true);
     hiss.connect(this.filter('highpass', 1200)).connect(this.filter('lowpass', 7500)).connect(this.rain);
     hiss.start(0, rand(0, 3));
+  }
+
+  /** The campfire's bed: a low, breathing roar of brown noise with a flickering band of hiss over it. */
+  private buildFire(): void {
+    const ctx = this.ctx!;
+    const gain = ctx.createGain();
+    gain.gain.value = 0;
+    const pan = ctx.createStereoPanner();
+    gain.connect(pan).connect(this.ambience);
+
+    const roar = this.noiseSource('brown', true);
+    const roarGain = ctx.createGain();
+    roarGain.gain.value = 0.8;
+    this.lfo(roarGain.gain, 0.6, 0.18);
+    roar.connect(this.filter('lowpass', 420)).connect(roarGain).connect(gain);
+    roar.start(0, rand(0, 3));
+
+    const hiss = this.noiseSource('pink', true);
+    const hissGain = ctx.createGain();
+    hissGain.gain.value = 0.35;
+    this.lfo(hissGain.gain, 3.1, 0.12);
+    this.lfo(hissGain.gain, 1.7, 0.1);
+    hiss.connect(this.filter('bandpass', 1400, 0.7)).connect(hissGain).connect(gain);
+    hiss.start(0, rand(0, 3));
+
+    this.fire = { gain, pan };
+  }
+
+  /** Wood crackling: tiny bright clicks, now and then a deeper snap. */
+  private crackles(span: number): void {
+    if (this.fireLevel < 0.05) return;
+    const ctx = this.ctx!;
+    const expected = MIX.fireCracklesPerSecond * this.fireLevel * span;
+    const count = Math.floor(expected) + (Math.random() < expected % 1 ? 1 : 0);
+    for (let i = 0; i < count; i += 1) {
+      const t = ctx.currentTime + rand(0, span);
+      const snap = Math.random() < 0.12;
+      const length = snap ? rand(0.03, 0.06) : rand(0.004, 0.014);
+      const src = this.noiseSource('white');
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(rand(0.25, snap ? 0.9 : 0.55) * this.fireLevel * MIX.fire * 1.6, t);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + length);
+      const pan = ctx.createStereoPanner();
+      pan.pan.value = Math.max(-1, Math.min(1, this.fire.pan.pan.value + rand(-0.15, 0.15)));
+      const tone = snap ? this.filter('bandpass', rand(700, 1400), 1.2) : this.filter('bandpass', rand(2500, 7000), 1.4);
+      src.connect(tone).connect(gain).connect(pan).connect(this.ambience);
+      src.start(t, rand(0, 3.5));
+      src.stop(t + length + 0.02);
+    }
   }
 
   /** Birds go through a soft filter and a little echo, so they read as somewhere off in the trees. */

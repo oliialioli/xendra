@@ -61,6 +61,18 @@ export function waterProximity(
   };
 }
 
+/** How loud the campfire is (0 while out) and where it sits in the view. */
+export function fireProximity(
+  snail: Vector2Like,
+  fire: (Vector2Like & { lit: boolean }) | null,
+  viewCenterX: number,
+  viewHalfWidth: number,
+): { level: number; pan: number } {
+  if (!fire || !fire.lit) return { level: 0, pan: 0 };
+  const d = Math.hypot(snail.x - fire.x, snail.y - fire.y);
+  return { level: falloff(d, REACH.fireFull, REACH.fireEdge), pan: panFor(fire.x, viewCenterX, viewHalfWidth) * 0.8 };
+}
+
 export type DuckState = {
   /** The open section's route, or null on the map. */
   panelRoute: string | null;

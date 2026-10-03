@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DUCK, REACH } from './ambienceConfig';
-import { ambienceDuck, falloff, nearestOnPolygon, panFor, waterProximity } from './ambienceMath';
+import { ambienceDuck, falloff, fireProximity, nearestOnPolygon, panFor, waterProximity } from './ambienceMath';
 
 const square = [
   { x: 0, y: 0 },
@@ -36,6 +36,16 @@ describe('ambience math', () => {
     const atFalls = waterProximity({ x: 880, y: 880 }, square, { x: 900, y: 900 }, view.center, view.half);
     expect(atFalls.waterfall).toBe(1);
     expect(atFalls.waterfallPan).toBeGreaterThan(0); // to the right of the view's centre
+  });
+
+  it('hears the campfire only while lit, louder close by', () => {
+    const fire = { x: 500, y: 500 };
+    expect(fireProximity({ x: 520, y: 500 }, { ...fire, lit: false }, 500, 400).level).toBe(0);
+    expect(fireProximity({ x: 520, y: 500 }, { ...fire, lit: true }, 500, 400).level).toBe(1);
+    const further = fireProximity({ x: 700, y: 500 }, { ...fire, lit: true }, 500, 400).level;
+    expect(further).toBeGreaterThan(0);
+    expect(further).toBeLessThan(1);
+    expect(fireProximity({ x: 520, y: 500 }, null, 500, 400).level).toBe(0);
   });
 
   it('pans by where a sound sits in the view', () => {

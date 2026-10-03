@@ -49,6 +49,8 @@ export type AppToGameEvents = {
   'weather:gust': { fromLeft: boolean };
   /** The kiosk vendor has just leaned out to greet the snail (once per approach). */
   'kiosk:greet': void;
+  /** The campfire lighting up (the snail came near) or going out, and where it is. */
+  'campfire:lit': { lit: boolean; x: number; y: number };
   /** Puts the snail down at a world point (and the camera on it) -- e.g. back in front of the castle after its minigame. */
   'snail:placeAt': { x: number; y: number };
   'controls:joystick': { x: number; y: number };
