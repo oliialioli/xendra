@@ -51,7 +51,7 @@ describe('ambience math', () => {
     const fire = { x: 500, y: 500 };
     expect(fireProximity({ x: 520, y: 500 }, { ...fire, lit: false }, 500, 400).level).toBe(0);
     expect(fireProximity({ x: 520, y: 500 }, { ...fire, lit: true }, 500, 400).level).toBe(1);
-    const further = fireProximity({ x: 700, y: 500 }, { ...fire, lit: true }, 500, 400).level;
+    const further = fireProximity({ x: 500 + (REACH.fireFull + REACH.fireEdge) / 2, y: 500 }, { ...fire, lit: true }, 500, 400).level;
     expect(further).toBeGreaterThan(0);
     expect(further).toBeLessThan(1);
     expect(fireProximity({ x: 520, y: 500 }, null, 500, 400).level).toBe(0);
