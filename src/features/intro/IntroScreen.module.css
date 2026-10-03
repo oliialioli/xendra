@@ -137,62 +137,16 @@
   animation: reveal 450ms var(--ease-organic) var(--t-controls) both;
 }
 
-.controlsRow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-4);
-}
 
-.keyCluster {
-  display: grid;
-  grid-template-columns: repeat(3, 24px);
-  grid-template-rows: repeat(2, 24px);
-  grid-template-areas:
-    '. up .'
-    'left down right';
-  gap: 3px;
-}
 
-.key {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5px;
-  background: rgb(215 198 175 / 10%);
-  box-shadow: inset 0 -2px 0 rgb(20 14 8 / 35%);
-  color: var(--intro-cream);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  line-height: 1;
-  /* A short sweep up-left-down-right once the guide is in, hinting at movement. */
-  animation: keyPress 420ms ease-out calc(var(--t-keys) + var(--key-step) * 170ms);
-}
 
-.key[data-area='up'] {
-  grid-area: up;
-}
 
-.key[data-area='left'] {
-  grid-area: left;
-}
 
-.key[data-area='down'] {
-  grid-area: down;
-}
 
-.key[data-area='right'] {
-  grid-area: right;
-}
 
-.mouse,
-.gesture {
-  color: var(--intro-cream);
-  opacity: 0.85;
-}
 
 .controlsLabel {
-  margin: var(--space-2) 0 0;
+  margin: 0;
   font-family: var(--font-mono);
   font-size: 0.78rem;
   color: var(--intro-cream);
@@ -269,15 +223,3 @@
   }
 }
 
-@keyframes keyPress {
-  0%,
-  100% {
-    transform: none;
-  }
-  35% {
-    background: var(--intro-cream);
-    color: var(--intro-ink);
-    box-shadow: inset 0 -1px 0 rgb(20 14 8 / 35%);
-    transform: translateY(1px);
-  }
-}

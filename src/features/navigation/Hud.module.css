@@ -69,3 +69,26 @@
     padding-left: 10px;
   }
 }
+
+/* The E key beside Ireki, for keyboards (hidden on touch screens). */
+.keyHint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border-radius: var(--ui-radius-sm);
+  background: var(--ui-well);
+  box-shadow: inset 0 -2px 0 0 var(--ui-border);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ui-ink-muted);
+}
+
+@media (pointer: coarse), (max-width: 720px) {
+  .keyHint {
+    display: none;
+  }
+}

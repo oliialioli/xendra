@@ -27,7 +27,8 @@ const SettingsContext = createContext<SettingsContextValue | null>(null);
 const SOUND_KEY = storageKey('sound-v2');
 const VOLUME_KEY = storageKey('volume');
 const MOTION_KEY = storageKey('reducedMotionExtra');
-const NAVIGATION_HINT_KEY = storageKey('seenNavigationHint');
+// v2: the guide became two steps (moving, then opening a place) -- shown once more to everyone.
+const NAVIGATION_HINT_KEY = storageKey('seenNavigationHint-v2');
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const systemReducedMotion = useSystemReducedMotion();

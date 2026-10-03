@@ -115,11 +115,17 @@ export function MapLayout() {
     setNavigationHintOpen(false);
     settings.markNavigationHintSeen();
   }, [settings]);
+  const dismissHintRef = useRef(dismissNavigationHint);
+  useEffect(() => {
+    dismissHintRef.current = dismissNavigationHint;
+  }, [dismissNavigationHint]);
 
   useEffect(() => {
     const offInteract = bus.on('landmark:interact', ({ id }) => {
       const landmark = landmarkById.get(id);
       if (!landmark) return;
+      // Opening a place is what the guide's last step teaches: it's done its job.
+      dismissHintRef.current();
       sendAnalyticsEvent({ type: 'panel_opened', landmarkId: id, source: 'map' });
       openedOnMapRef.current = id;
       navigate(landmark.route);
@@ -262,16 +268,16 @@ export function MapLayout() {
       />
 
       {/*
-        Also suppressed (not just controlled by navigationHintOpen) while a
-        landmark's own interact prompt is showing (Hud's proximityBar) --
-        both are bottom/bottom-center anchored, and the spawn point sits
-        inside the fountain's own interaction radius, so on a first visit
-        they'd otherwise overlap right from the very first frame. This never
-        touches navigationHintOpen itself, so stepping away reveals it again
-        rather than losing the one-time auto-show to a landmark that merely
-        happened to be nearby.
+        Both this and the Hud's "Ireki" bar sit bottom-center, and the snail
+        starts inside the fountain's reach -- so on a first visit both show at
+        once. Rather than hiding the guide then (when it matters most), it
+        rises above the bar.
       */}
-      <NavigationHint open={navigationHintOpen && !nearestId} onDismiss={dismissNavigationHint} />
+      <NavigationHint
+        open={navigationHintOpen && !controlsBlocked}
+        raised={Boolean(nearestId) && !boatCardOpen}
+        onDismiss={dismissNavigationHint}
+      />
 
       <LiveRegion message={liveMessage} />
       <Toast message={toastMessage} />

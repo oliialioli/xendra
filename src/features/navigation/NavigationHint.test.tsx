@@ -27,30 +27,51 @@ describe('NavigationHint', () => {
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 
-  it('calls onDismiss on the first arrow key press once past the reopen grace period', () => {
+  it('moves on to how to open a place once the player moves, then closes itself after a while', () => {
     vi.useFakeTimers();
     const onDismiss = vi.fn();
     render(<NavigationHint open onDismiss={onDismiss} />);
 
-    // Within the grace period right after opening: a stray/held key must not close it.
+    // Within the grace period right after opening: a stray/held key changes nothing.
     fireEvent.keyDown(window, { key: 'ArrowUp' });
-    expect(onDismiss).not.toHaveBeenCalled();
+    expect(screen.getByText('Arakatu mapa')).toBeInTheDocument();
 
     vi.advanceTimersByTime(300);
     fireEvent.keyDown(window, { key: 'ArrowUp' });
+    expect(screen.getByText('Sartu lekuetan')).toBeInTheDocument();
+    expect(onDismiss).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(15000);
     expect(onDismiss).toHaveBeenCalledTimes(1);
 
     vi.useRealTimers();
   });
 
-  it('does not call onDismiss for unrelated keys', () => {
+  it('counts WASD as moving too', () => {
+    vi.useFakeTimers();
+    render(<NavigationHint open onDismiss={() => {}} />);
+    vi.advanceTimersByTime(300);
+    fireEvent.keyDown(window, { key: 'd' });
+    expect(screen.getByText('Sartu lekuetan')).toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
+  it('closes on Escape', () => {
+    const onDismiss = vi.fn();
+    render(<NavigationHint open onDismiss={onDismiss} />);
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores unrelated keys', () => {
     vi.useFakeTimers();
     const onDismiss = vi.fn();
     render(<NavigationHint open onDismiss={onDismiss} />);
     vi.advanceTimersByTime(300);
 
-    fireEvent.keyDown(window, { key: 'a' });
+    fireEvent.keyDown(window, { key: 'x' });
     expect(onDismiss).not.toHaveBeenCalled();
+    expect(screen.getByText('Arakatu mapa')).toBeInTheDocument();
 
     vi.useRealTimers();
   });

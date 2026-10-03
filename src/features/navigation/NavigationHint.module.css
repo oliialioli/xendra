@@ -14,7 +14,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  width: min(500px, calc(100vw - var(--space-6) * 2));
+  width: min(600px, calc(100vw - var(--space-6) * 2));
   padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
   background: var(--ui-surface);
   color: var(--ui-ink);
@@ -29,7 +29,13 @@
   transition:
     opacity var(--duration-medium) var(--ease-organic),
     transform var(--duration-medium) var(--ease-organic),
+    bottom var(--duration-medium) var(--ease-organic),
     visibility 0s var(--duration-medium);
+}
+
+/* Above the Hud's Ireki bar (~64px tall) when that's showing too. */
+.panel[data-raised='true'] {
+  bottom: calc(var(--space-6) + 76px + env(safe-area-inset-bottom));
 }
 
 .panel[data-visible='true'] {
@@ -40,6 +46,7 @@
   transition:
     opacity var(--duration-medium) var(--ease-organic),
     transform var(--duration-medium) var(--ease-organic),
+    bottom var(--duration-medium) var(--ease-organic),
     visibility 0s 0s;
 }
 
@@ -85,6 +92,25 @@
 .keyRight {
   grid-column: 3;
   grid-row: 2;
+}
+
+/* The desktop controls: the arrows, WASD and the mouse side by side (or the E key, in the second step). */
+.desktopIcons {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.mouse {
+  color: var(--ui-ink);
+  opacity: 0.8;
+}
+
+.keyBig {
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
 }
 
 /* Touch-gesture icon, swapped in for the keycaps on touch/narrow viewports. */
@@ -137,7 +163,7 @@
     max-width: 360px;
   }
 
-  .keycaps {
+  .desktopIcons {
     display: none;
   }
 

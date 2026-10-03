@@ -69,6 +69,10 @@ export function Hud({
       {nearestLabel && !interactionHidden && (
         <div className={styles.proximityBar} role="status">
           <span>{nearestLabel}</span>
+          {/* On a keyboard, E opens it too. */}
+          <kbd className={styles.keyHint} aria-label="E tekla">
+            E
+          </kbd>
           <button
             type="button"
             className="xnd-btn-primary"

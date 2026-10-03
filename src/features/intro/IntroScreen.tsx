@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type AnimationEvent, type CSSProperties } from 'react';
-import { HandSwipeRight, HandTap, MouseLeftClick, SpeakerHigh, SpeakerSlash } from '@phosphor-icons/react';
+import { useEffect, useRef, useState, type AnimationEvent } from 'react';
+import { SpeakerHigh, SpeakerSlash } from '@phosphor-icons/react';
 import { useSettings } from '../../app/providers/SettingsContext';
 import { xendraContent } from '../../content/xendraContent';
 import { assetPath } from '../../lib/assetPath';
@@ -25,26 +25,10 @@ function preloadImage(src: string): Promise<void> {
   return image.decode().catch(() => undefined);
 }
 
-/** Arrow keys and WASD in the same inverted-T layout; `step` orders the highlight sweep. */
-const KEY_CLUSTERS = [
-  [
-    { label: '↑', area: 'up', step: 0 },
-    { label: '←', area: 'left', step: 1 },
-    { label: '↓', area: 'down', step: 2 },
-    { label: '→', area: 'right', step: 3 },
-  ],
-  [
-    { label: 'W', area: 'up', step: 0 },
-    { label: 'A', area: 'left', step: 1 },
-    { label: 'S', area: 'down', step: 2 },
-    { label: 'D', area: 'right', step: 3 },
-  ],
-] as const;
-
 /**
  * First screen of the experience: a short scene in which a snail egg
  * wobbles, cracks and hatches the very snail the player is about to steer,
- * followed by the way in. Logo, egg, phrase, buttons and the controls guide
+ * followed by the way in. Logo, egg, phrase, buttons and a one-line controls hint
  * all occupy their final place from the first frame (only their opacity
  * animates), so nothing shifts as they appear. See IntroSnail for the
  * hatching itself.
@@ -110,37 +94,8 @@ export function IntroScreen({ onEnter, onOpenMenu }: IntroScreenProps) {
         </div>
 
         <div className={styles.controls}>
-          <div className={styles.controlsDesktop}>
-            <div className={styles.controlsRow} aria-hidden="true">
-              {KEY_CLUSTERS.map((cluster) => (
-                <div key={cluster[0].label} className={styles.keyCluster}>
-                  {cluster.map((key) => (
-                    <span
-                      key={key.label}
-                      className={styles.key}
-                      data-area={key.area}
-                      style={{ '--key-step': key.step } as CSSProperties}
-                    >
-                      {key.label}
-                    </span>
-                  ))}
-                </div>
-              ))}
-              <MouseLeftClick className={styles.mouse} size={30} weight="light" />
-            </div>
-            <p className={styles.controlsLabel}>
-              Mugitu
-              <span className="visually-hidden">: geziekin, WASD teklekin edo saguarekin klik eginez</span>
-            </p>
-          </div>
-
-          <div className={styles.controlsTouch}>
-            <div className={styles.controlsRow} aria-hidden="true">
-              <HandTap className={styles.gesture} size={30} weight="light" />
-              <HandSwipeRight className={styles.gesture} size={30} weight="light" />
-            </div>
-            <p className={styles.controlsLabel}>Ukitu edo irristatu mugitzeko</p>
-          </div>
+          <p className={`${styles.controlsLabel} ${styles.controlsDesktop}`}>Mugitu geziekin edo WASD teklak erabiliz.</p>
+          <p className={`${styles.controlsLabel} ${styles.controlsTouch}`}>Ukitu edo irristatu mugitzeko.</p>
 
           <button
             type="button"
