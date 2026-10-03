@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: column;
   width: min(560px, calc(100vw - var(--space-5) * 2));
-  height: min(640px, calc(100vh - var(--space-5) * 2));
+  height: min(720px, calc(100dvh - var(--space-5) * 2));
   background: var(--ui-surface);
   color: var(--ui-ink);
   border-radius: var(--ui-radius-lg);
@@ -48,6 +48,79 @@
   letter-spacing: -0.015em;
 }
 
+.heading {
+  min-width: 0;
+}
+
+.subtitle {
+  margin: var(--space-1) 0 0;
+  color: var(--ui-ink-muted);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+/* "1. Zure ontzia -> 2. Zure mezua": the current step solid, the other quiet. */
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-2) var(--space-5) 0;
+  list-style: none;
+  flex-shrink: 0;
+}
+
+.stepItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ui-ink-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.stepNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ui-well);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.stepItem[aria-current='step'] {
+  color: var(--ui-ink);
+  font-weight: 600;
+}
+
+.stepItem[aria-current='step'] .stepNumber {
+  background: var(--ui-accent);
+}
+
+.stepArrow {
+  margin-left: var(--space-1);
+  color: var(--ui-ink-muted);
+  font-weight: 400;
+}
+
+.stepTitle {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.stepText {
+  margin: 0;
+  color: var(--ui-ink-muted);
+  line-height: 1.45;
+}
+
 .body {
   flex: 1;
   min-height: 0;
@@ -59,18 +132,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  height: 100%;
-  min-height: 0;
+  min-height: 100%;
 }
 
-/* Reference sketch of a paper boat, beside the instruction it illustrates. */
+/* The step's title and text, with a sample paper boat beside them as a hint of what to draw. */
 .reference {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--ui-radius-md);
-  background: var(--ui-well);
+  gap: var(--space-4);
 }
 
 .referenceSketch {
@@ -80,16 +149,18 @@
   color: var(--ui-ink);
 }
 
-.helpText {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--ui-ink-muted);
+
+/* Grows with the canvas and its tools (which wrap on narrow screens) rather than letting them spill over the footer; the body scrolls if it runs out of room. */
+.canvasArea {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
 }
 
-.canvasArea {
-  flex: 1;
-  min-height: 260px;
+/* The drawing canvas fills it (its own height: 100% can't resolve against a growing flex item). */
+.canvasArea > :global(*) {
+  flex: 1 1 auto;
 }
 
 .errorText {
@@ -121,6 +192,10 @@
 }
 
 @media (max-width: 640px) {
+  .steps {
+    padding: var(--space-2) var(--space-4) 0;
+  }
+
   .modal {
     top: 0;
     left: 0;

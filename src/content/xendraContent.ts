@@ -233,7 +233,7 @@ export const xendraContent: XendraContent = {
       route: '/mezuak',
       title: 'Mezuen kaia',
       shortLabel: 'Mezuak',
-      description: 'Idatzi mezu bat, marraztu zure ontzia eta bota ibaira.',
+      description: 'Marraztu zure ontzia, idatzi mezu bat eta bota ibaira.',
       position: LANDMARK_POSITIONS.dockMessages,
       interactionRadius: dockConfig.interactionRadius,
     },

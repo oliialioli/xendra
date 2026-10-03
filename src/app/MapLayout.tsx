@@ -17,7 +17,7 @@ import { BoatFleet } from '../features/boats/BoatFleet';
 import { BoatCreator } from '../features/boats/BoatCreator';
 import { useBoatFleet } from '../features/boats/useBoatFleet';
 import { CastleGame } from '../features/castleGame/CastleGame';
-import { CASTLE_ENTRANCE } from '../content/mapGeometry';
+import { CASTLE_ENTRANCE, DOCK_FRONT } from '../content/mapGeometry';
 import { useGameBridge } from './providers/GameBridgeContext';
 import { useSettings } from './providers/SettingsContext';
 import { useProgress } from './providers/ProgressContext';
@@ -43,6 +43,8 @@ export function MapLayout() {
   const [gloom, setGloom] = useState(0);
 
   const fleet = useBoatFleet();
+  /** The last landmark opened from the map itself (not the menu or a link) -- so we know where the snail is standing. */
+  const openedOnMapRef = useRef<LandmarkId | null>(null);
 
   // Captured once: the game reads later updates via the 'visited:hydrate' bridge event.
   const [initialVisitedIds] = useState<LandmarkId[]>(() => Array.from(progress.visited));
@@ -113,6 +115,7 @@ export function MapLayout() {
       const landmark = landmarkById.get(id);
       if (!landmark) return;
       sendAnalyticsEvent({ type: 'panel_opened', landmarkId: id, source: 'map' });
+      openedOnMapRef.current = id;
       navigate(landmark.route);
     });
 
@@ -261,7 +264,11 @@ export function MapLayout() {
           onClose={() => navigate(MAP_ROUTE)}
           onBoatCreated={(boat) => {
             fleet.addBoat(boat);
-            setToastMessage('Zure ontzia jada nabigatzen ari da');
+            // The new boat sets off from the dock: if the creator was opened
+            // from the menu or a link, take the snail there so it's seen.
+            if (openedOnMapRef.current !== 'dockMessages') bus.emit('snail:placeAt', DOCK_FRONT);
+            openedOnMapRef.current = null;
+            setToastMessage('Zure mezua Argan barrena doa!');
           }}
         />
       ) : (

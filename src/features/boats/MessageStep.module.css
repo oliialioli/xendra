@@ -1,5 +1,11 @@
+.boatRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
 .title {
-  margin: 0 0 var(--space-2);
+  margin: 0 0 var(--space-1);
   font-family: var(--font-display);
   font-size: 1.3rem;
   font-weight: 500;
@@ -7,9 +13,26 @@
 }
 
 .intro {
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-2);
   color: var(--ui-ink-muted);
   line-height: 1.5;
+}
+
+.editDrawing {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ui-ink);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
 }
 
 .counterRow {

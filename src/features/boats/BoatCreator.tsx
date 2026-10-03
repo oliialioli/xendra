@@ -20,7 +20,31 @@ export type BoatCreatorProps = {
   onBoatCreated?: (boat: Boat) => void;
 };
 
-type Step = 'message' | 'draw';
+type Step = 'draw' | 'message';
+
+const STEPS: { id: Step; label: string }[] = [
+  { id: 'draw', label: 'Zure ontzia' },
+  { id: 'message', label: 'Zure mezua' },
+];
+
+/** "1. Zure ontzia -> 2. Zure mezua", the current one highlighted. */
+function StepIndicator({ step }: { step: Step }) {
+  return (
+    <ol className={styles.steps} aria-label="Urratsak">
+      {STEPS.map((s, i) => (
+        <li key={s.id} className={styles.stepItem} aria-current={s.id === step ? 'step' : undefined}>
+          <span className={styles.stepNumber}>{i + 1}</span>
+          {s.label}
+          {i < STEPS.length - 1 && (
+            <span className={styles.stepArrow} aria-hidden="true">
+              →
+            </span>
+          )}
+        </li>
+      ))}
+    </ol>
+  );
+}
 
 const SUBMIT_ERROR_MESSAGES: Record<string, string> = {
   messageEmpty: 'Idatzi mezu bat aurrera egin baino lehen.',
@@ -35,8 +59,10 @@ const SUBMIT_ERROR_MESSAGES: Record<string, string> = {
 const GENERIC_SUBMIT_ERROR = 'Ezin izan da ontzia gorde. Egiaztatu konexioa eta saiatu berriro.';
 
 /**
- * The dock landmark's own two-step experience: write a message, then draw a
- * boat and send it -- see docs/BOATS.md for the full feature overview.
+ * The dock landmark's own two-step experience: draw a paper boat first (the
+ * creative part, right on the first screen), then write the message it will
+ * carry and send it down the river -- see docs/BOATS.md for the full feature
+ * overview. Going back to the drawing keeps the message, and vice versa.
  * Centered modal on desktop, near-fullscreen on mobile (see
  * BoatCreator.module.css); the map behind it is already blocked by
  * MapLayout's normal controlsBlocked mechanism (this route is still a
@@ -47,7 +73,7 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
   const navigate = useNavigate();
   const handleClose = onClose ?? (() => navigate(MAP_ROUTE));
 
-  const [step, setStep] = useState<Step>('message');
+  const [step, setStep] = useState<Step>('draw');
   const [displayName, setDisplayName] = useState('');
   const [message, setMessage] = useState('');
   const [drawing, setDrawing] = useState<BoatDrawing>(() => createEmptyDrawing());
@@ -83,6 +109,7 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
     }
     if (isDrawingEmpty(drawing)) {
       setSubmitError(SUBMIT_ERROR_MESSAGES.drawingEmpty);
+      setStep('draw');
       return;
     }
     // Stored compacted (simplified strokes, rounded coordinates) so a
@@ -91,6 +118,7 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
     const sizeError = validateDrawingSize(compactDrawing);
     if (sizeError) {
       setSubmitError(SUBMIT_ERROR_MESSAGES[sizeError]);
+      setStep('draw');
       return;
     }
 
@@ -114,7 +142,7 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
     }
   }
 
-  const canSubmit = !isDrawingEmpty(drawing) && !submitting;
+  const drawingEmpty = isDrawingEmpty(drawing);
 
   return (
     <>
@@ -128,30 +156,27 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
         tabIndex={-1}
       >
         <header className={styles.header}>
-          <h2 id="boat-creator-title" className={styles.title}>
-            {step === 'message' ? 'Jendearen oharrak' : 'Marraztu zure ontzi papera'}
-          </h2>
+          <div className={styles.heading}>
+            <h2 id="boat-creator-title" className={styles.title}>
+              Zure mezua, ibaian barrena
+            </h2>
+            <p className={styles.subtitle}>Marraztu paperezko ontzi bat, idatzi Xendrarentzako mezua eta bota ibaira.</p>
+          </div>
           <button type="button" className="xnd-btn-icon" onClick={handleClose} aria-label="Itxi" title="Itxi">
             <X size={20} aria-hidden="true" />
           </button>
         </header>
+        <StepIndicator step={step} />
 
         <div className={styles.body}>
-          {step === 'message' ? (
-            <MessageStep
-              displayName={displayName}
-              message={message}
-              onDisplayNameChange={setDisplayName}
-              onMessageChange={setMessage}
-              onNext={() => setStep('draw')}
-            />
-          ) : (
+          {step === 'draw' ? (
             <div className={styles.drawStep}>
               <div className={styles.reference}>
                 <PaperBoatSketch className={styles.referenceSketch} />
-                <p className={styles.helpText}>
-                  Adibidez: paperezko ontzi bat, <strong>eskuinera begira →</strong>
-                </p>
+                <div>
+                  <h3 className={styles.stepTitle}>Marraztu zure ontzia</h3>
+                  <p className={styles.stepText}>Ontzi honek zure mezua eramango du Arga ibaian barrena.</p>
+                </div>
               </div>
               <div className={styles.canvasArea}>
                 <BoatDrawingCanvas drawing={drawing} onChange={setDrawing} />
@@ -166,14 +191,31 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
                 <button
                   type="button"
                   className="xnd-btn-primary"
-                  onClick={handleSubmit}
-                  disabled={!canSubmit}
-                  aria-busy={submitting}
+                  onClick={() => {
+                    setSubmitError(null);
+                    setStep('message');
+                  }}
+                  disabled={drawingEmpty}
                 >
-                  {submitting ? 'Bidaltzen...' : 'Bota ibaira'}
+                  Gehitu zure mezua
                 </button>
               </div>
             </div>
+          ) : (
+            <MessageStep
+              drawing={drawing}
+              displayName={displayName}
+              message={message}
+              onDisplayNameChange={setDisplayName}
+              onMessageChange={setMessage}
+              onEditDrawing={() => {
+                setSubmitError(null);
+                setStep('draw');
+              }}
+              onSubmit={handleSubmit}
+              submitting={submitting}
+              submitError={submitError}
+            />
           )}
         </div>
       </div>

@@ -1,7 +1,7 @@
 # Community message-boats
 
-Visitors write a message, draw their own paper boat freehand (no template --
-see BoatDrawingCanvas), and send it off to sail the river loop around the
+Visitors draw their own paper boat freehand (no template -- see
+BoatDrawingCanvas), then write the message it carries, and send it off to sail the river loop around the
 island. Anyone can click a boat to read its message. See `src/features/boats/`
 for the implementation and each file's own doc comment for how the pieces
 fit together.
