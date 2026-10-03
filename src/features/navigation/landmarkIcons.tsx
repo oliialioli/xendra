@@ -82,3 +82,24 @@ export const SteamTrainIcon: Icon = forwardRef<SVGSVGElement, IconProps>((props,
   <IconBase ref={ref} {...props} weights={STEAM_TRAIN} />
 ));
 SteamTrainIcon.displayName = 'SteamTrainIcon';
+
+/** A folded paper boat on a ripple: the message boats. */
+const PAPER_BOAT = weightsOf(
+  <>
+    <path {...stroke} d="M24,148H232l-32,48H56Z" />
+    <path {...stroke} d="M72,148l56-92,56,92M128,56v92" />
+    <path {...stroke} d="M24,148l44-22v22M232,148l-44-22v22" />
+    <path {...stroke} d="M44,228c14-10,30-10,44,0s30,10,44,0s30-10,44,0s30,10,44,0" />
+  </>,
+  <>
+    <path d="M16,140H240l-38,60H54Z" />
+    <path d="M68,132L122,44V132ZM134,44l54,88H134Z" />
+    <path d="M16,132l46-24v24ZM240,132l-46-24v24Z" />
+    <path {...stroke} d="M44,228c14-10,30-10,44,0s30,10,44,0s30-10,44,0s30,10,44,0" />
+  </>,
+);
+
+export const PaperBoatIcon: Icon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+  <IconBase ref={ref} {...props} weights={PAPER_BOAT} />
+));
+PaperBoatIcon.displayName = 'PaperBoatIcon';

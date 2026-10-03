@@ -84,7 +84,7 @@ export const PANEL_ROUTES: PanelRouteConfig[] = [
     // and still lists correctly in the menu drawer.
     route: '/mezuak',
     landmarkId: 'dockMessages',
-    title: 'Zure mezua, ibaian barrena',
+    title: 'Bidali zure ontzia',
     Component: BoatCreator,
     icon: '✎',
   },

@@ -2,14 +2,13 @@ import {
   EnvelopeSimple,
   ImagesSquare,
   MicrophoneStage,
-  Pencil,
   TShirt,
   UsersThree,
   VinylRecord,
   type Icon,
 } from '@phosphor-icons/react';
 import type { LandmarkId } from '../../types/content';
-import { CastleRuinIcon, SteamTrainIcon } from './landmarkIcons';
+import { CastleRuinIcon, PaperBoatIcon, SteamTrainIcon } from './landmarkIcons';
 
 export type LandmarkIndicatorConfig = {
   /** Phosphor icon shown inside the closed circle / expanded pill. */
@@ -78,11 +77,11 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     // BULLETIN_BOARD_WIDTH_PERCENT, so the badge sits just over the roof.
     visualHeight: 100,
   },
-  // Provisional pencil badge icon until a definitive one exists -- the
-  // landmark's real artwork (a house) is set up separately, see
+  // A paper boat, like the ones sent from here -- the landmark's real
+  // artwork (a house) is set up separately, see
   // LANDMARK_ASSET_OVERRIDES.dockMessages in content/mapGeometry.ts.
   dockMessages: {
-    icon: Pencil,
+    icon: PaperBoatIcon,
     label: 'Mezuak',
     visualHeight: 65,
   },
