@@ -3,8 +3,11 @@ import { ArrowFatLeft, ArrowFatRight, ArrowFatUp, Pause, X } from '@phosphor-ico
 import { useNavigate } from 'react-router-dom';
 import { MAP_ROUTE } from '../../app/routes';
 import { useFocusTrap } from '../../components/useFocusTrap';
+import { useSettings } from '../../app/providers/SettingsContext';
+import { assetPath } from '../../lib/assetPath';
+import { GameMusic } from './music';
 import { SnailFigure } from '../../components/SnailFigure';
-import { BOSS, COPY, LEADERBOARD, LIVES } from './config';
+import { BOSS, COPY, LEADERBOARD, LIVES, MUSIC_SRC } from './config';
 import { advance, createGame, type GameState } from './engine';
 import { InputController, isGameKey, type TouchButton } from './input';
 import { cleanAlias, loadLeaderboard, qualifies, saveScore, type LeaderboardEntry } from './leaderboard';
@@ -114,6 +117,9 @@ export function CastleGame({ onClose }: CastleGameProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const gameRef = useRef<GameState>(createGame());
+  const { soundEnabled, volume } = useSettings();
+  const musicRef = useRef<GameMusic | null>(null);
+  const soundRef = useRef(soundEnabled);
   const inputRef = useRef(new InputController());
   const cameraRef = useRef(new Camera());
   const effectsRef = useRef(new Effects());
@@ -166,6 +172,7 @@ export function CastleGame({ onClose }: CastleGameProps) {
 
 
 
+
   // Canvas size follows its box, at up to 2x for sharp lines on retina screens.
   useEffect(() => {
     const stage = stageRef.current;
@@ -189,6 +196,11 @@ export function CastleGame({ onClose }: CastleGameProps) {
 
   const startGame = useCallback(() => {
     gameRef.current = createGame();
+    // The tension music, started inside this click (mobile browsers need the gesture).
+    if (soundRef.current) {
+      musicRef.current ??= new GameMusic(assetPath(MUSIC_SRC));
+      musicRef.current.start();
+    }
     // Tell the shared ranking a game has started (its score will need this run's id).
     const seq = ++gameSeqRef.current;
     runIdRef.current = null;
@@ -226,6 +238,21 @@ export function CastleGame({ onClose }: CastleGameProps) {
     stageRef.current?.focus({ preventScroll: true });
   }, []);
 
+  // The music follows the game: on while playing, held while paused, faded
+  // out at the end or back in the menu; off altogether with the sound off.
+  useEffect(() => {
+    soundRef.current = soundEnabled;
+    const music = musicRef.current;
+    if (!music) return;
+    music.setVolume(volume);
+    if (!soundEnabled) music.stop();
+    else if (screen === 'playing') music.resume();
+    else if (screen === 'paused') music.pause();
+    else music.stop();
+  }, [screen, soundEnabled, volume]);
+
+  useEffect(() => () => musicRef.current?.destroy(), []);
+
   // The game loop: only runs while playing. Fixed-step simulation (see
   // engine.advance), so it plays the same at any refresh rate; the first
   // frame after starting or resuming simulates nothing, so a pause never
@@ -250,6 +277,9 @@ export function CastleGame({ onClose }: CastleGameProps) {
       const result = advance(game, input.read(now), elapsed, accumulator);
       accumulator = result.accumulator;
       if (result.steps > 0) input.consumeJump();
+
+      const bossPhase = game.boss.phase;
+      musicRef.current?.setBoss(bossPhase === 'intro' || bossPhase === 'walk' || bossPhase === 'windup');
 
       if (game.events.length > 0) {
         effectsRef.current.handle(game.events, game);

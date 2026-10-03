@@ -109,7 +109,8 @@ export function ambienceDuck({ panelRoute, musicPlaying, mediaPlaying }: DuckSta
   let level = 1;
   if (panelRoute) level = Math.min(level, DUCK.panel);
   // The band's music lives in Musika (its Bandcamp player can't tell us when it plays, so being there is enough).
-  if (panelRoute === '/musica' || musicPlaying) level = Math.min(level, DUCK.music);
+  // ...and the castle game has its own music.
+  if (panelRoute === '/musica' || panelRoute === '/gaztelua' || musicPlaying) level = Math.min(level, DUCK.music);
   if (mediaPlaying) level = Math.min(level, DUCK.media);
   return level;
 }

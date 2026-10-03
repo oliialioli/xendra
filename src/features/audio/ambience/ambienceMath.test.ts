@@ -79,6 +79,7 @@ describe('ambience math', () => {
     expect(ambienceDuck({ panelRoute: null, musicPlaying: false, mediaPlaying: false })).toBe(1);
     expect(ambienceDuck({ panelRoute: '/merch', musicPlaying: false, mediaPlaying: false })).toBe(DUCK.panel);
     expect(ambienceDuck({ panelRoute: '/musica', musicPlaying: false, mediaPlaying: false })).toBe(DUCK.music);
+    expect(ambienceDuck({ panelRoute: '/gaztelua', musicPlaying: false, mediaPlaying: false })).toBe(DUCK.music);
     expect(ambienceDuck({ panelRoute: '/archivo', musicPlaying: false, mediaPlaying: true })).toBe(DUCK.media);
     expect(ambienceDuck({ panelRoute: null, musicPlaying: true, mediaPlaying: false })).toBe(DUCK.music);
   });

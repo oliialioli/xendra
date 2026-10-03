@@ -88,6 +88,9 @@ export const CRYSTAL = {
   speedY: 640,
 } as const;
 
+/** The game's tension music (a loop made from the opening of "Lurrazala"), under /public. */
+export const MUSIC_SRC = '/assets/audio/gaztelua-tentsioa.m4a';
+
 /** Local top-3 storage. Bump the version suffix if the stored shape ever changes. */
 export const LEADERBOARD = {
   storageKey: 'xendra-castle-leaderboard-v1',
