@@ -267,7 +267,9 @@ export class AmbienceEngine {
     const source = ctx.createBufferSource();
     source.buffer = buffer;
     const gain = ctx.createGain();
-    gain.gain.value = MIX.voice;
+    // A short fade-in, so the greeting eases in rather than snapping on.
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(MIX.voice, ctx.currentTime + 0.12);
     source.connect(gain).connect(this.master);
     this.voiceDuck = DUCK.voice;
     this.applyDuck();

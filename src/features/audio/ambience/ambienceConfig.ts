@@ -45,7 +45,8 @@ export const MIX = {
   school: 0.5,
   /** The beaver's plop as it dives (startled: bigger). */
   splash: 0.09,
-  voice: 0.95,
+  /** The vendor's greeting -- kept gentle: he pops out as you pass, and shouldn't make anyone jump. */
+  voice: 0.4,
 } as const;
 
 /** How far sound reaches, in world units. */
