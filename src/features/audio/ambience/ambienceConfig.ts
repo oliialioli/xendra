@@ -62,9 +62,12 @@ export const REACH = {
   /** From the fountain's centre (its basin is ~85 across). */
   fountainFull: 110,
   fountainEdge: 420,
-  /** From the middle of the music school (it's ~290 wide). */
-  schoolFull: 150,
-  schoolEdge: 620,
+  /**
+   * From the middle of the music school (it's ~290 wide, so its walls are
+   * ~145 out): heard only once you're near it, full right beside it.
+   */
+  schoolFull: 120,
+  schoolEdge: 340,
 } as const;
 
 /** Seconds: the time constant every level glides with, so nothing jumps. */
