@@ -14,12 +14,6 @@ export type LandmarkIndicatorConfig = {
   /** Phosphor icon shown inside the closed circle / expanded pill. */
   icon: Icon;
   /**
-   * Short indicator label -- deliberately its own copy, not `Landmark.shortLabel`
-   * (used by the bottom Hud proximity bar): this badge needs to stay compact
-   * enough to never compete visually with the building it points at.
-   */
-  label: string;
-  /**
    * Approximate world-unit height of the landmark's visual structure, used
    * to lift the badge above its roofline rather than off the bare ground
    * point. For landmarks with real overlay artwork (see
@@ -34,12 +28,10 @@ export type LandmarkIndicatorConfig = {
 export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConfig> = {
   kiosk: {
     icon: TShirt,
-    label: 'Denda',
     visualHeight: 118,
   },
   stage: {
     icon: MicrophoneStage,
-    label: 'Kontzertuak',
     // Matches escenario-xendra.png's own analyzed height (roof to anchor),
     // so the badge clears the roofline -- and the lamps/spiral below it --
     // entirely, rather than sitting over them.
@@ -47,7 +39,6 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
   },
   school: {
     icon: VinylRecord,
-    label: 'Musika',
     // Slightly less than escuela-musica-xendra-default.png's own analyzed
     // height (roof to anchor, 260) -- clearing the roofline entirely left
     // the badge looking disconnected, floating well above the building;
@@ -56,7 +47,6 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
   },
   fountain: {
     icon: UsersThree,
-    label: 'Taldea',
     // The fountain's own anchor is its analyzed *center* (see
     // LANDMARK_ASSET_OVERRIDES.fountain's anchorMode), not a ground-contact
     // point -- so this is half fuente-xendra.png's own analyzed height (to
@@ -66,13 +56,11 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
   },
   trainHistory: {
     icon: SteamTrainIcon,
-    label: 'Historia',
     // Clears the middle carriage's roof above tren.png's anchor.
     visualHeight: 150,
   },
   bulletinBoard: {
     icon: ImagesSquare,
-    label: 'Galeria',
     // Roughly tablon-anuncios.png's own height (roof to anchor) at
     // BULLETIN_BOARD_WIDTH_PERCENT, so the badge sits just over the roof.
     visualHeight: 100,
@@ -82,19 +70,16 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
   // LANDMARK_ASSET_OVERRIDES.dockMessages in content/mapGeometry.ts.
   dockMessages: {
     icon: PaperBoatIcon,
-    label: 'Mezuak',
     visualHeight: 65,
   },
   postbox: {
     icon: EnvelopeSimple,
-    label: 'Kontaktua',
     // Roughly buzon.png's own analyzed height (cap to anchor) at
     // POSTBOX_WIDTH_PERCENT, so the badge sits just over the cap.
     visualHeight: 88,
   },
   castle: {
     icon: CastleRuinIcon,
-    label: 'Jokoa',
     // Just over the tall corner tower of castillo.png (its anchor sits near
     // the top of the map, so a higher badge would be cut off by the edge).
     visualHeight: 120,

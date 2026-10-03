@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import type { GameEventBus, BridgeEvents } from '../../game/bridge/gameEvents';
 import type { Landmark, LandmarkId } from '../../types/content';
+import { panelRouteByLandmarkId } from '../../app/routes';
 import { LANDMARK_INDICATOR_CONFIG } from './landmarkIndicatorConfig';
 import { LandmarkIndicator } from './LandmarkIndicator';
 import styles from './DiscoveryIndicators.module.css';
@@ -104,6 +105,8 @@ export function DiscoveryIndicators({
         <LandmarkIndicator
           key={landmark.id}
           title={landmark.title}
+          // The same name the menu gives it.
+          label={panelRouteByLandmarkId.get(landmark.id)?.title ?? landmark.shortLabel}
           config={LANDMARK_INDICATOR_CONFIG[landmark.id]}
           // Its label opens exactly when it can be opened -- the same landmark the Hud's bar offers.
           autoRevealed={nearestId === landmark.id}

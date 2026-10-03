@@ -4,6 +4,8 @@ import styles from './LandmarkIndicator.module.css';
 
 export type LandmarkIndicatorProps = {
   title: string;
+  /** The expanded pill's text: the section's own name, as the menu calls it. */
+  label: string;
   config: LandmarkIndicatorConfig;
   /** True when this is the landmark that can be opened right now (the map's nearestId) -- see DiscoveryIndicators. */
   autoRevealed: boolean;
@@ -30,6 +32,7 @@ export type LandmarkIndicatorProps = {
  */
 export function LandmarkIndicator({
   title,
+  label,
   config,
   autoRevealed,
   interactable,
@@ -92,7 +95,7 @@ export function LandmarkIndicator({
           >
             <Icon size={19} weight="fill" aria-hidden="true" />
           </span>
-          <span className={styles.label}>{config.label}</span>
+          <span className={styles.label}>{label}</span>
         </button>
       </div>
     </div>

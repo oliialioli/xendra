@@ -23,7 +23,7 @@ import { useGameBridge } from './providers/GameBridgeContext';
 import { useSettings } from './providers/SettingsContext';
 import { useProgress } from './providers/ProgressContext';
 import { xendraContent, landmarkById } from '../content/xendraContent';
-import { MAP_ROUTE, panelRouteByPath } from './routes';
+import { MAP_ROUTE, panelRouteByLandmarkId, panelRouteByPath } from './routes';
 import { sendAnalyticsEvent } from '../lib/analytics';
 import type { LandmarkId } from '../types/content';
 
@@ -225,7 +225,8 @@ export function MapLayout() {
       />
 
       <Hud
-        nearestLabel={nearestLandmark ? nearestLandmark.shortLabel : null}
+        // The section's own name, as the menu and the map badge call it.
+        nearestLabel={nearestLandmark ? (panelRouteByLandmarkId.get(nearestLandmark.id)?.title ?? nearestLandmark.shortLabel) : null}
         onOpenMenu={() => setMenuOpen(true)}
         onInteract={() => bus.emit('controls:interactPressed', undefined)}
         onOpenNavigationHint={() => setNavigationHintOpen(true)}

@@ -55,7 +55,7 @@ export const PANEL_ROUTES: PanelRouteConfig[] = [
   {
     route: '/historia',
     landmarkId: 'trainHistory',
-    title: 'Xendraren bidea',
+    title: 'Gure Xendra',
     Component: HistoryPanel,
     variant: 'wide',
     icon: '☖',
