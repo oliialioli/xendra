@@ -15,6 +15,8 @@ export type FountainSprayOptions = {
   /** Depth just above the fountain sprite. */
   depth: number;
   isReducedMotion: () => boolean;
+  /** Told when the spray starts and stops (e.g. so its sound livens up). */
+  onSprayChange?: (spraying: boolean) => void;
 };
 
 function ensureDropTexture(scene: Phaser.Scene): void {
@@ -82,6 +84,7 @@ export class FountainSpray {
     const shouldRun = !isReducedMotion() && (this.running ? distance < STOP_RADIUS : distance < START_RADIUS);
     if (shouldRun === this.running) return;
     this.running = shouldRun;
+    this.options.onSprayChange?.(shouldRun);
     if (shouldRun) {
       this.drops.start();
       this.jet.start();

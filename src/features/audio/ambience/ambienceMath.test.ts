@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { DUCK, REACH } from './ambienceConfig';
-import { ambienceDuck, falloff, fireProximity, nearestOnPolygon, panFor, waterProximity } from './ambienceMath';
+import {
+  ambienceDuck,
+  falloff,
+  fireProximity,
+  fountainProximity,
+  nearestOnPolygon,
+  panFor,
+  schoolProximity,
+  waterProximity,
+} from './ambienceMath';
 
 const square = [
   { x: 0, y: 0 },
@@ -46,6 +55,18 @@ describe('ambience math', () => {
     expect(further).toBeGreaterThan(0);
     expect(further).toBeLessThan(1);
     expect(fireProximity({ x: 520, y: 500 }, null, 500, 400).level).toBe(0);
+  });
+
+  it('hears the fountain and the rehearsal louder the nearer they are, and not at all far off', () => {
+    const at = { x: 1000, y: 1000 };
+    expect(fountainProximity({ x: 1050, y: 1000 }, at, 1000, 400).level).toBe(1);
+    expect(fountainProximity({ x: 1000 + REACH.fountainEdge + 10, y: 1000 }, at, 1000, 400).level).toBe(0);
+    const near = schoolProximity({ x: 1100, y: 1000 }, at, 1000, 400).level;
+    const mid = schoolProximity({ x: 1400, y: 1000 }, at, 1000, 400).level;
+    expect(near).toBe(1);
+    expect(mid).toBeGreaterThan(0);
+    expect(mid).toBeLessThan(near);
+    expect(schoolProximity({ x: 1000 + REACH.schoolEdge + 10, y: 1000 }, at, 1000, 400).level).toBe(0);
   });
 
   it('pans by where a sound sits in the view', () => {

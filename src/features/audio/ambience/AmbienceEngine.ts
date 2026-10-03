@@ -1,4 +1,4 @@
-import { DUCK, GLIDE, MIX, TIMING } from './ambienceConfig';
+import { DUCK, GLIDE, MIX, SCHOOL_REHEARSAL_SRC, TIMING } from './ambienceConfig';
 import type { Proximity } from './ambienceMath';
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
@@ -16,6 +16,12 @@ type Noise = 'white' | 'pink' | 'brown';
  *   wind       a whoosh sweeping across the stereo field on each gust
  *   leaves     short rustles now and then, and in every gust
  *   fire       the campfire once lit: a soft roar with crackles and the odd snap
+ *   fountain   a gentle splash with droplets plinking into the basin (little
+ *              rising "bloops"), near the fountain; livelier while it sprays
+ *   school     the band rehearsing the chorus of "Errauts eskuak" inside the
+ *              music school: a recording, but heard through the walls --
+ *              filtered, with the room's echo -- clearer the closer you get
+ *   splash     the beaver's plop as it dives
  *   birds      chirps, whistles and trills from a few made-up species, with
  *              a touch of echo so they sound far off; quieter in the rain
  *
@@ -34,6 +40,13 @@ export class AmbienceEngine {
   private rain!: GainNode;
   private fire!: { gain: GainNode; pan: StereoPannerNode };
   private fireLevel = 0;
+  private fountain!: { gain: GainNode; pan: StereoPannerNode; drops: GainNode };
+  private fountainLevel = 0;
+  private fountainSpraying = false;
+  private school!: { input: GainNode; gain: GainNode; muffle: BiquadFilterNode; pan: StereoPannerNode };
+  private schoolLevel = 0;
+  private schoolBusy = false;
+  private schoolSrc = SCHOOL_REHEARSAL_SRC;
   private birdBus!: GainNode;
   private timers = new Set<number>();
   private suspendTimer = 0;
@@ -91,6 +104,117 @@ export class AmbienceEngine {
     const t = this.ctx.currentTime;
     this.fire.gain.gain.setTargetAtTime(MIX.fire * level, t, level > 0 ? 0.5 : 0.8);
     this.fire.pan.pan.setTargetAtTime(pan, t, GLIDE.proximity);
+  }
+
+  /** 0-1: how near the fountain is, and where it sits left-right. */
+  setFountain(level: number, pan: number): void {
+    this.fountainLevel = level;
+    this.applyFountain(pan);
+  }
+
+  /** Its spray going (the snail came near): a bit more splash and more drops. */
+  setFountainSpray(spraying: boolean): void {
+    this.fountainSpraying = spraying;
+    this.applyFountain();
+  }
+
+  private applyFountain(pan?: number): void {
+    if (!this.ctx) return;
+    const t = this.ctx.currentTime;
+    const boost = this.fountainSpraying ? MIX.fountainSpray : 1;
+    this.fountain.gain.gain.setTargetAtTime(MIX.fountain * this.fountainLevel * boost, t, GLIDE.proximity);
+    if (pan !== undefined) this.fountain.pan.pan.setTargetAtTime(pan, t, GLIDE.proximity);
+  }
+
+  /**
+   * 0-1: how near the music school is, and where it sits left-right. The
+   * band starts a run-through of the chorus whenever you're in earshot and
+   * they aren't already playing; nearer, the walls muffle it less.
+   */
+  setSchool(level: number, pan: number): void {
+    this.schoolLevel = level;
+    if (!this.ctx) return;
+    const t = this.ctx.currentTime;
+    this.school.gain.gain.setTargetAtTime(MIX.school * level, t, GLIDE.proximity);
+    // Through the walls from afar (only the low end gets out), opening up close by.
+    this.school.muffle.frequency.setTargetAtTime(380 + 1500 * level * level, t, GLIDE.proximity);
+    this.school.pan.pan.setTargetAtTime(pan, t, GLIDE.proximity);
+    if (level > 0.02 && !this.schoolBusy) void this.rehearse();
+  }
+
+  /** Where the rehearsal recording lives (resolved for the deploy's base path). */
+  setSchoolSource(src: string): void {
+    this.schoolSrc = src;
+  }
+
+  /** The beaver's plop: a dull splash with a few droplets after it; bigger when it was startled. */
+  splash(pan: number, big: boolean): void {
+    if (!this.isRunning()) return;
+    const ctx = this.ctx!;
+    const t = ctx.currentTime;
+    const size = big ? 1.6 : 1;
+    const out = ctx.createStereoPanner();
+    out.pan.value = pan;
+    out.connect(this.ambience);
+
+    const burst = this.noiseSource('white');
+    const burstGain = ctx.createGain();
+    burstGain.gain.setValueAtTime(0.0001, t);
+    burstGain.gain.exponentialRampToValueAtTime(MIX.splash * size, t + 0.012);
+    burstGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.35 * size);
+    burst.connect(this.filter('lowpass', 1600)).connect(burstGain).connect(out);
+    burst.start(t, rand(0, 3));
+    burst.stop(t + 0.5 * size);
+
+    const plop = ctx.createOscillator();
+    plop.frequency.setValueAtTime(260, t);
+    plop.frequency.exponentialRampToValueAtTime(90, t + 0.16);
+    const plopGain = ctx.createGain();
+    plopGain.gain.setValueAtTime(0.0001, t);
+    plopGain.gain.exponentialRampToValueAtTime(MIX.splash * 0.9 * size, t + 0.008);
+    plopGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+    plop.connect(plopGain).connect(out);
+    plop.start(t);
+    plop.stop(t + 0.25);
+
+    for (let i = 0; i < (big ? 6 : 3); i += 1) {
+      const at = t + rand(0.08, 0.45);
+      const f0 = rand(700, 1500);
+      const drop = ctx.createOscillator();
+      drop.frequency.setValueAtTime(f0, at);
+      drop.frequency.exponentialRampToValueAtTime(f0 * 2.2, at + 0.05);
+      const dropGain = ctx.createGain();
+      dropGain.gain.setValueAtTime(0.0001, at);
+      dropGain.gain.exponentialRampToValueAtTime(MIX.splash * rand(0.2, 0.45), at + 0.004);
+      dropGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.06);
+      drop.connect(dropGain).connect(out);
+      drop.start(at);
+      drop.stop(at + 0.08);
+    }
+  }
+
+  /** One run-through of the chorus; then, after a pause, another -- while you're still in earshot. */
+  private async rehearse(): Promise<void> {
+    if (!this.isRunning()) return;
+    this.schoolBusy = true;
+    const buffer = await this.loadVoice(this.schoolSrc);
+    if (!buffer || !this.isRunning()) {
+      this.schoolBusy = false;
+      return;
+    }
+    const source = this.ctx!.createBufferSource();
+    source.buffer = buffer;
+    source.connect(this.school.input);
+    source.onended = () => {
+      const gap = rand(...TIMING.rehearsalGap) * 1000;
+      const id = window.setTimeout(() => {
+        this.timers.delete(id);
+        this.schoolBusy = false;
+        if (this.schoolLevel > 0.02) void this.rehearse();
+      }, gap);
+      this.timers.add(id);
+    };
+    source.start();
   }
 
   /** 0-1, following the map's rain showers. */
@@ -183,12 +307,15 @@ export class AmbienceEngine {
     this.buildWaterfall();
     this.buildRain();
     this.buildFire();
+    this.buildFountain();
+    this.buildSchool();
     this.buildBirds();
     this.setRain(this.rainIntensity);
     this.loop(TIMING.birds, () => this.bird(), () => 1 + (TIMING.birdsRainFactor - 1) * this.rainIntensity);
     this.loop(TIMING.leaves, () => this.rustle(rand(0.7, 1.3), this.ctx!.currentTime, rand(-0.6, 0.6)));
     this.loop([0.04, 0.04], () => this.rainDrops(0.04));
     this.loop([0.04, 0.04], () => this.crackles(0.04));
+    this.loop([0.04, 0.04], () => this.fountainDrops(0.04));
   }
 
   private makeNoise(kind: Noise): AudioBuffer {
@@ -324,6 +451,112 @@ export class AmbienceEngine {
     hiss.start(0, rand(0, 3));
 
     this.fire = { gain, pan };
+  }
+
+  /** The fountain's bed: a soft, airy splash of water falling into the basin, gently swaying. */
+  private buildFountain(): void {
+    const ctx = this.ctx!;
+    const gain = ctx.createGain();
+    gain.gain.value = 0;
+    const pan = ctx.createStereoPanner();
+    gain.connect(pan).connect(this.ambience);
+
+    const splash = this.noiseSource('pink', true);
+    const splashGain = ctx.createGain();
+    splashGain.gain.value = 0.7;
+    this.lfo(splashGain.gain, 0.5, 0.12);
+    this.lfo(splashGain.gain, 1.3, 0.08);
+    splash
+      .connect(this.filter('highpass', 500))
+      .connect(this.filter('bandpass', 1900, 0.5))
+      .connect(splashGain)
+      .connect(gain);
+    splash.start(0, rand(0, 3));
+
+    // The drops go through the same panner, at their own level.
+    const drops = ctx.createGain();
+    drops.gain.value = 1;
+    drops.connect(pan);
+
+    this.fountain = { gain, pan, drops };
+  }
+
+  /**
+   * Droplets falling into the basin: each a tiny sine "bloop" sweeping
+   * quickly upward, the sound a drop makes as its bubble rings -- soft and
+   * pleasant rather than hissy.
+   */
+  private fountainDrops(span: number): void {
+    const level = this.fountainLevel * (this.fountainSpraying ? MIX.fountainSpray : 1);
+    if (level < 0.05) return;
+    const ctx = this.ctx!;
+    const expected = MIX.fountainDropsPerSecond * level * span;
+    const count = Math.floor(expected) + (Math.random() < expected % 1 ? 1 : 0);
+    for (let i = 0; i < count; i += 1) {
+      const t = ctx.currentTime + rand(0, span);
+      const f0 = rand(500, 1300);
+      const length = rand(0.04, 0.09);
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(f0, t);
+      osc.frequency.exponentialRampToValueAtTime(f0 * rand(1.8, 2.6), t + length);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(rand(0.4, 1) * MIX.fountain * Math.min(1, level) * 0.6, t + 0.004);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + length);
+      const pan = ctx.createStereoPanner();
+      pan.pan.value = rand(-0.25, 0.25);
+      osc.connect(gain).connect(pan).connect(this.fountain.drops);
+      osc.start(t);
+      osc.stop(t + length + 0.02);
+    }
+  }
+
+  /**
+   * The rehearsal heard from outside: band-limited like sound through a wall
+   * (the low-pass opens up as you come near), plus a room -- a synthetic
+   * reverb tail -- that makes it sound like it's happening in there.
+   */
+  private buildSchool(): void {
+    const ctx = this.ctx!;
+    const input = ctx.createGain();
+    const gain = ctx.createGain();
+    gain.gain.value = 0;
+    const pan = ctx.createStereoPanner();
+    const muffle = this.filter('lowpass', 380, 0.5);
+    const thin = this.filter('highpass', 140, 0.5);
+    input.connect(thin).connect(muffle);
+
+    const dry = ctx.createGain();
+    dry.gain.value = 0.55;
+    const room = ctx.createConvolver();
+    room.buffer = this.makeRoom(1.8);
+    const wet = ctx.createGain();
+    wet.gain.value = 0.7;
+    muffle.connect(dry).connect(gain);
+    muffle.connect(room).connect(wet).connect(gain);
+    gain.connect(pan).connect(this.ambience);
+
+    this.school = { input, gain, muffle, pan };
+  }
+
+  /** An impulse response for a medium room: decaying stereo noise, darker as it fades. */
+  private makeRoom(seconds: number): AudioBuffer {
+    const ctx = this.ctx!;
+    const length = Math.round(ctx.sampleRate * seconds);
+    const buffer = ctx.createBuffer(2, length, ctx.sampleRate);
+    for (let ch = 0; ch < 2; ch += 1) {
+      const data = buffer.getChannelData(ch);
+      let smooth = 0;
+      for (let i = 0; i < length; i += 1) {
+        const t = i / length;
+        // Smoothing grows over the tail, so late reflections lose their highs.
+        const k = 0.15 + 0.8 * t;
+        smooth = smooth * k + (Math.random() * 2 - 1) * (1 - k);
+        data[i] = smooth * Math.pow(1 - t, 2.6) * (i < ctx.sampleRate * 0.012 ? i / (ctx.sampleRate * 0.012) : 1);
+      }
+    }
+    return buffer;
   }
 
   /** Wood crackling: tiny bright clicks, now and then a deeper snap. */

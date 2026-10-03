@@ -10,6 +10,13 @@
 /** The vendor's "Aupa, egunon!" (1.5s, trimmed and levelled from the band's recording), under /public. If it can't load, he just waves silently. */
 export const VENDOR_VOICE_SRC = '/assets/audio/kiosko-aupa-egunon.m4a';
 
+/**
+ * The band rehearsing in the music school: the chorus of "Errauts eskuak"
+ * (77.0-100.5 s of the album track, faded in and out), heard from outside --
+ * muffled through the walls and echoing in the room (see AmbienceEngine).
+ */
+export const SCHOOL_REHEARSAL_SRC = '/assets/audio/eskola-errauts-eskuak-leloa.m4a';
+
 export const MIX = {
   /** The whole world's sound at full volume setting. */
   master: 0.9,
@@ -29,6 +36,15 @@ export const MIX = {
   /** The campfire's soft roar right beside it; its crackles and snaps come on top. */
   fire: 0.07,
   fireCracklesPerSecond: 11,
+  /** The fountain beside it: a soft splash, with droplets plinking into the basin on top. */
+  fountain: 0.06,
+  fountainDropsPerSecond: 9,
+  /** How much livelier it gets while its spray is going. */
+  fountainSpray: 1.6,
+  /** The rehearsal, right outside the school (it's muffled too, so it never gets loud). */
+  school: 0.5,
+  /** The beaver's plop as it dives (startled: bigger). */
+  splash: 0.09,
   voice: 0.95,
 } as const;
 
@@ -42,6 +58,12 @@ export const REACH = {
   /** The campfire, once lit (it lights when the snail comes near). */
   fireFull: 50,
   fireEdge: 320,
+  /** From the fountain's centre (its basin is ~85 across). */
+  fountainFull: 110,
+  fountainEdge: 420,
+  /** From the middle of the music school (it's ~290 wide). */
+  schoolFull: 150,
+  schoolEdge: 620,
 } as const;
 
 /** Seconds: the time constant every level glides with, so nothing jumps. */
@@ -69,4 +91,6 @@ export const TIMING = {
   leaves: [9, 20] as [number, number],
   /** Birds go quieter in the rain: their gaps stretch by up to this factor at its peak. */
   birdsRainFactor: 3,
+  /** The band pausing between run-throughs of the chorus. */
+  rehearsalGap: [4, 9] as [number, number],
 } as const;

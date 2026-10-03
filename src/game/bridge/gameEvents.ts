@@ -49,6 +49,10 @@ export type AppToGameEvents = {
   'weather:gust': { fromLeft: boolean };
   /** The kiosk vendor has just leaned out to greet the snail (once per approach). */
   'kiosk:greet': void;
+  /** The fountain's spray starting (the snail came near) or stopping. */
+  'fountain:spray': { spraying: boolean };
+  /** The beaver diving, where it went under -- `startled` when it was clicked. */
+  'beaver:splash': { x: number; y: number; startled: boolean };
   /** The campfire lighting up (the snail came near) or going out, and where it is. */
   'campfire:lit': { lit: boolean; x: number; y: number };
   /** Puts the snail down at a world point (and the camera on it) -- e.g. back in front of the castle after its minigame. */

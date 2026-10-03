@@ -241,6 +241,7 @@ export class MapScene extends Phaser.Scene {
       // Over the water, under every y-sorted landmark, plant and the snail.
       depth: 2,
       isReducedMotion: () => this.reducedMotion,
+      onSplash: (at, startled) => this.bus.emit('beaver:splash', { ...at, startled }),
     });
 
     this.ambient = new AmbientEffectsSystem(this, {
@@ -569,6 +570,7 @@ export class MapScene extends Phaser.Scene {
       },
       depth: renderY,
       isReducedMotion: () => this.reducedMotion,
+      onSprayChange: (spraying) => this.bus.emit('fountain:spray', { spraying }),
     });
   }
 

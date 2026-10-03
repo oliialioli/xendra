@@ -73,6 +73,28 @@ export function fireProximity(
   return { level: falloff(d, REACH.fireFull, REACH.fireEdge), pan: panFor(fire.x, viewCenterX, viewHalfWidth) * 0.8 };
 }
 
+/** How loud the fountain is (it always runs, quietly) and where it sits in the view. */
+export function fountainProximity(
+  snail: Vector2Like,
+  fountain: Vector2Like,
+  viewCenterX: number,
+  viewHalfWidth: number,
+): { level: number; pan: number } {
+  const d = Math.hypot(snail.x - fountain.x, snail.y - fountain.y);
+  return { level: falloff(d, REACH.fountainFull, REACH.fountainEdge), pan: panFor(fountain.x, viewCenterX, viewHalfWidth) * 0.8 };
+}
+
+/** How loud the rehearsal is from where the snail stands, and where the school sits in the view. */
+export function schoolProximity(
+  snail: Vector2Like,
+  school: Vector2Like,
+  viewCenterX: number,
+  viewHalfWidth: number,
+): { level: number; pan: number } {
+  const d = Math.hypot(snail.x - school.x, snail.y - school.y);
+  return { level: falloff(d, REACH.schoolFull, REACH.schoolEdge), pan: panFor(school.x, viewCenterX, viewHalfWidth) * 0.7 };
+}
+
 export type DuckState = {
   /** The open section's route, or null on the map. */
   panelRoute: string | null;

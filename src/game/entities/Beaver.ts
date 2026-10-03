@@ -155,6 +155,8 @@ export type BeaverOptions = {
   avoid: OcclusionSegment[];
   depth: number;
   isReducedMotion: () => boolean;
+  /** Told each time it hits the water diving (`startled` when it was clicked), e.g. for the splash's sound. */
+  onSplash?: (at: Vector2Like, startled: boolean) => void;
 };
 
 /**
@@ -184,6 +186,22 @@ export class Beaver {
     ensureTextures(scene);
     this.sprite = scene.add.image(0, 0, 'beaver').setScale(SIZE).setAlpha(0).setVisible(false);
     this.sprite.setDepth(options.depth);
+    // Clicking it startles it: it darts off and dives. A generous round hit
+    // area (in texture pixels) around its head and back, so it's easy to catch.
+    this.sprite.setInteractive({
+      hitArea: new Phaser.Geom.Circle((FRAME_W * RES) / 2 + 6 * RES, (FRAME_H * RES) / 2, 24 * RES),
+      hitAreaCallback: Phaser.Geom.Circle.Contains,
+      useHandCursor: true,
+    });
+    this.sprite.on(
+      'pointerdown',
+      (_pointer: Phaser.Input.Pointer, _x: number, _y: number, event: Phaser.Types.Input.EventData) => {
+        if (!this.swimming) return;
+        // It's the beaver being clicked, not the map: don't send the snail walking there.
+        event.stopPropagation();
+        this.dive(true);
+      },
+    );
     this.schedule(FIRST_DELAY_MS);
   }
 
@@ -287,7 +305,11 @@ export class Beaver {
   }
 
   /** Tail slap, a splash and it's gone -- then wait for next time. */
-  private dive(): void {
+  /**
+   * Tail slap, a splash and it's gone -- then wait for next time. Startled
+   * (clicked), it first darts ahead and goes under faster, with a bigger splash.
+   */
+  private dive(startled = false): void {
     if (!this.swimming) return;
     this.swimming = false;
     this.swim?.stop();
@@ -295,23 +317,33 @@ export class Beaver {
     this.rippleTimer?.remove();
     this.swim = this.bob = this.rippleTimer = null;
 
-    const { x, y } = this.sprite;
+    const ahead = this.sprite.rotation;
+    const dart = startled ? 34 : 0;
+    const x = this.sprite.x + Math.cos(ahead) * dart;
+    const y = this.sprite.y + Math.sin(ahead) * dart;
+    const goUnder = startled ? 260 : 420;
+    if (startled) {
+      this.scene.tweens.add({ targets: this.sprite, x, y, duration: 200, ease: 'Quad.easeOut' });
+    }
     this.scene.tweens.add({
       targets: this.sprite,
       alpha: 0,
       scaleX: 0.5 * SIZE,
       scaleY: 0.85 * SIZE,
-      duration: 420,
+      delay: startled ? 140 : 0,
+      duration: goUnder,
       ease: 'Quad.easeIn',
       onComplete: () => this.sprite.setVisible(false),
     });
-    const back = this.sprite.rotation + Math.PI;
+    const back = ahead + Math.PI;
     const tailX = x + Math.cos(back) * 30;
     const tailY = y + Math.sin(back) * 30;
-    this.scene.time.delayedCall(260, () => {
-      this.ripple(tailX, tailY, 1.6);
-      this.scene.time.delayedCall(220, () => this.ripple(tailX, tailY, 1.1));
+    this.scene.time.delayedCall(startled ? 220 : 260, () => {
+      this.ripple(tailX, tailY, startled ? 2.2 : 1.6);
+      this.scene.time.delayedCall(220, () => this.ripple(tailX, tailY, startled ? 1.6 : 1.1));
       this.splash(tailX, tailY);
+      if (startled) this.splash(tailX + 6, tailY - 4);
+      this.options.onSplash?.({ x: tailX, y: tailY }, startled);
     });
     this.schedule(NEXT_DELAY_MS);
   }

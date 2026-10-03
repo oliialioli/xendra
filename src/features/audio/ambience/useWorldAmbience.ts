@@ -1,18 +1,28 @@
 import { useEffect, useState } from 'react';
 import type { GameEventBus } from '../../../game/bridge/gameEvents';
 import { useSettings } from '../../../app/providers/SettingsContext';
-import { ISLAND_POLYGON } from '../../../content/mapGeometry';
+import { ISLAND_POLYGON, LANDMARK_FOOTPRINTS, LANDMARK_POSITIONS } from '../../../content/mapGeometry';
 import { waterfallConfig } from '../../../content/dockConfig';
 import { useAudioPlayer } from '../AudioContext';
 import { ambienceEngine } from './AmbienceEngine';
-import { VENDOR_VOICE_SRC } from './ambienceConfig';
-import { ambienceDuck, fireProximity, waterProximity } from './ambienceMath';
+import { SCHOOL_REHEARSAL_SRC, VENDOR_VOICE_SRC } from './ambienceConfig';
+import { ambienceDuck, fireProximity, fountainProximity, panFor, schoolProximity, waterProximity } from './ambienceMath';
 import { assetPath } from '../../../lib/assetPath';
 
 /** How often the snail's position is turned into water levels (the levels themselves glide). */
 const PROXIMITY_EVERY_MS = 120;
 
 const WATERFALL = waterfallConfig.enabled ? { x: waterfallConfig.x, y: waterfallConfig.y } : null;
+
+/** The middle of the music school's footprint: where the rehearsal comes from. */
+const SCHOOL = (() => {
+  const shape = LANDMARK_FOOTPRINTS.school?.[0];
+  return shape && 'width' in shape
+    ? { x: shape.x + shape.width / 2, y: shape.y + shape.height / 2 }
+    : LANDMARK_POSITIONS.school;
+})();
+
+ambienceEngine.setSchoolSource(assetPath(SCHOOL_REHEARSAL_SRC));
 
 /** True while any <audio>/<video> on the page is playing (a gallery video, say). */
 function useMediaPlaying(): boolean {
@@ -89,26 +99,38 @@ export function useWorldAmbience(bus: GameEventBus, panelRoute: string | null): 
   useEffect(() => {
     let lastProximity = 0;
     let fire: { x: number; y: number; lit: boolean } | null = null;
+    let view = { centerX: 0, halfWidth: 1 };
     const offFrame = bus.on('camera:frame', ({ worldViewX, zoom, viewportWidth, snailX, snailY }) => {
       const now = performance.now();
       if (now - lastProximity < PROXIMITY_EVERY_MS) return;
       lastProximity = now;
       const halfWidth = viewportWidth / zoom / 2;
+      view = { centerX: worldViewX + halfWidth, halfWidth };
       const snail = { x: snailX, y: snailY };
       ambienceEngine.setProximity(waterProximity(snail, ISLAND_POLYGON, WATERFALL, worldViewX + halfWidth, halfWidth));
-      const { level, pan } = fireProximity(snail, fire, worldViewX + halfWidth, halfWidth);
-      ambienceEngine.setFire(level, pan);
+      const fireNear = fireProximity(snail, fire, worldViewX + halfWidth, halfWidth);
+      ambienceEngine.setFire(fireNear.level, fireNear.pan);
+      const fountainNear = fountainProximity(snail, LANDMARK_POSITIONS.fountain, worldViewX + halfWidth, halfWidth);
+      ambienceEngine.setFountain(fountainNear.level, fountainNear.pan);
+      const schoolNear = schoolProximity(snail, SCHOOL, worldViewX + halfWidth, halfWidth);
+      ambienceEngine.setSchool(schoolNear.level, schoolNear.pan);
     });
     const offFire = bus.on('campfire:lit', (state) => {
       fire = state;
       if (!state.lit) ambienceEngine.setFire(0, 0);
     });
+    const offSplash = bus.on('beaver:splash', ({ x, startled }) =>
+      ambienceEngine.splash(panFor(x, view.centerX, view.halfWidth), startled),
+    );
+    const offSpray = bus.on('fountain:spray', ({ spraying }) => ambienceEngine.setFountainSpray(spraying));
     const offRain = bus.on('weather:rain', ({ intensity }) => ambienceEngine.setRain(intensity));
     const offGust = bus.on('weather:gust', ({ fromLeft }) => ambienceEngine.gust(fromLeft));
     const offGreet = bus.on('kiosk:greet', () => void ambienceEngine.playVoice(assetPath(VENDOR_VOICE_SRC)));
     return () => {
       offFrame();
       offFire();
+      offSpray();
+      offSplash();
       offRain();
       offGust();
       offGreet();
