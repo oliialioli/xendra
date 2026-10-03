@@ -55,8 +55,52 @@ function offsetPolygonOutward(polygon: Vector2Like[], margin: number): Vector2Li
   });
 }
 
+/**
+ * Stretches where pushing the coastline outward doesn't follow the water,
+ * redrawn by hand against xendra-map-base-v7-4k.png (world = image px / 1.5).
+ * Each replaces the offset polygon's points `from`..`to` (inclusive) with
+ * `points`; listed last-first so earlier indexes stay valid.
+ */
+const RIVER_PATH_FIXES: { from: number; to: number; points: Vector2Like[] }[] = [
+  // Under the causeway (bottom): the coast follows the road down off the map,
+  // so the offset dived off the bottom edge and came back. The river just
+  // runs straight under it.
+  {
+    from: 57,
+    to: 63,
+    points: [
+      { x: 967, y: 1283 },
+      { x: 1080, y: 1303 },
+      { x: 1193, y: 1317 },
+    ],
+  },
+  // A tiny zig-zag on the west bend, which crossed the lanes over.
+  { from: 48, to: 50, points: [{ x: 438, y: 1038 }] },
+  // Top left: the river along the top passes under the curved road and turns
+  // down the west channel. The offset climbed onto the land instead and looped
+  // over the stone arch bridge.
+  {
+    from: 27,
+    to: 35,
+    points: [
+      { x: 487, y: 237 },
+      { x: 373, y: 300 },
+    ],
+  },
+  // A tiny zig-zag just past the railway viaduct.
+  { from: 8, to: 9, points: [{ x: 1981, y: 237 }] },
+];
+
+function applyFixes(points: Vector2Like[]): Vector2Like[] {
+  const result = [...points];
+  RIVER_PATH_FIXES.forEach(({ from, to, points: replacement }) => {
+    result.splice(from, to - from + 1, ...replacement);
+  });
+  return result;
+}
+
 /** The river-path polygon in world units -- same order/winding as ISLAND_POLYGON. */
-export const RIVER_PATH_POLYGON: Vector2Like[] = offsetPolygonOutward(ISLAND_POLYGON, RIVER_PATH_MARGIN);
+export const RIVER_PATH_POLYGON: Vector2Like[] = applyFixes(offsetPolygonOutward(ISLAND_POLYGON, RIVER_PATH_MARGIN));
 
 function buildClosedSvgPath(points: Vector2Like[]): string {
   const [first, ...rest] = points;
@@ -113,9 +157,9 @@ export const boatPathConfig = {
    * polyline) as riverEntryPoint's own coordinates in dockConfig.ts, so the
    * two stay geometrically consistent with each other.
    */
-  launchProgress: 0.8504,
+  launchProgress: 0.8299,
   /**
-   * The three bridges the river runs under, drawn *over* the boats so a boat
+   * The four bridges the boats pass under, drawn *over* the boats so a boat
    * really disappears beneath the deck instead of fading on top of it.
    * Boats are DOM elements above the whole map canvas, so the bridges baked
    * into the map image can't cover them; each `src` is that bridge cut out
@@ -135,19 +179,27 @@ export const boatPathConfig = {
       id: 'railway',
       src: '/assets/map/bridge-rail.png',
       bounds: { x: 1894, y: 89, width: 360, height: 327 },
-      segment: { start: 0.08, end: 0.11 },
+      segment: { start: 0.095, end: 0.1231 },
     },
     {
-      id: 'stone',
-      src: '/assets/map/bridge-stone.png',
-      bounds: { x: 36, y: 126, width: 318, height: 140 },
-      segment: { start: 0.362, end: 0.388 },
+      // The curved road from the island to the stone bridge, top left.
+      id: 'road',
+      src: '/assets/map/bridge-road.png',
+      bounds: { x: 280, y: 100, width: 300, height: 230 },
+      segment: { start: 0.3737, end: 0.3995 },
     },
     {
       id: 'causeway',
       src: '/assets/map/bridge-causeway.png',
       bounds: { x: 1054, y: 1156, width: 150, height: 284 },
-      segment: { start: 0.733, end: 0.76 },
+      segment: { start: 0.7046, end: 0.7348 },
+    },
+    {
+      // The railway's second crossing, on the east side.
+      id: 'rail-south',
+      src: '/assets/map/bridge-rail-south.png',
+      bounds: { x: 2330, y: 790, width: 230, height: 250 },
+      segment: { start: 0.9413, end: 0.9661 },
     },
   ] as BridgeOverlay[],
   /**
@@ -161,7 +213,7 @@ export const boatPathConfig = {
    * hand together if the falls ever move.
    */
   occlusionSegments: [
-    { start: 0.8498, end: 0.8638 }, // waterfall rock cluster
+    { start: 0.8293, end: 0.8452 }, // waterfall rock cluster
   ] as OcclusionSegment[],
   /**
    * Progress range handed to waterfallConfig's tilt/speed/drop/splash
@@ -169,5 +221,5 @@ export const boatPathConfig = {
    * own segmentStart/segmentEnd directly), kept here in sync by hand for
    * anyone scanning this file to see the boat-path-side picture in one place.
    */
-  waterfallSegment: { start: 0.8418, end: 0.8718 } as OcclusionSegment | null,
+  waterfallSegment: { start: 0.8202, end: 0.8543 } as OcclusionSegment | null,
 };

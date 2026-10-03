@@ -60,7 +60,7 @@ else needs to change:
 | Boat speed | `features/boats/boatHash.ts` | `BASE_SPEED` / `SPEED_VARIATION` |
 | Floating bob | `features/boats/BoatFleet.tsx` | `FLOAT_AMPLITUDE_PX` / `FLOAT_SPEED` |
 | How boats are posed (always upright, mirrored when heading left, tilted in curves) | `features/boats/BoatFleet.tsx` | `MAX_BOAT_TILT_RAD` (max tilt), `uprightPose()` |
-| Bridge under-crossings (boat drawn beneath the bridge) | `content/boatPathConfig.ts` | `boatPathConfig.bridges` (cut-out image, world bounds, and the path stretch under each of the three bridges) |
+| Bridge under-crossings (boat drawn beneath the bridge) | `content/boatPathConfig.ts` | `boatPathConfig.bridges` (cut-out image, world bounds, and the path stretch under each of the four bridges) |
 | Fading behind the waterfall's rocks | `content/boatPathConfig.ts` | `boatPathConfig.occlusionSegments` |
 | House landmark (Mensajes/Mezuak) position/size | `content/mapGeometry.ts` | position: `dockConfig.xPercent`/`yPercent` (shared with the landmark hotspot below); size: `HOUSE_WIDTH_PERCENT` |
 | Waterfall art position/scale/rotation | `content/dockConfig.ts` | `waterfallConfig.x`/`y`/`scale`/`rotation`/`anchorX`/`anchorY` |

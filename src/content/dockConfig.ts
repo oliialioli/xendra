@@ -93,8 +93,8 @@ export const waterfallConfig = {
   rotation: 0,
   anchorX: 0.5,
   anchorY: 0.5,
-  segmentStart: 0.8418,
-  segmentEnd: 0.8718,
+  segmentStart: 0.8202,
+  segmentEnd: 0.8543,
   /** Degrees the boat's outer container tilts at the peak of the crossing envelope. */
   tilt: 8,
   speedMultiplier: 1.18,
