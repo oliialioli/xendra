@@ -15,6 +15,8 @@ type Screen = 'menu' | 'playing' | 'paused' | 'gameOver' | 'victory';
 
 type Hud = {
   score: number;
+  /** Whole seconds on the clock (it only runs while playing). */
+  seconds: number;
   lives: number;
   bossHp: number;
   /** The boss's name and health bar, from its entrance until it's beaten. */
@@ -22,7 +24,13 @@ type Hud = {
   bossIntro: boolean;
 };
 
-const HUD_START: Hud = { score: 0, lives: LIVES, bossHp: BOSS.hp, bossShown: false, bossIntro: false };
+const HUD_START: Hud = { score: 0, seconds: 0, lives: LIVES, bossHp: BOSS.hp, bossShown: false, bossIntro: false };
+
+/** 83.4 -> "1:23" */
+function formatTime(seconds: number): string {
+  const s = Math.floor(seconds);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
 
 /** How long the last moment (the final hit, the door) plays out before the results card. */
 const END_DELAY_MS = 900;
@@ -31,6 +39,7 @@ function hudFrom(state: GameState): Hud {
   const { phase, hp } = state.boss;
   return {
     score: state.score,
+    seconds: Math.floor(state.time),
     lives: state.lives,
     bossHp: hp,
     bossShown: phase === 'intro' || phase === 'walk' || phase === 'windup',
@@ -39,7 +48,8 @@ function hudFrom(state: GameState): Hud {
 }
 
 const sameHud = (a: Hud, b: Hud) =>
-  a.score === b.score && a.lives === b.lives && a.bossHp === b.bossHp && a.bossShown === b.bossShown && a.bossIntro === b.bossIntro;
+  a.score === b.score &&
+  a.seconds === b.seconds && a.lives === b.lives && a.bossHp === b.bossHp && a.bossShown === b.bossShown && a.bossIntro === b.bossIntro;
 
 function prefersTouch(): boolean {
   return typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
@@ -59,6 +69,7 @@ function Leaderboard({ entries, highlightAt }: { entries: LeaderboardEntry[]; hi
             <li key={`${entry.at}-${i}`} className={styles.boardRow} data-new={entry.at === highlightAt || undefined}>
               <span className={styles.boardPos}>{i + 1}.</span>
               <span className={styles.boardAlias}>{entry.alias}</span>
+              <span className={styles.boardTime}>{entry.time !== undefined ? formatTime(entry.time) : ''}</span>
               <span className={styles.boardScore}>{entry.score.toLocaleString('eu')}</span>
             </li>
           ))}
@@ -110,6 +121,9 @@ export function CastleGame({ onClose }: CastleGameProps) {
   const [hud, setHud] = useState<Hud>(HUD_START);
   const [board, setBoard] = useState<LeaderboardEntry[]>(() => loadLeaderboard());
   const [finalScore, setFinalScore] = useState(0);
+  /** The finished game's time and speed bonus (the bonus only for a win). */
+  const [finalTime, setFinalTime] = useState(0);
+  const [finalBonus, setFinalBonus] = useState(0);
   const [savedRun, setSavedRun] = useState<number | null>(null);
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [alias, setAlias] = useState('');
@@ -134,6 +148,7 @@ export function CastleGame({ onClose }: CastleGameProps) {
     ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
     drawFrame(ctx, gameRef.current, viewRef.current, cameraRef.current, effectsRef.current);
   }, []);
+
 
 
   // Canvas size follows its box, at up to 2x for sharp lines on retina screens.
@@ -235,6 +250,8 @@ export function CastleGame({ onClose }: CastleGameProps) {
         endAt ??= now + END_DELAY_MS;
         if (now >= endAt) {
           setFinalScore(game.score);
+          setFinalTime(game.time);
+          setFinalBonus(game.timeBonus);
           setScreen(game.status === 'victory' ? 'victory' : 'gameOver');
           return;
         }
@@ -344,7 +361,7 @@ export function CastleGame({ onClose }: CastleGameProps) {
       return;
     }
     const at = Date.now();
-    setBoard(saveScore(clean, finalScore, at));
+    setBoard(saveScore(clean, finalScore, at, screen === 'victory' ? finalTime : undefined));
     setSavedAt(at);
     setSavedRun(run);
     setAliasError(null);
@@ -395,6 +412,10 @@ export function CastleGame({ onClose }: CastleGameProps) {
                 <span className={styles.score}>
                   <span className="visually-hidden">{COPY.score}: </span>
                   {hud.score.toLocaleString('eu')}
+                </span>
+                <span className={styles.timer}>
+                  <span className="visually-hidden">{COPY.time}: </span>
+                  {formatTime(hud.seconds)}
                 </span>
               </div>
 
@@ -490,6 +511,15 @@ export function CastleGame({ onClose }: CastleGameProps) {
                   <strong>
                     {finalScore.toLocaleString('eu')} {COPY.points}
                   </strong>
+                </p>
+                <p className={styles.finalBreakdown}>
+                  {COPY.time}: {formatTime(finalTime)}
+                  {screen === 'victory' && (
+                    <>
+                      {' · '}
+                      {COPY.timeBonus}: +{finalBonus.toLocaleString('eu')}
+                    </>
+                  )}
                 </p>
 
                 {canSave && (

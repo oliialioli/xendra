@@ -5,6 +5,8 @@ export type LeaderboardEntry = {
   score: number;
   /** When it was saved (ms since epoch): on a tie, the earlier one stays ahead. */
   at: number;
+  /** Seconds it took, for a game won at the door (absent for a game over). */
+  time?: number;
 };
 
 /**
@@ -33,7 +35,7 @@ export function cleanAlias(raw: string): string | null {
 
 function isEntry(value: unknown): value is LeaderboardEntry {
   if (typeof value !== 'object' || value === null) return false;
-  const { alias, score, at } = value as Record<string, unknown>;
+  const { alias, score, at, time } = value as Record<string, unknown>;
   return (
     typeof alias === 'string' &&
     cleanAlias(alias) === alias &&
@@ -41,7 +43,8 @@ function isEntry(value: unknown): value is LeaderboardEntry {
     Number.isInteger(score) &&
     score >= 0 &&
     typeof at === 'number' &&
-    Number.isFinite(at)
+    Number.isFinite(at) &&
+    (time === undefined || (typeof time === 'number' && Number.isFinite(time) && time >= 0))
   );
 }
 
@@ -71,10 +74,12 @@ export function qualifies(score: number, entries: LeaderboardEntry[]): boolean {
 }
 
 /** Adds a result and returns the new top 3. Saving can fail silently: the returned ranking is still right for this visit. */
-export function saveScore(alias: string, score: number, now: number = Date.now()): LeaderboardEntry[] {
+export function saveScore(alias: string, score: number, now: number = Date.now(), time?: number): LeaderboardEntry[] {
   const clean = cleanAlias(alias);
   if (clean === null) return loadLeaderboard();
-  const next = rank([...loadLeaderboard(), { alias: clean, score, at: now }]);
+  const entry: LeaderboardEntry = { alias: clean, score, at: now };
+  if (time !== undefined) entry.time = Math.round(time * 10) / 10;
+  const next = rank([...loadLeaderboard(), entry]);
   memoryFallback = next;
   try {
     storage()?.setItem(LEADERBOARD.storageKey, JSON.stringify(next));

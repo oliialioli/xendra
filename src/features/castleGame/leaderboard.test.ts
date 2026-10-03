@@ -22,6 +22,14 @@ describe('castle leaderboard', () => {
     expect(JSON.parse(window.localStorage.getItem(LEADERBOARD.storageKey)!)).toHaveLength(3);
   });
 
+  it("keeps a win's time with its score", () => {
+    saveScore('Azkarra', 5200, 1, 71.26);
+    saveScore('Galdu', 900, 2);
+    const board = loadLeaderboard();
+    expect(board[0]).toMatchObject({ alias: 'Azkarra', time: 71.3 });
+    expect(board[1].time).toBeUndefined();
+  });
+
   it('keeps the earlier score first on a tie', () => {
     saveScore('Lehena', 1000, 10);
     saveScore('Bigarrena', 1000, 20);

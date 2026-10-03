@@ -10,6 +10,13 @@ export const SCORE = {
   enemy: 200,
   boss: 1000,
   door: 2000,
+  /**
+   * The speed bonus on reaching the door: this many points, less
+   * `timeBonusPerSecond` for every second played (never below 0) -- so the
+   * faster, the better. 150 s and over earns nothing.
+   */
+  timeBonusMax: 3000,
+  timeBonusPerSecond: 20,
 } as const;
 
 export const LIVES = 3;
@@ -130,7 +137,10 @@ export const COPY = {
   points: 'puntu',
   howToKeys: 'Mugitu geziekin edo A/D teklekin, eta egin salto zuriunearekin edo gora geziarekin. Erori etsaien gainera haiek garaitzeko.',
   howToTouch: 'Arrastatu hatza alboetara mugitzeko, eta ukitu pantaila edo irristatu gora salto egiteko. Erori etsaien gainera haiek garaitzeko.',
-  howToGoal: 'Bildu musika-notak, garaitu Gatz-zaindaria buruan salto eginez eta sartu tronuaren atetik.',
+  howToGoal:
+    'Bildu musika-notak, garaitu Gatz-zaindaria buruan salto eginez eta sartu tronuaren atetik. Zenbat eta azkarrago, orduan eta puntu gehiago!',
+  time: 'Denbora',
+  timeBonus: 'Abiadura-saria',
   touchLeft: 'Ezkerrera',
   touchRight: 'Eskuinera',
   touchJump: 'Salto',

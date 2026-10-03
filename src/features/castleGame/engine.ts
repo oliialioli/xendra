@@ -89,6 +89,8 @@ export type GameState = {
   /** 0 closed, 1 fully raised; it stops blocking the moment the boss is beaten. */
   gateOpen: number;
   checkpoint: number;
+  /** The speed bonus earned at the door (0 until then). `time` is the clock: it only runs while playing. */
+  timeBonus: number;
   events: GameEvent[];
 };
 
@@ -137,6 +139,7 @@ export function createGame(): GameState {
     boss: freshBoss(),
     gateOpen: 0,
     checkpoint: 0,
+    timeBonus: 0,
     events: [],
   };
 }
@@ -163,6 +166,12 @@ function award(state: GameState, key: string, points: number): void {
   if (state.awarded.has(key)) return;
   state.awarded.add(key);
   state.score += points;
+}
+
+/** The speed bonus for reaching the door after `seconds` of play: the faster, the more (rounded to tens). */
+export function timeBonus(seconds: number): number {
+  const points = SCORE.timeBonusMax - SCORE.timeBonusPerSecond * seconds;
+  return Math.max(0, Math.round(points / 10) * 10);
 }
 
 export function bossInterval(hp: number): number {
@@ -442,6 +451,10 @@ function stepPickups(state: GameState): void {
 
   if (state.boss.phase === 'defeated' && overlaps(r, DOOR)) {
     award(state, 'door', SCORE.door);
+    if (!state.awarded.has('time')) {
+      state.timeBonus = timeBonus(state.time);
+      award(state, 'time', state.timeBonus);
+    }
     state.status = 'victory';
     state.events.push({ type: 'victory' });
   }

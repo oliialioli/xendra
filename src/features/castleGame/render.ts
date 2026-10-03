@@ -118,6 +118,7 @@ export class Effects {
       } else if (e.type === 'victory') {
         this.burst(DOOR.x + DOOR.w / 2, DOOR.y + 30, 'spark', PAL.accent, 24, 200);
         this.text(DOOR.x + DOOR.w / 2, DOOR.y - 16, `+${SCORE.door}`);
+        if (state.timeBonus > 0) this.text(DOOR.x + DOOR.w / 2, DOOR.y - 40, `+${state.timeBonus}`);
       } else if (e.type === 'jump') {
         const p = state.player;
         this.burst(p.x + PLAYER.width / 2, p.y + PLAYER.height, 'dust', PAL.stoneShade, 3, 50);

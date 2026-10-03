@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BOSS, ENEMY, LIVES, PHYSICS, PLAYER, SCORE } from './config';
-import { NO_INPUT, advance, createGame, respawn, solidsFor, step, type GameInput, type GameState } from './engine';
+import { NO_INPUT, advance, createGame, respawn, solidsFor, step, timeBonus, type GameInput, type GameState } from './engine';
 import { ARENA, CHECKPOINTS, DOOR, GROUND_Y } from './level';
 
 const run = (state: GameState, seconds: number, input: GameInput = NO_INPUT) => {
@@ -193,7 +193,10 @@ describe('the Gatz-zaindaria fight', () => {
     Object.assign(game.player, { x: DOOR.x + 10, y: GROUND_Y - PLAYER.height });
     step(game, NO_INPUT);
     expect(game.status).toBe('victory');
-    expect(game.score).toBe(startScore + SCORE.boss + SCORE.door);
+    // The door pays its points, plus the speed bonus for the time taken.
+    expect(game.timeBonus).toBe(timeBonus(game.time));
+    expect(game.timeBonus).toBeGreaterThan(0);
+    expect(game.score).toBe(startScore + SCORE.boss + SCORE.door + game.timeBonus);
   });
 
   it('blocks the door until it is beaten', () => {
@@ -243,5 +246,25 @@ describe('the Gatz-zaindaria fight', () => {
     run(game, 0.3, { ...NO_INPUT, right: true });
     expect(game.lives).toBe(LIVES - 1);
     expect(b.hp).toBe(BOSS.hp);
+  });
+});
+
+describe('the speed bonus', () => {
+  it('pays more the faster the door is reached, and nothing past the limit', () => {
+    expect(timeBonus(0)).toBe(SCORE.timeBonusMax);
+    expect(timeBonus(60)).toBeGreaterThan(timeBonus(90));
+    expect(timeBonus(SCORE.timeBonusMax / SCORE.timeBonusPerSecond + 5)).toBe(0);
+  });
+
+  it("isn't paid for losing, and the clock only counts played time", () => {
+    const game = createGame();
+    game.lives = 1;
+    Object.assign(game.player, { x: 800, y: 300, onGround: false });
+    run(game, 1.5);
+    expect(game.status).toBe('gameOver');
+    expect(game.timeBonus).toBe(0);
+    const frozen = game.time;
+    run(game, 1);
+    expect(game.time).toBe(frozen);
   });
 });

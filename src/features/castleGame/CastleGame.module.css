@@ -126,6 +126,15 @@
   font-variant-numeric: tabular-nums;
 }
 
+.timer {
+  padding-left: var(--space-3);
+  border-left: 1px solid rgb(46 53 41 / 15%);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ui-ink-muted);
+}
+
 .pauseButton {
   min-width: 40px;
   min-height: 40px;
@@ -320,6 +329,13 @@
   font-size: 0.85rem;
 }
 
+.finalBreakdown {
+  margin: calc(var(--space-2) * -1) 0 0;
+  color: var(--ui-ink-muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .finalScore strong {
   color: var(--ui-ink);
   font-family: var(--font-display);
@@ -353,7 +369,7 @@
 
 .boardRow {
   display: grid;
-  grid-template-columns: 1.6rem 1fr auto;
+  grid-template-columns: 1.6rem 1fr auto auto;
   gap: var(--space-2);
   padding: 4px 6px;
   border-radius: var(--ui-radius-sm);
@@ -374,6 +390,12 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 600;
+}
+
+.boardTime {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--ui-ink-muted);
 }
 
 .boardScore {
