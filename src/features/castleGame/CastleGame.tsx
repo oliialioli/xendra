@@ -23,10 +23,9 @@ type Hud = {
   bossHp: number;
   /** The boss's name and health bar, from its entrance until it's beaten. */
   bossShown: boolean;
-  bossIntro: boolean;
 };
 
-const HUD_START: Hud = { score: 0, seconds: 0, lives: LIVES, bossHp: BOSS.hp, bossShown: false, bossIntro: false };
+const HUD_START: Hud = { score: 0, seconds: 0, lives: LIVES, bossHp: BOSS.hp, bossShown: false };
 
 /** 83.4 -> "1:23" */
 function formatTime(seconds: number): string {
@@ -45,13 +44,12 @@ function hudFrom(state: GameState): Hud {
     lives: state.lives,
     bossHp: hp,
     bossShown: phase === 'intro' || phase === 'walk' || phase === 'windup',
-    bossIntro: phase === 'intro',
   };
 }
 
 const sameHud = (a: Hud, b: Hud) =>
   a.score === b.score &&
-  a.seconds === b.seconds && a.lives === b.lives && a.bossHp === b.bossHp && a.bossShown === b.bossShown && a.bossIntro === b.bossIntro;
+  a.seconds === b.seconds && a.lives === b.lives && a.bossHp === b.bossHp && a.bossShown === b.bossShown;
 
 function prefersTouch(): boolean {
   return typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
@@ -484,8 +482,7 @@ export function CastleGame({ onClose }: CastleGameProps) {
 
               {hud.bossShown && (
                 <div className={styles.bossBar} aria-live="polite">
-                  <span className={styles.bossName}>{BOSS.name}</span>
-                  <span className={styles.bossHp} role="meter" aria-valuemin={0} aria-valuemax={BOSS.hp} aria-valuenow={hud.bossHp} aria-label={BOSS.name}>
+                  <span className={styles.bossHp} role="meter" aria-valuemin={0} aria-valuemax={BOSS.hp} aria-valuenow={hud.bossHp} aria-label={COPY.bossHealth}>
                     {Array.from({ length: BOSS.hp }, (_, i) => (
                       <span key={i} className={styles.bossHpSegment} data-full={i < hud.bossHp || undefined} />
                     ))}
@@ -506,11 +503,6 @@ export function CastleGame({ onClose }: CastleGameProps) {
             </div>
           )}
 
-          {screen === 'playing' && hud.bossIntro && (
-            <div className={styles.bossIntro} aria-hidden="true">
-              {BOSS.name}
-            </div>
-          )}
           {screen === 'playing' && notice && (
             <div className={styles.notice} role="status">
               {notice}

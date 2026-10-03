@@ -16,7 +16,7 @@ const pillar = (x: number, w: number, height: number): Rect => ({ x, y: GROUND_Y
  * The level, left to right:
  *   1. 0-760     the courtyard: flat floor and two low blocks to learn moving and jumping
  *   2. 760-2500  the ruins: gaps, floating stones, notes and patrolling salt mites
- *   3. 2500-3480 the arena: a safe respawn point, then the Gatz-zaindaria fight
+ *   3. 2500-3480 the arena: a safe respawn point, then the boss fight
  *   4. 3480-3800 behind the gate: the throne door
  * Every jump on the way is at most ~130 units across and ~95 up; with the
  * snail's jump (see PHYSICS) clearing ~180 across and ~130 up, they're all

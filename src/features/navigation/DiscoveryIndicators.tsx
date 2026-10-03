@@ -25,6 +25,10 @@ export type DiscoveryIndicatorsProps = {
  * why the icon itself never has to move when this flips.
  */
 const FLIP_MARGIN_PX = 220;
+/** Screen px kept clear at the top for the HUD bar (logo, buttons). */
+const TOP_CLEAR_PX = 72;
+/** How far the badge rises above its anchor point (its 20px gap + 44px height -- see LandmarkIndicator.module.css). */
+const BADGE_RISE_PX = 64;
 
 /**
  * Renders all 8 landmark discovery badges as absolutely-positioned DOM
@@ -81,7 +85,10 @@ export function DiscoveryIndicators({
         // instead of the bare ground point -- see landmarkIndicatorConfig.ts.
         const worldAnchorY = landmark.position.y - config.visualHeight;
         const screenX = (landmark.position.x - worldViewX) * zoom;
-        const screenY = (worldAnchorY - worldViewY) * zoom;
+        // Never above the top edge or under the HUD bar: a landmark near the
+        // top of the map (the castle) would otherwise put its badge out of
+        // sight -- it settles just below the bar instead.
+        const screenY = Math.max((worldAnchorY - worldViewY) * zoom, TOP_CLEAR_PX + BADGE_RISE_PX);
 
         const el = elementRefs.current[landmark.id];
         if (el) {

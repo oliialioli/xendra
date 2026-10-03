@@ -62,7 +62,6 @@ export const ENEMY = {
 } as const;
 
 export const BOSS = {
-  name: 'Gatz-zaindaria',
   hp: 3,
   width: 112,
   height: 92,
@@ -120,7 +119,9 @@ export const COPY = {
   paused: 'Pausan',
   gameOver: 'Jokoa amaitu da',
   victory: 'Garaipena!',
-  victoryText: 'Gatz-zaindaria garaitu eta tronuaren atea zeharkatu duzu.',
+  victoryText: 'Munstroa garaitu eta tronuaren atea zeharkatu duzu.',
+  /** The boss's health bar has no visible label (it has no name); this is for screen readers. */
+  bossHealth: 'Munstroaren bizitza',
   gameOverText: 'Bizitzak agortu zaizkizu.',
   score: 'Puntuak',
   lives: 'Bizitzak',

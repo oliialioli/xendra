@@ -242,7 +242,7 @@ export const xendraContent: XendraContent = {
       route: '/gaztelua',
       title: 'Gaztelu magikoa',
       shortLabel: 'Jokoa',
-      description: 'Xendraren minijokoa: zeharkatu gaztelu hondatua eta garaitu Gatz-zaindaria.',
+      description: 'Xendraren minijokoa: zeharkatu gaztelu magikoa eta iritsi ahalik eta azkarren bukaerara.',
       position: LANDMARK_POSITIONS.castle,
       interactionRadius: LANDMARK_INTERACTION_RADIUS,
     },

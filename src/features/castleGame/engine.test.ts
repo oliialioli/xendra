@@ -149,7 +149,7 @@ describe('castle game engine', () => {
   });
 });
 
-describe('the Gatz-zaindaria fight', () => {
+describe('the boss fight', () => {
   it('introduces itself, winds up visibly, then throws salt crystals', () => {
     const game = createGame();
     startFight(game);
