@@ -8,6 +8,7 @@ import { BOSS, COPY, LEADERBOARD, LIVES } from './config';
 import { advance, createGame, type GameState } from './engine';
 import { InputController, isGameKey, type TouchButton } from './input';
 import { cleanAlias, loadLeaderboard, qualifies, saveScore, type LeaderboardEntry } from './leaderboard';
+import { fetchSharedTop, startSharedRun, submitSharedScore } from './remoteLeaderboard';
 import { Camera, Effects, computeView, drawFrame, type View } from './render';
 import styles from './CastleGame.module.css';
 
@@ -55,7 +56,11 @@ function prefersTouch(): boolean {
   return typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
 }
 
-function Leaderboard({ entries, highlightAt }: { entries: LeaderboardEntry[]; highlightAt: number | null }) {
+type SavedEntry = { alias: string; score: number };
+
+/** The top 3 -- everyone's (shared, from Supabase) or, when that's unavailable, this browser's. */
+function Leaderboard({ entries, saved, shared }: { entries: LeaderboardEntry[]; saved: SavedEntry | null; shared: boolean }) {
+  const highlighted = saved ? entries.findIndex((e) => e.alias === saved.alias && e.score === saved.score) : -1;
   return (
     <section className={styles.board} aria-labelledby="castle-board-title">
       <h3 id="castle-board-title" className={styles.boardTitle}>
@@ -66,7 +71,7 @@ function Leaderboard({ entries, highlightAt }: { entries: LeaderboardEntry[]; hi
       ) : (
         <ol className={styles.boardList}>
           {entries.map((entry, i) => (
-            <li key={`${entry.at}-${i}`} className={styles.boardRow} data-new={entry.at === highlightAt || undefined}>
+            <li key={`${entry.at}-${i}`} className={styles.boardRow} data-new={i === highlighted || undefined}>
               <span className={styles.boardPos}>{i + 1}.</span>
               <span className={styles.boardAlias}>{entry.alias}</span>
               <span className={styles.boardTime}>{entry.time !== undefined ? formatTime(entry.time) : ''}</span>
@@ -75,7 +80,7 @@ function Leaderboard({ entries, highlightAt }: { entries: LeaderboardEntry[]; hi
           ))}
         </ol>
       )}
-      <p className={styles.boardNote}>{COPY.leaderboardNote}</p>
+      <p className={styles.boardNote}>{shared ? COPY.leaderboardNoteShared : COPY.leaderboardNote}</p>
     </section>
   );
 }
@@ -120,12 +125,18 @@ export function CastleGame({ onClose }: CastleGameProps) {
   const [run, setRun] = useState(0);
   const [hud, setHud] = useState<Hud>(HUD_START);
   const [board, setBoard] = useState<LeaderboardEntry[]>(() => loadLeaderboard());
+  /** Whether `board` is everyone's ranking (Supabase) rather than this browser's. */
+  const [boardShared, setBoardShared] = useState(false);
+  const [saving, setSaving] = useState(false);
+  /** This game's run id from Supabase (null until it arrives, or if unavailable). */
+  const runIdRef = useRef<string | null>(null);
+  const gameSeqRef = useRef(0);
   const [finalScore, setFinalScore] = useState(0);
   /** The finished game's time and speed bonus (the bonus only for a win). */
   const [finalTime, setFinalTime] = useState(0);
   const [finalBonus, setFinalBonus] = useState(0);
   const [savedRun, setSavedRun] = useState<number | null>(null);
-  const [savedAt, setSavedAt] = useState<number | null>(null);
+  const [savedEntry, setSavedEntry] = useState<SavedEntry | null>(null);
   const [alias, setAlias] = useState('');
   const [aliasError, setAliasError] = useState<string | null>(null);
   const [touchUi, setTouchUi] = useState(prefersTouch);
@@ -174,13 +185,19 @@ export function CastleGame({ onClose }: CastleGameProps) {
 
   const startGame = useCallback(() => {
     gameRef.current = createGame();
+    // Tell the shared ranking a game has started (its score will need this run's id).
+    const seq = ++gameSeqRef.current;
+    runIdRef.current = null;
+    void startSharedRun().then((id) => {
+      if (gameSeqRef.current === seq) runIdRef.current = id;
+    });
     setRun((n) => n + 1);
     inputRef.current.reset();
     effectsRef.current.clear();
     cameraRef.current.follow(gameRef.current, viewRef.current, 0, true);
     setHud(HUD_START);
     setSavedRun(null);
-    setSavedAt(null);
+    setSavedEntry(null);
     setAlias('');
     setAliasError(null);
     setNotice(null);
@@ -354,18 +371,50 @@ export function CastleGame({ onClose }: CastleGameProps) {
 
   const submitAlias = (event: FormEvent) => {
     event.preventDefault();
-    if (savedRun === run) return;
+    if (savedRun === run || saving) return;
     const clean = cleanAlias(alias);
     if (!clean) {
       setAliasError(COPY.aliasEmpty);
       return;
     }
-    const at = Date.now();
-    setBoard(saveScore(clean, finalScore, at, screen === 'victory' ? finalTime : undefined));
-    setSavedAt(at);
-    setSavedRun(run);
+    const won = screen === 'victory';
+    const time = won ? finalTime : undefined;
+    const saveHere = () => {
+      setBoard(saveScore(clean, finalScore, Date.now(), time));
+      setBoardShared(false);
+    };
     setAliasError(null);
+    setSavedEntry({ alias: clean, score: finalScore });
+    const runId = runIdRef.current;
+    if (!boardShared || !runId) {
+      saveHere();
+      setSavedRun(run);
+      return;
+    }
+    // Into everyone's ranking; if that fails (offline, refused), into this browser's instead.
+    setSaving(true);
+    void submitSharedScore(runId, clean, finalScore, finalTime, won)
+      .then((ok) => (ok ? fetchSharedTop() : null))
+      .then((top) => {
+        if (top) setBoard(top);
+        else saveHere();
+        setSavedRun(run);
+        setSaving(false);
+      });
   };
+
+  // Everyone's ranking, when Supabase has it; until then (or without it) this browser's.
+  useEffect(() => {
+    let cancelled = false;
+    void fetchSharedTop().then((top) => {
+      if (cancelled || !top) return;
+      setBoard(top);
+      setBoardShared(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const howTo = touchUi ? COPY.howToTouch : COPY.howToKeys;
 
@@ -480,7 +529,7 @@ export function CastleGame({ onClose }: CastleGameProps) {
                 <button type="button" className="xnd-btn-primary" onClick={startGame} autoFocus>
                   {COPY.start}
                 </button>
-                <Leaderboard entries={board} highlightAt={null} />
+                <Leaderboard entries={board} saved={null} shared={boardShared} />
               </div>
             </div>
           )}
@@ -536,8 +585,8 @@ export function CastleGame({ onClose }: CastleGameProps) {
                         aria-invalid={Boolean(aliasError)}
                         autoFocus
                       />
-                      <button type="submit" className="xnd-btn-secondary">
-                        {COPY.save}
+                      <button type="submit" className="xnd-btn-secondary" disabled={saving} aria-busy={saving}>
+                        {saving ? COPY.saving : COPY.save}
                       </button>
                     </div>
                     <p id="castle-alias-hint" className={aliasError ? styles.aliasError : styles.aliasHint} role={aliasError ? 'alert' : undefined}>
@@ -547,7 +596,7 @@ export function CastleGame({ onClose }: CastleGameProps) {
                 )}
                 {savedRun === run && <p className={styles.saved} role="status">{COPY.saved}</p>}
 
-                <Leaderboard entries={board} highlightAt={savedAt} />
+                <Leaderboard entries={board} saved={savedEntry} shared={boardShared} />
                 <div className={styles.actions}>
                   <button type="button" className="xnd-btn-primary" onClick={startGame} autoFocus={!canSave}>
                     {COPY.playAgain}

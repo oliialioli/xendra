@@ -128,6 +128,8 @@ export const COPY = {
   leaderboard: 'Onenak',
   leaderboardEmpty: 'Oraindik ez du inork jokatu. Izan zaitez lehena!',
   leaderboardNote: 'Nabigatzaile honetan gordetako puntuazioak.',
+  leaderboardNoteShared: 'Jokalari guztien artean onenak.',
+  saving: 'Gordetzen…',
   newRecord: 'Onenen artean zaude! Idatzi zure ezizena:',
   aliasLabel: 'Ezizena',
   aliasHint: `Gehienez ${LEADERBOARD.aliasMaxLength} karaktere.`,

@@ -24,6 +24,10 @@ one exists.
    SQL editor, or `supabase db push` if you use the CLI. This creates the
    `boats` table, its RLS policies (public read + public insert, no public
    update/delete), and enables realtime for it.
+   Then run `supabase/migrations/0002_castle_scores.sql` too: the castle
+   minigame's shared top 3 (`castle_scores`, readable by all, written only
+   through the `submit_castle_score()` check -- see that file). Until it
+   exists, the game keeps a per-browser ranking.
 3. Copy `.env.example` to `.env.local` and fill in:
    ```
    VITE_SUPABASE_URL=https://<your-project>.supabase.co

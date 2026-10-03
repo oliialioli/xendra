@@ -1,4 +1,5 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { getSupabaseClient } from '../../lib/supabaseClient';
 import { readJSON, storageKey, writeJSON } from '../../lib/storage';
 import { sanitizePlainText, validateBoatMessageInput, BOAT_MESSAGE_MAX_LENGTH } from './boatValidation';
 import { validateDrawingSize, isDrawingEmpty } from './drawingUtils';
@@ -204,11 +205,8 @@ let cachedRepository: BoatRepository | null = null;
 export function getBoatRepository(): BoatRepository {
   if (cachedRepository) return cachedRepository;
 
-  const url = import.meta.env.VITE_SUPABASE_URL;
-  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-  cachedRepository =
-    url && anonKey ? new SupabaseBoatRepository(createClient(url, anonKey)) : new LocalStorageBoatRepository();
+  const supabase = getSupabaseClient();
+  cachedRepository = supabase ? new SupabaseBoatRepository(supabase) : new LocalStorageBoatRepository();
   return cachedRepository;
 }
 
