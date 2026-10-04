@@ -196,6 +196,9 @@ export const OBSTACLE_RECTS: ObstacleRect[] = [
     height: 28,
   },
   ...TRAIN_FOOTPRINT,
+  // The paper-boat workshop's walls (see LANDMARK_ASSET_OVERRIDES.dockMessages),
+  // inset from its diamond footprint so the plaza in front stays walkable.
+  { id: 'dock-workshop', x: 1748, y: 942, width: 110, height: 40 },
 ];
 
 /**
@@ -359,7 +362,7 @@ export const FOUNTAIN_CONFIG = {
  * hotspot -- this constant only sizes the artwork, it doesn't duplicate the
  * position.
  */
-export const HOUSE_WIDTH_PERCENT = 5.86;
+export const HOUSE_WIDTH_PERCENT = 8.35;
 
 /**
  * Approved on-screen width (percentage of WORLD_WIDTH) of the yellow
@@ -411,7 +414,7 @@ export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   // dockMessages' own position lives in dockConfig.ts (dockPosition) --
   // kept there, not here, since it needs to be shared with the boat
   // launch/river-entry logic without this file importing that one.
-  dockMessages: { x: 1800, y: 1025 },
+  dockMessages: { x: 1787, y: 1005 },
   postbox: POSTBOX_POSITION,
   // The ruin's own anchor (castleConfig.x/y, kept in sync by hand like the
   // 'castle-ruins' obstacle above): the bottom of its walls, where the
@@ -419,8 +422,8 @@ export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   castle: { x: 1500, y: 230 },
 };
 
-/** Where the snail is taken to watch a newly sent boat leave the dock (when the creator wasn't opened there). */
-export const DOCK_FRONT: Vector2Like = { x: 1745, y: 1055 };
+/** Where the snail is taken to watch a newly sent boat leave the dock (when the creator wasn't opened there): on the path down to the pier. */
+export const DOCK_FRONT: Vector2Like = { x: 1968, y: 1084 };
 
 /** Where the snail stands when it comes back out of the castle minigame: on the path just in front of the ruin. */
 export const CASTLE_ENTRANCE: Vector2Like = { x: 1500, y: 272 };
@@ -454,6 +457,7 @@ export const LANDMARK_FOOTPRINTS: Partial<Record<LandmarkId, (ObstacleRect | Obs
   trainHistory: TRAIN_FOOTPRINT,
   fountain: obstacleCircles('fountain-basin'),
   postbox: obstacleCircles('postbox-plinth'),
+  dockMessages: obstacleRects('dock-workshop'),
 };
 
 /**
@@ -557,13 +561,13 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
     anchorMode: 'center',
     proximityGlow: true,
   },
-  // The messages-dock's house, replacing the provisional bare pencil badge
-  // with a real building -- same bottom-center-anchor pattern as every
-  // other landmark here. Position comes from LANDMARK_POSITIONS.dockMessages
-  // (== dockConfig.dockPosition), verified against the actual river-bend
-  // clearing on xendra-map-base-v7-4k.png, not guessed from a reference image.
+  // The paper-boat workshop: an open shed with the work table, a sign and a
+  // bench, drawn in the map's own isometric angle so it sits square on the
+  // plaza (its path down to the pier is dockConfig's pierConfig). Position
+  // comes from LANDMARK_POSITIONS.dockMessages (== dockConfig.dockPosition),
+  // checked against a composite with xendra-map-base-v7-4k.png.
   dockMessages: {
-    path: '/assets/landmarks/casa_rio.png',
+    path: '/assets/landmarks/caseta-ontziak.png',
     approvedBuildingWidth: (HOUSE_WIDTH_PERCENT / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
     proximityGlow: true,

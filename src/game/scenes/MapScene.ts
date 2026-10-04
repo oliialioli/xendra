@@ -16,7 +16,7 @@ import {
   WORLD_HEIGHT,
   WORLD_WIDTH,
 } from '../../content/mapGeometry';
-import { waterfallConfig } from '../../content/dockConfig';
+import { pierConfig, waterfallConfig } from '../../content/dockConfig';
 import { castleConfig } from '../../content/castleConfig';
 import { campfireConfig } from '../../content/campfireConfig';
 import {
@@ -187,6 +187,7 @@ export class MapScene extends Phaser.Scene {
     if (waterfallConfig.enabled && waterfallConfig.assetSrc) {
       this.load.image(MapScene.waterfallAssetKey(), assetPath(waterfallConfig.assetSrc));
     }
+    this.load.image('dock-pier', assetPath(pierConfig.src));
 
     this.load.image('kiosk-vendor-window', assetPath(KIOSK_VENDOR.windowSrc));
     this.load.image('kiosk-vendor-body', assetPath(KIOSK_VENDOR.bodySrc));
@@ -229,6 +230,8 @@ export class MapScene extends Phaser.Scene {
     this.setUpKioskVendor();
     this.setUpTrainSteam();
     this.setUpWaterfallAsset();
+    // The path and pier down from the boat workshop: flat on the ground, under the snail and every sprite.
+    this.add.image(pierConfig.x, pierConfig.y, 'dock-pier').setOrigin(0, 0).setDisplaySize(pierConfig.width, pierConfig.height).setDepth(1);
     this.setUpGroundDecor(castleConfig, MapScene.castleAssetKey());
     this.setUpCampfire();
     this.beaver = new Beaver(this, {

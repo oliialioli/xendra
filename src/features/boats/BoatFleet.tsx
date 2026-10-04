@@ -6,6 +6,7 @@ import { dockConfig, waterfallConfig } from '../../content/dockConfig';
 import { WORLD_HEIGHT, WORLD_WIDTH } from '../../content/mapGeometry';
 import { computeBoatMotionParams } from './boatHash';
 import { samplePathAtProgress, offsetPerpendicular, segmentFraction } from './boatPath';
+import { waterfallPose } from './waterfallRoute';
 import { getBoatBitmapDataUrl } from './boatBitmap';
 import { BoatMessageCard } from './BoatMessageCard';
 import { assetPath } from '../../lib/assetPath';
@@ -222,12 +223,14 @@ export function BoatFleet({ bus, boats, loaded, reducedMotion, suppressed, onBoa
 
       // Shared by every currently-launching boat, so computed once per
       // frame rather than per boat -- see the launch branch below for why.
-      const launchStartFacing = Math.atan2(
-        dockConfig.riverEntryPoint.y - dockConfig.launchPoint.y,
-        dockConfig.riverEntryPoint.x - dockConfig.launchPoint.x,
-      );
-      const launchHandoffSample = samplePathAtProgress(boatPathConfig.launchProgress);
-      const launchHandoffFacing = launchHandoffSample.angleRad + (boatPathConfig.direction < 0 ? Math.PI : 0);
+      // The hand-off point is wherever the river (or the waterfall route,
+      // which starts right below the pier) has a boat at launchProgress.
+      const handoffPath = samplePathAtProgress(boatPathConfig.launchProgress);
+      const handoffRoute = waterfallPose(boatPathConfig.launchProgress);
+      const riverEntry = handoffRoute ?? handoffPath;
+      const launchStartFacing = Math.atan2(riverEntry.y - dockConfig.launchPoint.y, riverEntry.x - dockConfig.launchPoint.x);
+      const launchHandoffFacing =
+        handoffRoute?.headingRad ?? handoffPath.angleRad + (boatPathConfig.direction < 0 ? Math.PI : 0);
 
       runtimeRef.current.forEach((state, boatId) => {
         const el = elementRefs.current.get(boatId);
@@ -243,15 +246,15 @@ export function BoatFleet({ bus, boats, loaded, reducedMotion, suppressed, onBoa
         let angleRad: number;
         let opacity = 1;
         let floatOffset = 0;
-        let waterfallEnvelope = 0;
+        let splashBoost = 1;
         let underBridge = false;
 
         const launchElapsed = state.launchStartedAt === null ? Infinity : now - state.launchStartedAt;
 
         if (launchElapsed < LAUNCH_DURATION_MS) {
           const t = easeOutCubic(launchElapsed / LAUNCH_DURATION_MS);
-          worldX = dockConfig.launchPoint.x + (dockConfig.riverEntryPoint.x - dockConfig.launchPoint.x) * t;
-          worldY = dockConfig.launchPoint.y + (dockConfig.riverEntryPoint.y - dockConfig.launchPoint.y) * t;
+          worldX = dockConfig.launchPoint.x + (riverEntry.x - dockConfig.launchPoint.x) * t;
+          worldY = dockConfig.launchPoint.y + (riverEntry.y - dockConfig.launchPoint.y) * t;
           // Eases from "facing straight toward the river entry point" (t=0,
           // just leaving the dock) to whatever heading the boat needs the
           // instant it joins the loop (t=1) -- these two angles aren't the
@@ -270,43 +273,26 @@ export function BoatFleet({ bus, boats, loaded, reducedMotion, suppressed, onBoa
           const elapsedSeconds = (now - sailingStart) / 1000;
           const progress = baseOffset + elapsedSeconds * state.motionParams.speed * boatPathConfig.direction;
 
-          // Smooth 0->1->0 envelope across the waterfall's segment (0 at
-          // both edges, peaking mid-crossing) instead of a hard on/off step,
-          // so entering/leaving the falls never visibly pops -- shared by
-          // the speed boost, tilt, drop and splash effects below.
-          const waterfallSegment = waterfallConfig.enabled
-            ? { start: waterfallConfig.segmentStart, end: waterfallConfig.segmentEnd }
-            : null;
-          const waterfallFraction = segmentFraction(progress, waterfallSegment);
-          waterfallEnvelope = waterfallFraction === null ? 0 : Math.sin(waterfallFraction * Math.PI);
-
-          let sampledProgress = progress;
-          if (waterfallEnvelope > 0 && waterfallConfig.speedMultiplier !== 1) {
-            // Peak forward nudge sized so the *average* extra distance
-            // covered across the whole segment (the sine envelope's mean is
-            // 2/pi of its peak) matches segmentSpan * (multiplier - 1) --
-            // i.e. "speedMultiplier% faster through this stretch", not an
-            // arbitrary constant.
-            const segmentSpan = waterfallConfig.segmentEnd - waterfallConfig.segmentStart;
-            const peakBoost = (segmentSpan * (waterfallConfig.speedMultiplier - 1)) / (2 / Math.PI);
-            sampledProgress = progress + waterfallEnvelope * peakBoost * boatPathConfig.direction;
-          }
-
-          const sample = samplePathAtProgress(sampledProgress);
+          const sample = samplePathAtProgress(progress);
           const lane = boatPathConfig.lanes[state.motionParams.laneIndex] ?? 0;
-          const laned = offsetPerpendicular(sample, lane);
-          worldX = laned.x;
-          worldY = laned.y;
-          // samplePathAtProgress's own tangent always faces the polygon's
-          // forward point order -- flip it 180 degrees when the fleet is
-          // actually traveling that order backwards (boatPathConfig.direction
-          // === -1), so this is the boat's true heading. uprightPose() below
-          // turns it into the pose actually drawn.
-          angleRad = sample.angleRad + (boatPathConfig.direction < 0 ? Math.PI : 0);
-
-          if (waterfallEnvelope > 0) {
-            worldY += waterfallConfig.dropDistance * waterfallEnvelope;
-            angleRad += ((waterfallConfig.tilt * Math.PI) / 180) * waterfallEnvelope;
+          // Through the waterfall the boat takes its own route over one of
+          // the falls (see waterfallRoute.ts), its lane folding in so every
+          // boat goes over the same lip.
+          const fall = waterfallPose(progress);
+          const laned = offsetPerpendicular(sample, lane * (fall ? fall.laneWeight : 1));
+          if (fall) {
+            worldX = fall.x + (laned.x - sample.x);
+            worldY = fall.y + (laned.y - sample.y);
+            angleRad = fall.headingRad;
+          } else {
+            worldX = laned.x;
+            worldY = laned.y;
+            // samplePathAtProgress's own tangent always faces the polygon's
+            // forward point order -- flip it 180 degrees when the fleet is
+            // actually traveling that order backwards (boatPathConfig.direction
+            // === -1), so this is the boat's true heading. uprightPose() below
+            // turns it into the pose actually drawn.
+            angleRad = sample.angleRad + (boatPathConfig.direction < 0 ? Math.PI : 0);
           }
 
           // Under a bridge: drawn beneath the bridge cut-outs (see the
@@ -339,6 +325,17 @@ export function BoatFleet({ bus, boats, loaded, reducedMotion, suppressed, onBoa
 
           if (!reducedMotion) {
             floatOffset = Math.sin(now / 1000 * FLOAT_SPEED + state.motionParams.floatPhase) * FLOAT_AMPLITUDE_PX;
+            if (fall && fall.falling > 0) floatOffset = 0;
+            // Landing at the foot of the fall: it dunks, bobs back up and the
+            // drawing bulges for a moment, as if splashing.
+            if (fall && fall.sinceLanding !== null) {
+              const landed = fall.sinceLanding / waterfallConfig.splashDistance;
+              if (landed < 1) {
+                const settle = 1 - landed;
+                floatOffset += Math.sin(landed * Math.PI * 2.5) * 7 * settle;
+                splashBoost = 1 + Math.sin(Math.min(1, landed * 2) * Math.PI) * 0.14;
+              }
+            }
           }
         }
 
@@ -346,9 +343,6 @@ export function BoatFleet({ bus, boats, loaded, reducedMotion, suppressed, onBoa
         const screenY = (worldY - worldViewY) * zoom;
         const { tiltRad, mirrored } = uprightPose(angleRad);
         const tiltDeg = (tiltRad * 180) / Math.PI;
-        // Subtle splash bulge at the peak of the waterfall crossing -- same
-        // shared envelope as the tilt/drop/speed effects above, no new asset.
-        const splashBoost = waterfallConfig.splashEnabled ? 1 + waterfallEnvelope * 0.12 : 1;
         const scale = zoom * state.motionParams.scaleVariation * splashBoost;
         const scaleX = mirrored ? -scale : scale;
 

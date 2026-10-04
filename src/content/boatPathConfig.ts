@@ -151,13 +151,12 @@ export const boatPathConfig = {
    */
   lanes: [-22, 0, 22],
   /**
-   * Progress (0-1 along the path) nearest dockConfig.riverEntryPoint -- a
-   * newly-launched boat's animation ends here before joining the loop.
-   * Computed the same way (nearest-vertex-index / vertex-count along the
-   * polyline) as riverEntryPoint's own coordinates in dockConfig.ts, so the
-   * two stay geometrically consistent with each other.
+   * Where a newly-launched boat joins the river: the progress at which
+   * waterfallConfig's route (features/boats/waterfallRoute.ts) passes right
+   * under the pier's end (dockConfig.launchPoint), so a boat dropped off the
+   * pier lands on the water and heads straight for the falls.
    */
-  launchProgress: 0.8299,
+  launchProgress: 0.8655,
   /**
    * The four bridges the boats pass under, drawn *over* the boats so a boat
    * really disappears beneath the deck instead of fading on top of it.
@@ -213,7 +212,8 @@ export const boatPathConfig = {
    * hand together if the falls ever move.
    */
   occlusionSegments: [
-    { start: 0.8293, end: 0.8452 }, // waterfall rock cluster
+    // (none: boats go over the waterfall by their own route instead of
+    // passing behind its rocks -- see features/boats/waterfallRoute.ts)
   ] as OcclusionSegment[],
   /**
    * Progress range handed to waterfallConfig's tilt/speed/drop/splash
@@ -221,5 +221,5 @@ export const boatPathConfig = {
    * own segmentStart/segmentEnd directly), kept here in sync by hand for
    * anyone scanning this file to see the boat-path-side picture in one place.
    */
-  waterfallSegment: { start: 0.8202, end: 0.8543 } as OcclusionSegment | null,
+  waterfallSegment: { start: 0.8244, end: 0.875 } as OcclusionSegment | null,
 };

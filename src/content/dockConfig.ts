@@ -2,46 +2,42 @@ import type { Vector2Like } from '../types/content';
 import { WORLD_WIDTH, WORLD_HEIGHT, LANDMARK_INTERACTION_RADIUS } from './mapGeometry';
 
 /**
- * Editable placement for the message dock, same percent-of-world pattern as
- * KIOSK_CONFIG/STAGE_CONFIG/SCHOOL_CONFIG/FOUNTAIN_CONFIG in mapGeometry.ts.
- * This reuses the exact spot the old `fronton` landmark stood at (see
- * LandmarkId's `dockMessages` doc comment in types/content.ts for why) --
- * lower-right of the island, just below and right of the music school,
- * inside the path loop, near the lower-right riverbank -- until the real
- * dock/pier artwork exists.
- *
- * `interactionRadius` is this landmark's own value (used by
- * xendraContent.ts instead of the shared LANDMARK_INTERACTION_RADIUS),
- * kept identical to the old default for now -- tune independently once the
- * real dock footprint is known.
- *
- * `launchPoint` is where a newly-sent boat visually appears (the dock spot
- * itself). `riverEntryPoint` is where it merges onto boatPathConfig's route
- * -- computed as the closest point on the island's own coastline
- * (mapGeometry's ISLAND_POLYGON, vertex index 70) pushed outward by
- * boatPathConfig's own RIVER_PATH_MARGIN (see that file), so it lands
- * exactly on the path rather than needing a second hand-tuned margin here.
- * Both points are in world units, independent of viewport/zoom.
+ * Editable placement for the message dock (the paper-boat workshop), same
+ * percent-of-world pattern as KIOSK_CONFIG/STAGE_CONFIG/SCHOOL_CONFIG in
+ * mapGeometry.ts: the workshop stands on the plaza baked into
+ * xendra-map-base-v7-4k.png (where the old `fronton` landmark was -- see
+ * LandmarkId's `dockMessages` doc comment), a path leads down to the pier
+ * (pierConfig) and boats are launched off its end (`launchPoint`), joining
+ * the river at boatPathConfig.launchProgress. World units throughout.
  */
 export const dockConfig = {
   /**
-   * Horizontal position, 0-100, percentage of WORLD_WIDTH -- the house's own
-   * ground-contact point, re-centered on the pre-existing clearing (the old
-   * `fronton` plaza baked into xendra-map-base-v7-4k.png). The clearing's
-   * geometric center is (1800, 965) world units, but a bottom-anchored
-   * sprite only ever extends *upward* from its anchor (never below/in front
-   * of it -- same convention every other landmark uses), so anchoring
-   * exactly at that center leaves the whole visible house sitting in the
-   * clearing's back half. Nudged further toward the front (larger y) than
-   * the raw geometric center to compensate, verified live against the
-   * actual rendered sprite, not just the patch's own shape.
+   * Horizontal position, 0-100, percentage of WORLD_WIDTH: the bottom-centre
+   * of caseta-ontziak.png's silhouette (its bench and tufts included), placed
+   * so the shed itself stands in the middle of the plaza.
    */
-  xPercent: 70.31,
+  xPercent: 69.8,
   /** Vertical position, 0-100, percentage of WORLD_HEIGHT -- see xPercent. */
-  yPercent: 71.18,
+  yPercent: 69.79,
   interactionRadius: LANDMARK_INTERACTION_RADIUS,
-  launchPoint: { x: 1800, y: 1025 } as Vector2Like,
-  riverEntryPoint: { x: 1811, y: 1263 } as Vector2Like,
+  /** The far end of the pier (pierConfig below): boats are set on the water there. */
+  launchPoint: { x: 2036, y: 1150 } as Vector2Like,
+};
+
+/**
+ * The sandy path from the workshop's plaza down to the riverbank and the
+ * little wooden pier the boats are launched from -- one ground-level image
+ * (ontzi-kaia.png) laid over the base map like the bridges, under every
+ * y-sorted sprite so the snail walks on it. `x`/`y` is its top-left corner
+ * and `width`/`height` its size, all in world units (the image covers
+ * xendra-map-base-v7-4k.png's pixels 2810-3150 x 1470-1800 at 2x).
+ */
+export const pierConfig = {
+  src: '/assets/map/ontzi-kaia.png',
+  x: 2810 / 1.5,
+  y: 1470 / 1.5,
+  width: 340 / 1.5,
+  height: 330 / 1.5,
 };
 
 export const dockPosition: Vector2Like = {
@@ -58,47 +54,45 @@ export const dockPosition: Vector2Like = {
  * placed by hand (x/y/scale/rotation/anchor), not derived from analyzing
  * the image's own opaque bounds like a building.
  *
- * `x`/`y` started out equal to dockConfig.riverEntryPoint (the river-path
- * progress nearest the dock -- see boatPathConfig's own `launchProgress`),
- * then were nudged upstream/bankward by hand (closer to the house, per
- * visual review) -- both checked, at each step, against a real crop of
- * xendra-map-base-v7-4k.png composited with these exact assets, never
- * guessed from the Figma composition reference or a screenshot alone. The
- * nearest point on the actual boat path barely moves for this small a nudge
- * (~0.0012 progress, well inside segmentStart/segmentEnd's own margin
- * below), so boats still cross through the same stretch of rocks/water.
- *
  * `segmentStart`/`segmentEnd` are boatPathConfig progress values (0-1)
- * bracketing that stretch, derived from how far a fixed world-unit
- * distance corresponds to in path progress right here (~7.2 world units of
- * river per 0.001 progress) -- see BoatFleet's tick loop for how a boat's
- * per-frame progress is compared against this range through a smooth 0->1->0
- * envelope (Math.sin), not a hard on/off step, so crossing the falls never
- * visibly pops. `boatPathConfig.occlusionSegments` has a matching (narrower)
- * entry for fading a boat while it's visually behind the rock cluster.
- *
- * If the asset, its scale, or the river art itself ever changes, re-verify
- * `x`/`y`/`scale`/`segmentStart`/`segmentEnd` against the live map (e.g. via
- * MapScene's debug overlay, press `D`) rather than adjusting them from a
- * screenshot alone.
+ * bracketing the stretch where a boat leaves the river path and takes
+ * `route` instead: round the big rock, into the pool above the right-hand
+ * fall, over its lip, down into the foam and back out to the path (see
+ * features/boats/waterfallRoute.ts). Route points are world units, checked
+ * against a composite of xendra-map-base-v7-4k.png with cascada.png at this
+ * exact x/y/scale -- re-check them if either moves. A boat's position is its
+ * centre, so points sit a little above the water line its hull rests on.
  */
 export const waterfallConfig = {
   enabled: true,
   assetSrc: '/assets/landmarks/cascada.png',
-  // Moved 47 units downstream from the dock's river entry so the rocks'
-  // far end touches the south bank (segment values shifted +0.0064 to match).
-  x: 1858,
-  y: 1215,
+  // Placed so the rocks span the river: the left one on the north bank,
+  // the right ones touching the south bank (segment values follow it,
+  // ~7.2 world units per 0.001 progress).
+  x: 1888,
+  y: 1211,
   scale: 0.32,
   rotation: 0,
   anchorX: 0.5,
   anchorY: 0.5,
-  segmentStart: 0.8202,
-  segmentEnd: 0.8543,
-  /** Degrees the boat's outer container tilts at the peak of the crossing envelope. */
-  tilt: 8,
-  speedMultiplier: 1.18,
-  /** World units the boat visually drops at the peak of the crossing envelope. */
-  dropDistance: 14,
-  splashEnabled: true,
+  segmentStart: 0.8244,
+  segmentEnd: 0.875,
+  /**
+   * In travel order, between the path at segmentEnd and at segmentStart
+   * (both added from the path itself). `pace` is how fast the leg leading
+   * *to* that point goes (1 = river speed); `fall` marks the drop.
+   */
+  route: [
+    { x: 2027, y: 1195, pace: 1 },
+    { x: 1965, y: 1201, pace: 0.85 },
+    // The lip: it slows a touch before tipping over...
+    { x: 1921, y: 1205, pace: 0.6 },
+    // ...and drops.
+    { x: 1909, y: 1265, pace: 3.4, fall: true },
+    { x: 1865, y: 1288, pace: 1.2 },
+  ] as WaterfallRoutePoint[],
+  /** World units after landing over which the boat bobs and its splash bulges. */
+  splashDistance: 34,
 };
+
+export type WaterfallRoutePoint = Vector2Like & { pace: number; fall?: boolean };

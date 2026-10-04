@@ -8,14 +8,15 @@ fit together.
 
 ## Landmark
 
-The dock reuses the old `fronton`/notes landmark's exact spot and interaction
-radius (see `types/content.ts`'s `dockMessages` doc comment) -- lower-right
-of the island, below/right of the music school, near the lower-right
-riverbank, upstream-left of the small waterfall. Its real artwork is a small
-house (`LANDMARK_ASSET_OVERRIDES.dockMessages` in `mapGeometry.ts`, using
-`public/assets/landmarks/casa_rio.png`); the discovery badge still shows a
-provisional pencil icon (`landmarkIndicatorConfig.tsx`) until a definitive
-one exists.
+The dock is the paper-boat workshop on the plaza where the old
+`fronton`/notes landmark stood (see `types/content.ts`'s `dockMessages` doc
+comment) -- lower-right of the island, below/right of the music school. Its
+artwork is an open shed with the work table, a sign and a bench
+(`public/assets/landmarks/caseta-ontziak.png`, via
+`LANDMARK_ASSET_OVERRIDES.dockMessages` in `mapGeometry.ts`); a sandy path
+leads down to a small pier (`public/assets/map/ontzi-kaia.png`, placed by
+`pierConfig` in `dockConfig.ts`), and new boats are launched off the pier's
+end, just upstream of the waterfall.
 
 ## Supabase setup
 
@@ -61,7 +62,7 @@ else needs to change:
 | --- | --- | --- |
 | Landmark position / interaction radius | `content/dockConfig.ts` | `dockConfig.xPercent`/`yPercent`/`interactionRadius` |
 | Where a new boat visually appears | `content/dockConfig.ts` | `dockConfig.launchPoint` |
-| Where the launch animation hands off to the river loop | `content/dockConfig.ts` | `dockConfig.riverEntryPoint` (keep it geometrically on the path -- see `boatPathConfig.launchProgress`) |
+| Where the launch animation hands off to the river loop | `content/boatPathConfig.ts` | `boatPathConfig.launchProgress` (the hand-off point is computed from it; boats start at `dockConfig.launchPoint`, the pier's end) |
 | The river route itself | `content/boatPathConfig.ts` | `RIVER_PATH_MARGIN` (how far out from the coastline) -- the `path`/`RIVER_PATH_POLYGON` are derived automatically, never hand-edit them |
 | Parallel lanes | `content/boatPathConfig.ts` | `boatPathConfig.lanes` (perpendicular world-unit offsets) |
 | Boat size | `features/boats/BoatFleet.tsx` | `BOAT_WORLD_SIZE` |
@@ -69,10 +70,10 @@ else needs to change:
 | Floating bob | `features/boats/BoatFleet.tsx` | `FLOAT_AMPLITUDE_PX` / `FLOAT_SPEED` |
 | How boats are posed (always upright, mirrored when heading left, tilted in curves) | `features/boats/BoatFleet.tsx` | `MAX_BOAT_TILT_RAD` (max tilt), `uprightPose()` |
 | Bridge under-crossings (boat drawn beneath the bridge) | `content/boatPathConfig.ts` | `boatPathConfig.bridges` (cut-out image, world bounds, and the path stretch under each of the four bridges) |
-| Fading behind the waterfall's rocks | `content/boatPathConfig.ts` | `boatPathConfig.occlusionSegments` |
+| Fading behind something on the map | `content/boatPathConfig.ts` | `boatPathConfig.occlusionSegments` (currently none) |
 | House landmark (Mensajes/Mezuak) position/size | `content/mapGeometry.ts` | position: `dockConfig.xPercent`/`yPercent` (shared with the landmark hotspot below); size: `HOUSE_WIDTH_PERCENT` |
 | Waterfall art position/scale/rotation | `content/dockConfig.ts` | `waterfallConfig.x`/`y`/`scale`/`rotation`/`anchorX`/`anchorY` |
-| Waterfall boat effect (tilt/speed/drop/splash) | `content/dockConfig.ts` | `waterfallConfig.tilt`/`speedMultiplier`/`dropDistance`/`splashEnabled`, over `segmentStart`/`segmentEnd` |
+| How boats go over the waterfall | `content/dockConfig.ts` | `waterfallConfig.route` (points + `pace`, `fall` marks the drop) between `segmentStart`/`segmentEnd`, and `splashDistance` -- see `features/boats/waterfallRoute.ts` |
 
 ## Needs a visual pass once real assets/art exist
 
@@ -89,7 +90,8 @@ else needs to change:
   from a reference image -- see `waterfallConfig`'s own comment in
   `dockConfig.ts` for how `x`/`y` were derived). If the base map or either
   asset ever changes, re-verify position/scale/`segmentStart`/`segmentEnd`
-  against the live map (debug overlay, `D`) rather than adjusting blind.
+  against the live map (debug overlay, `D`) rather than adjusting blind --
+  and move `waterfallConfig.route` with it.
 - **`RIVER_PATH_MARGIN`** (`boatPathConfig.ts`) was checked visually against
   the current map at its default value; if a future map revision moves the
   riverbank, re-check the loop still reads as "in the water" all the way
