@@ -8,6 +8,13 @@ export type GameBootData = {
   landmarks: Landmark[];
   visitedIds: LandmarkId[];
   reducedMotion: boolean;
+  /**
+   * Stills even the small, slow, local effects (steam, notes, water...).
+   * Only the in-app toggle sets this: the system's "reduce motion" alone
+   * (which phones often have on) leaves them running -- they're the sign a
+   * place has come alive -- and only calms the big movement.
+   */
+  ambientMotionOff: boolean;
 };
 
 /** Never render more than 2 canvas pixels per CSS pixel -- 3x phones gain little visibly for 2.25x the fill cost. */

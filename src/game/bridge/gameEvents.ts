@@ -59,7 +59,13 @@ export type AppToGameEvents = {
   'snail:placeAt': { x: number; y: number };
   'controls:joystick': { x: number; y: number };
   'controls:interactPressed': void;
-  'motion:setReduced': { reduced: boolean };
+  /**
+   * `reduced`: the system's "reduce motion" (or the in-app toggle) -- calms
+   * big movement: rain and gusts across the screen, flickers. `ambientOff`:
+   * only the in-app toggle -- also stills the small, slow, local effects
+   * (steam, notes, water, letters...), which otherwise keep running.
+   */
+  'motion:setReduced': { reduced: boolean; ambientOff: boolean };
   'visited:hydrate': { ids: LandmarkId[] };
 };
 

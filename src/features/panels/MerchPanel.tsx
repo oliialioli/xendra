@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MagnifyingGlassMinus, MagnifyingGlassPlus } from '@phosphor-icons/react';
 import type { MerchProduct } from '../../types/content';
 import { xendraContent } from '../../content/xendraContent';
 import { assetPath } from '../../lib/assetPath';
@@ -8,7 +9,7 @@ import styles from './MerchPanel.module.css';
 /**
  * The product photo. With a close-up, hovering it (or focusing it) fades the
  * close-up in; on a touch screen, where there's no hover, tapping it swaps
- * between the two.
+ * between the two -- the magnifier in its corner says so.
  */
 function ProductPhoto({ product }: { product: MerchProduct }) {
   const [showDetail, setShowDetail] = useState(false);
@@ -24,10 +25,16 @@ function ProductPhoto({ product }: { product: MerchProduct }) {
       aria-pressed={showDetail}
       aria-label={`${product.name}: ikusi xehetasuna`}
       onClick={() => setShowDetail((shown) => !shown)}
-      onMouseLeave={() => setShowDetail(false)}
+      // Only a real mouse leaving resets it: some phones send a "leave" right after a tap.
+      onPointerLeave={(event) => {
+        if (event.pointerType === 'mouse') setShowDetail(false);
+      }}
     >
       {photo}
-      <img className={`${styles.image} ${styles.detail}`} src={assetPath(product.detailImagePath)} alt="" loading="lazy" />
+      <img className={`${styles.image} ${styles.detail}`} src={assetPath(product.detailImagePath)} alt="" />
+      <span className={styles.zoomHint} aria-hidden="true">
+        {showDetail ? <MagnifyingGlassMinus size={18} weight="bold" /> : <MagnifyingGlassPlus size={18} weight="bold" />}
+      </span>
     </button>
   );
 }

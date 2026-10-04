@@ -40,6 +40,22 @@ button.photo {
   }
 }
 
+/* The magnifier in the corner: the cue that the photo has a close-up (the only one on touch screens). */
+.zoomHint {
+  position: absolute;
+  right: var(--space-2);
+  bottom: var(--space-2);
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgb(255 252 245 / 88%);
+  color: var(--ui-ink);
+  box-shadow: 0 1px 4px rgb(40 30 20 / 18%);
+  pointer-events: none;
+}
+
 .photo:focus-visible {
   outline: 2px solid var(--ui-ink);
   outline-offset: 2px;

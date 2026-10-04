@@ -10,13 +10,15 @@ export type PhaserGameProps = {
   landmarks: Landmark[];
   visitedIds: LandmarkId[];
   reducedMotion: boolean;
+  /** See GameBootData.ambientMotionOff. */
+  ambientMotionOff: boolean;
 };
 
 /**
  * Mounts a single Phaser.Game instance for the lifetime of the app.
  * React never re-creates it on re-render; only the bridge carries updates in.
  */
-export function PhaserGame({ bus, landmarks, visitedIds, reducedMotion }: PhaserGameProps) {
+export function PhaserGame({ bus, landmarks, visitedIds, reducedMotion, ambientMotionOff }: PhaserGameProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
 
@@ -29,6 +31,7 @@ export function PhaserGame({ bus, landmarks, visitedIds, reducedMotion }: Phaser
       landmarks,
       visitedIds,
       reducedMotion,
+      ambientMotionOff,
     });
     const game = new Phaser.Game(config);
     gameRef.current = game;

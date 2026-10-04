@@ -87,8 +87,8 @@ export function MapLayout() {
   );
 
   useEffect(() => {
-    bus.emit('motion:setReduced', { reduced: settings.effectiveReducedMotion });
-  }, [settings.effectiveReducedMotion, bus]);
+    bus.emit('motion:setReduced', { reduced: settings.effectiveReducedMotion, ambientOff: settings.extraReducedMotion });
+  }, [settings.effectiveReducedMotion, settings.extraReducedMotion, bus]);
 
   // Auto-shows the instant the map first becomes interactive (whether that's
   // true from the very first render, e.g. the intro was already seen in an
@@ -232,6 +232,7 @@ export function MapLayout() {
         landmarks={xendraContent.landmarks}
         visitedIds={initialVisitedIds}
         reducedMotion={settings.effectiveReducedMotion}
+        ambientMotionOff={settings.extraReducedMotion}
       />
 
       {usingFallbackMap && <DevWarningBanner />}
@@ -262,7 +263,8 @@ export function MapLayout() {
         bus={bus}
         boats={fleet.boats}
         loaded={!fleet.loading}
-        reducedMotion={settings.effectiveReducedMotion}
+        // Their gentle bob is a small, local effect: only the in-app toggle stills it (see GameBootData.ambientMotionOff).
+        reducedMotion={settings.extraReducedMotion}
         suppressed={controlsBlocked}
         onBoatCardOpenChange={setBoatCardOpen}
       />

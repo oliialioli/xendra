@@ -132,6 +132,8 @@ export class MapScene extends Phaser.Scene {
   private landmarks: Landmark[] = [];
   private visited = new Set<LandmarkId>();
   private reducedMotion = false;
+  /** See GameBootData.ambientMotionOff: stills the small local effects too, not just the big movement. */
+  private ambientMotionOff = false;
   private campfire: Campfire | null = null;
   private beaver: Beaver | null = null;
   private riverFlow: RiverFlow | null = null;
@@ -215,6 +217,7 @@ export class MapScene extends Phaser.Scene {
     this.landmarks = bootData.landmarks;
     this.visited = new Set(bootData.visitedIds);
     this.reducedMotion = bootData.reducedMotion;
+    this.ambientMotionOff = bootData.ambientMotionOff;
 
     this.physics.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
     this.cameras.main.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
@@ -253,18 +256,18 @@ export class MapScene extends Phaser.Scene {
       // Over the water and the pier's path, under the beaver and everything y-sorted.
       depth: 1.5,
     });
-    this.riverFlow.setEnabled(!this.reducedMotion);
+    this.riverFlow.setEnabled(!this.ambientMotionOff);
     this.beaver = new Beaver(this, {
       river: RIVER_PATH_POLYGON,
       avoid: riverAvoid,
       // Over the water, under every y-sorted landmark, plant and the snail.
       depth: 2,
-      isReducedMotion: () => this.reducedMotion,
+      isReducedMotion: () => this.ambientMotionOff,
       onSplash: (at, startled) => this.bus.emit('beaver:splash', { ...at, startled }),
     });
 
     this.ambient = new AmbientEffectsSystem(this, {
-      reducedMotion: this.reducedMotion,
+      reducedMotion: this.ambientMotionOff,
       stageLightPositions: STAGE_LIGHT_OFFSETS,
       riverSparklePoints: ISLAND_POLYGON.filter((_, i) => i % 3 === 0),
     });
@@ -577,7 +580,7 @@ export class MapScene extends Phaser.Scene {
       scale: waterfallConfig.scale,
       depth: waterfallConfig.y + 0.5,
     });
-    this.waterfallFlow.setEnabled(!this.reducedMotion);
+    this.waterfallFlow.setEnabled(!this.ambientMotionOff);
   }
 
   private static castleAssetKey(): string {
@@ -602,7 +605,7 @@ export class MapScene extends Phaser.Scene {
         y: renderY + (spoutPx.y - analysis.origin.y * analysis.imageHeight) * scale,
       },
       depth: renderY,
-      isReducedMotion: () => this.reducedMotion,
+      isReducedMotion: () => this.ambientMotionOff,
       onSprayChange: (spraying) => this.bus.emit('fountain:spray', { spraying }),
     });
   }
@@ -624,7 +627,7 @@ export class MapScene extends Phaser.Scene {
       anchor: { x: renderX, y: renderY },
       face: { x0: -0.3 * width, x1: 0.25 * width, y0: -0.72 * height, y1: -0.38 * height },
       depth: renderY,
-      isReducedMotion: () => this.reducedMotion,
+      isReducedMotion: () => this.ambientMotionOff,
     });
   }
 
@@ -641,7 +644,7 @@ export class MapScene extends Phaser.Scene {
         y: renderY + (POSTBOX_SLOT_PX.y - analysis.origin.y * analysis.imageHeight) * scale,
       },
       depth: renderY,
-      isReducedMotion: () => this.reducedMotion,
+      isReducedMotion: () => this.ambientMotionOff,
     });
   }
 
@@ -665,7 +668,7 @@ export class MapScene extends Phaser.Scene {
         y: renderY + (px.y - analysis.origin.y * analysis.imageHeight) * scale,
       })),
       depth: renderY + 1,
-      isReducedMotion: () => this.reducedMotion,
+      isReducedMotion: () => this.ambientMotionOff,
     });
   }
 
@@ -684,7 +687,7 @@ export class MapScene extends Phaser.Scene {
       },
       scale,
       depth: renderY + 1,
-      isReducedMotion: () => this.reducedMotion,
+      isReducedMotion: () => this.ambientMotionOff,
     });
   }
 
@@ -706,7 +709,7 @@ export class MapScene extends Phaser.Scene {
       keys: { window: 'kiosk-vendor-window', body: 'kiosk-vendor-body', arm: 'kiosk-vendor-arm' },
       armOrigin: KIOSK_VENDOR.armPivot,
       depth: renderY,
-      isReducedMotion: () => this.reducedMotion,
+      isReducedMotion: () => this.ambientMotionOff,
       onGreet: () => this.bus.emit('kiosk:greet', undefined),
     });
   }
@@ -738,7 +741,7 @@ export class MapScene extends Phaser.Scene {
       flameKey: MapScene.campfireFlameKey(),
       flameOrigin: { x: flameBasePx.x / imageWidth, y: flameBasePx.y / imageHeight },
       depth: sprite.depth,
-      isReducedMotion: () => this.reducedMotion,
+      isReducedMotion: () => this.ambientMotionOff,
       onLitChange: (lit) => this.bus.emit('campfire:lit', { lit, ...flameBase }),
     });
   }
@@ -783,11 +786,12 @@ export class MapScene extends Phaser.Scene {
         this.snail.placeAt(x, y);
         this.cameras.main.centerOn(x, y);
       }),
-      this.bus.on('motion:setReduced', ({ reduced }) => {
+      this.bus.on('motion:setReduced', ({ reduced, ambientOff }) => {
         this.reducedMotion = reduced;
-        this.riverFlow?.setEnabled(!reduced);
-        this.waterfallFlow?.setEnabled(!reduced);
-        this.ambient.setReducedMotion(reduced);
+        this.ambientMotionOff = ambientOff;
+        this.riverFlow?.setEnabled(!ambientOff);
+        this.waterfallFlow?.setEnabled(!ambientOff);
+        this.ambient.setReducedMotion(ambientOff);
         this.weather.setReducedMotion(reduced);
       }),
       this.bus.on('visited:hydrate', ({ ids }) => {
