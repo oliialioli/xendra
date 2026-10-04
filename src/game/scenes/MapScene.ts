@@ -38,6 +38,7 @@ import { PostboxLetters } from '../entities/PostboxLetters';
 import { KioskVendor } from '../entities/KioskVendor';
 import { TrainSteam } from '../entities/TrainSteam';
 import { RiverFlow } from '../entities/RiverFlow';
+import { SchoolNotes } from '../entities/SchoolNotes';
 import { WaterfallFlow } from '../entities/WaterfallFlow';
 import { Beaver } from '../entities/Beaver';
 import { RIVER_PATH_POLYGON, boatPathConfig } from '../../content/boatPathConfig';
@@ -134,6 +135,7 @@ export class MapScene extends Phaser.Scene {
   private campfire: Campfire | null = null;
   private beaver: Beaver | null = null;
   private riverFlow: RiverFlow | null = null;
+  private schoolNotes: SchoolNotes | null = null;
   private waterfallFlow: WaterfallFlow | null = null;
   private trainSteam: TrainSteam | null = null;
   private controlsEnabledAt = 0;
@@ -233,6 +235,7 @@ export class MapScene extends Phaser.Scene {
     this.setUpPostboxLetters();
     this.setUpKioskVendor();
     this.setUpTrainSteam();
+    this.setUpSchoolNotes();
     this.setUpWaterfallAsset();
     // The path and pier down from the boat workshop: flat on the ground, under the snail and every sprite.
     this.add.image(pierConfig.x, pierConfig.y, 'dock-pier').setOrigin(0, 0).setDisplaySize(pierConfig.width, pierConfig.height).setDepth(1);
@@ -318,6 +321,7 @@ export class MapScene extends Phaser.Scene {
     this.postboxLetters?.update(this.snail.position);
     this.kioskVendor?.update(this.snail.position);
     this.trainSteam?.update(this.nearestId === 'trainHistory');
+    this.schoolNotes?.update(this.nearestId === 'school');
     this.beaver?.update(this.snail.position);
     this.riverFlow?.update(this.time.now, delta);
     this.waterfallFlow?.update(delta);
@@ -637,6 +641,30 @@ export class MapScene extends Phaser.Scene {
         y: renderY + (POSTBOX_SLOT_PX.y - analysis.origin.y * analysis.imageHeight) * scale,
       },
       depth: renderY,
+      isReducedMotion: () => this.reducedMotion,
+    });
+  }
+
+  /** The music school's active state (see entities/SchoolNotes.ts): notes out of its windows, placed on its artwork's own pixel grid. */
+  private setUpSchoolNotes(): void {
+    const info = this.landmarkSpriteRenderInfo.get('school');
+    if (!info) return;
+    const { analysis, renderX, renderY, displayWidth } = info;
+    const scale = displayWidth / analysis.imageWidth;
+    // The upper-floor windows in escuela-musica-xendra-default.png: four on the front, one round the side.
+    const windowsPx = [
+      { x: 795, y: 966 },
+      { x: 1029, y: 1050 },
+      { x: 1260, y: 1164 },
+      { x: 1476, y: 1266 },
+      { x: 2175, y: 1455 },
+    ];
+    this.schoolNotes = new SchoolNotes(this, {
+      windows: windowsPx.map((px) => ({
+        x: renderX + (px.x - analysis.origin.x * analysis.imageWidth) * scale,
+        y: renderY + (px.y - analysis.origin.y * analysis.imageHeight) * scale,
+      })),
+      depth: renderY + 1,
       isReducedMotion: () => this.reducedMotion,
     });
   }
