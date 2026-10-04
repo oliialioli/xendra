@@ -37,6 +37,8 @@ import { NoticeBoardPapers } from '../entities/NoticeBoardPapers';
 import { PostboxLetters } from '../entities/PostboxLetters';
 import { KioskVendor } from '../entities/KioskVendor';
 import { TrainSteam } from '../entities/TrainSteam';
+import { RiverFlow } from '../entities/RiverFlow';
+import { WaterfallFlow } from '../entities/WaterfallFlow';
 import { Beaver } from '../entities/Beaver';
 import { RIVER_PATH_POLYGON, boatPathConfig } from '../../content/boatPathConfig';
 import { findNearestLandmark } from '../systems/proximity';
@@ -131,6 +133,8 @@ export class MapScene extends Phaser.Scene {
   private reducedMotion = false;
   private campfire: Campfire | null = null;
   private beaver: Beaver | null = null;
+  private riverFlow: RiverFlow | null = null;
+  private waterfallFlow: WaterfallFlow | null = null;
   private trainSteam: TrainSteam | null = null;
   private controlsEnabledAt = 0;
   private fountainSpray: FountainSpray | null = null;
@@ -234,13 +238,22 @@ export class MapScene extends Phaser.Scene {
     this.add.image(pierConfig.x, pierConfig.y, 'dock-pier').setOrigin(0, 0).setDisplaySize(pierConfig.width, pierConfig.height).setDepth(1);
     this.setUpGroundDecor(castleConfig, MapScene.castleAssetKey());
     this.setUpCampfire();
+    const riverAvoid = [
+      ...boatPathConfig.bridges.map((bridge) => bridge.segment),
+      ...boatPathConfig.occlusionSegments,
+      ...(boatPathConfig.waterfallSegment ? [boatPathConfig.waterfallSegment] : []),
+    ];
+    this.riverFlow = new RiverFlow(this, {
+      river: RIVER_PATH_POLYGON,
+      direction: boatPathConfig.direction,
+      avoid: riverAvoid,
+      // Over the water and the pier's path, under the beaver and everything y-sorted.
+      depth: 1.5,
+    });
+    this.riverFlow.setEnabled(!this.reducedMotion);
     this.beaver = new Beaver(this, {
       river: RIVER_PATH_POLYGON,
-      avoid: [
-        ...boatPathConfig.bridges.map((bridge) => bridge.segment),
-        ...boatPathConfig.occlusionSegments,
-        ...(boatPathConfig.waterfallSegment ? [boatPathConfig.waterfallSegment] : []),
-      ],
+      avoid: riverAvoid,
       // Over the water, under every y-sorted landmark, plant and the snail.
       depth: 2,
       isReducedMotion: () => this.reducedMotion,
@@ -306,6 +319,8 @@ export class MapScene extends Phaser.Scene {
     this.kioskVendor?.update(this.snail.position);
     this.trainSteam?.update(this.nearestId === 'trainHistory');
     this.beaver?.update(this.snail.position);
+    this.riverFlow?.update(this.time.now, delta);
+    this.waterfallFlow?.update(delta);
     this.weather.update();
 
     if (!this.controlsEnabled) {
@@ -548,6 +563,17 @@ export class MapScene extends Phaser.Scene {
     // Sorted by its own anchor point, like every other landmark sprite, so
     // it draws correctly relative to anything else keyed off ground position.
     sprite.setDepth(waterfallConfig.y);
+
+    const { width, height } = this.textures.get(MapScene.waterfallAssetKey()).getSourceImage();
+    this.waterfallFlow = new WaterfallFlow(this, {
+      toWorld: (px) => ({
+        x: waterfallConfig.x + (px.x - width * waterfallConfig.anchorX) * waterfallConfig.scale,
+        y: waterfallConfig.y + (px.y - height * waterfallConfig.anchorY) * waterfallConfig.scale,
+      }),
+      scale: waterfallConfig.scale,
+      depth: waterfallConfig.y + 0.5,
+    });
+    this.waterfallFlow.setEnabled(!this.reducedMotion);
   }
 
   private static castleAssetKey(): string {
@@ -731,6 +757,8 @@ export class MapScene extends Phaser.Scene {
       }),
       this.bus.on('motion:setReduced', ({ reduced }) => {
         this.reducedMotion = reduced;
+        this.riverFlow?.setEnabled(!reduced);
+        this.waterfallFlow?.setEnabled(!reduced);
         this.ambient.setReducedMotion(reduced);
         this.weather.setReducedMotion(reduced);
       }),
