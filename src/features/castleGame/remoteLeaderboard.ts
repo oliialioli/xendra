@@ -50,8 +50,10 @@ export type SubmitResult = {
   /** False if it couldn't be saved (offline, or refused as implausible). */
   ok: boolean;
   /**
-   * The discount code (XENDRA1, XENDRA2...) when this score took first place
-   * from everyone -- handed out by Supabase, in order (migration 0003).
+   * The discount code when this score took first place from everyone --
+   * handed out by Supabase (migrations 0003-0004): XENDRA3-K7QM, its number
+   * counting the winners in order and the rest random, so it can't be guessed
+   * (the first few, from before 0004, are just XENDRA1, XENDRA2...).
    */
   prizeCode: string | null;
 };
@@ -75,7 +77,7 @@ export async function submitSharedScore(
       p_won: won,
     });
     if (error) return { ok: false, prizeCode: null };
-    return { ok: true, prizeCode: typeof data === 'string' && /^XENDRA\d+$/.test(data) ? data : null };
+    return { ok: true, prizeCode: typeof data === 'string' && /^XENDRA\d+(-[A-Z0-9]{4})?$/.test(data) ? data : null };
   } catch {
     return { ok: false, prizeCode: null };
   }

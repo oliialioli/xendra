@@ -33,6 +33,8 @@ end, just upstream of the waterfall.
    everyone's best score wins a 10% discount code (XENDRA1, XENDRA2...),
    handed out in order and recorded in the private `castle_prizes` table
    (Table Editor -> castle_prizes) with alias, score and date.
+   Then `supabase/migrations/0004_castle_prize_codes.sql`: the codes gain
+   four random characters (XENDRA3-K7QM) so the next one can't be guessed.
 3. Copy `.env.example` to `.env.local` and fill in:
    ```
    VITE_SUPABASE_URL=https://<your-project>.supabase.co

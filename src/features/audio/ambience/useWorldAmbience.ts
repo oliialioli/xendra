@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { GameEventBus } from '../../../game/bridge/gameEvents';
 import { useSettings } from '../../../app/providers/SettingsContext';
 import { ISLAND_POLYGON, LANDMARK_FOOTPRINTS, LANDMARK_POSITIONS } from '../../../content/mapGeometry';
@@ -24,11 +24,26 @@ const SCHOOL = (() => {
 
 ambienceEngine.setSchoolSource(assetPath(SCHOOL_REHEARSAL_SRC));
 
-/** True while any <audio>/<video> on the page is playing (a gallery video, say). */
-function useMediaPlaying(): boolean {
+/**
+ * True while any <audio>/<video> on the page is playing (a gallery video,
+ * say) -- or a YouTube embed, which announces itself the same way (see
+ * YouTubeEmbed). Something taken off the page mid-play (its section closed)
+ * never says it stopped, so those are dropped whenever the section changes.
+ */
+function useMediaPlaying(panelRoute: string | null): boolean {
   const [playing, setPlaying] = useState(false);
+  const activeRef = useRef(new Set<EventTarget>());
+
   useEffect(() => {
-    const active = new Set<EventTarget>();
+    const active = activeRef.current;
+    active.forEach((target) => {
+      if (target instanceof Node && !target.isConnected) active.delete(target);
+    });
+    setPlaying(active.size > 0);
+  }, [panelRoute]);
+
+  useEffect(() => {
+    const active = activeRef.current;
     const update = () => setPlaying(active.size > 0);
     const onPlay = (e: Event) => {
       active.add(e.target as EventTarget);
@@ -62,7 +77,7 @@ function useMediaPlaying(): boolean {
 export function useWorldAmbience(bus: GameEventBus, panelRoute: string | null): void {
   const { soundEnabled, volume } = useSettings();
   const { isPlaying: musicPlaying } = useAudioPlayer();
-  const mediaPlaying = useMediaPlaying();
+  const mediaPlaying = useMediaPlaying(panelRoute);
 
   useEffect(() => {
     ambienceEngine.setEnabled(soundEnabled);

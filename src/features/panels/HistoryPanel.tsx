@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { useSettings } from '../../app/providers/SettingsContext';
 import { SnailFigure } from '../../components/SnailFigure';
+import { YouTubeEmbed } from '../../components/YouTubeEmbed';
 import { xendraContent } from '../../content/xendraContent';
 import shared from './panelShared.module.css';
 import styles from './HistoryPanel.module.css';
@@ -208,15 +209,7 @@ export function HistoryPanel() {
               <h3 className={styles.year}>{stop.year}</h3>
               <p className={styles.text}>{stop.description}</p>
               {stop.video && (
-                <iframe
-                  className={styles.video}
-                  src={`https://www.youtube-nocookie.com/embed/${stop.video.youtubeId}`}
-                  title={stop.video.title}
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                />
+                <YouTubeEmbed className={styles.video} videoId={stop.video.youtubeId} title={stop.video.title} />
               )}
             </li>
           ))}

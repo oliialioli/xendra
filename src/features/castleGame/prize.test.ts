@@ -7,9 +7,9 @@ describe('remembered prize codes', () => {
   it('keeps each code won, once, in order', () => {
     expect(loadPrizeCodes()).toEqual([]);
     rememberPrizeCode('XENDRA3');
-    rememberPrizeCode('XENDRA7');
+    rememberPrizeCode('XENDRA7-K7QM');
     rememberPrizeCode('XENDRA3');
-    expect(loadPrizeCodes()).toEqual(['XENDRA3', 'XENDRA7']);
+    expect(loadPrizeCodes()).toEqual(['XENDRA3', 'XENDRA7-K7QM']);
   });
 
   it('ignores anything that is not a prize code', () => {

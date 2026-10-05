@@ -9,7 +9,7 @@ const KEY = 'xendra-castle-prizes-v1';
 export function loadPrizeCodes(): string[] {
   try {
     const parsed: unknown = JSON.parse(window.localStorage.getItem(KEY) ?? '[]');
-    return Array.isArray(parsed) ? parsed.filter((c): c is string => typeof c === 'string' && /^XENDRA\d+$/.test(c)) : [];
+    return Array.isArray(parsed) ? parsed.filter((c): c is string => typeof c === 'string' && /^XENDRA\d+(-[A-Z0-9]{4})?$/.test(c)) : [];
   } catch {
     return [];
   }
