@@ -143,7 +143,7 @@ export function HistoryPanel() {
 
   return (
     <div>
-      <p className={`${shared.lead} ${styles.intro}`}>
+      <p className={shared.lead}>
         {xendraContent.band.originText} Bide-ideia horrek ematen dio izena Xendrari eta uharte
         honi.
       </p>

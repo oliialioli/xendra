@@ -104,18 +104,11 @@
   line-height: 1.1;
 }
 
-/* The history reads as prose: the sans, not the panels' usual mono. */
-.intro {
-  font-family: var(--font-ui);
-  font-size: 1rem;
-  line-height: 1.55;
-}
-
 .text {
   margin: 0;
-  font-family: var(--font-ui);
-  font-size: 0.95rem;
-  line-height: 1.55;
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  line-height: 1.6;
 }
 
 /* A video clip under a stop's text (the first song's, in 2024). */
