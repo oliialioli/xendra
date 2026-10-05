@@ -25,25 +25,26 @@
 }
 
 .trail {
-  stroke: var(--ui-border);
+  stroke: rgb(46 53 41 / 22%);
   stroke-dasharray: 2 7;
 }
 
+/* Monochrome: the ink of the text, a little softened. */
 .line {
-  stroke: var(--ui-secondary);
+  stroke: var(--ui-ink-muted);
   transition: stroke-dashoffset 1s var(--ease-organic);
 }
 
 .node {
   fill: var(--ui-surface);
-  stroke: var(--ui-border);
+  stroke: rgb(46 53 41 / 28%);
   stroke-width: 2;
   transition: fill var(--duration-medium) var(--ease-organic), stroke var(--duration-medium) var(--ease-organic);
 }
 
 .node[data-reached='true'] {
-  fill: var(--ui-accent);
-  stroke: var(--ui-secondary);
+  fill: var(--ui-ink);
+  stroke: var(--ui-ink-muted);
 }
 
 /* The player's snail at the head of the line; offset-path/-distance are set inline. */
