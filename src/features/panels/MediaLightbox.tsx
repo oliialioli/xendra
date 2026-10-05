@@ -100,31 +100,33 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
         <figcaption className={styles.caption}>{item.altText}</figcaption>
       </figure>
 
-      <div className={styles.nav}>
-        <button
-          type="button"
-          className="xnd-btn-icon"
-          onClick={() => onIndexChange(index - 1)}
-          disabled={!hasPrevious}
-          aria-label="Aurrekoa"
-          title="Aurrekoa"
-        >
-          <CaretLeft size={20} aria-hidden="true" />
-        </button>
-        <span className={styles.counter} aria-live="polite">
-          {index + 1} / {items.length}
-        </span>
-        <button
-          type="button"
-          className="xnd-btn-icon"
-          onClick={() => onIndexChange(index + 1)}
-          disabled={!hasNext}
-          aria-label="Hurrengoa"
-          title="Hurrengoa"
-        >
-          <CaretRight size={20} aria-hidden="true" />
-        </button>
-      </div>
+      {items.length > 1 && (
+        <div className={styles.nav}>
+          <button
+            type="button"
+            className="xnd-btn-icon"
+            onClick={() => onIndexChange(index - 1)}
+            disabled={!hasPrevious}
+            aria-label="Aurrekoa"
+            title="Aurrekoa"
+          >
+            <CaretLeft size={20} aria-hidden="true" />
+          </button>
+          <span className={styles.counter} aria-live="polite">
+            {index + 1} / {items.length}
+          </span>
+          <button
+            type="button"
+            className="xnd-btn-icon"
+            onClick={() => onIndexChange(index + 1)}
+            disabled={!hasNext}
+            aria-label="Hurrengoa"
+            title="Hurrengoa"
+          >
+            <CaretRight size={20} aria-hidden="true" />
+          </button>
+        </div>
+      )}
     </div>,
     document.body,
   );

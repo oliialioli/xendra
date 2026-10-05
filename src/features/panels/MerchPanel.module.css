@@ -21,7 +21,7 @@ button.photo {
   object-fit: cover;
 }
 
-/* The close-up, laid over the photo, fading in on hover/focus (or after a tap). */
+/* The close-up, laid over the photo, fading in while a mouse hovers it. */
 .detail {
   position: absolute;
   inset: 0;
@@ -29,18 +29,11 @@ button.photo {
   transition: opacity var(--duration-medium) var(--ease-organic);
 }
 
-.photo[data-detail] .detail,
-.photo:focus-visible .detail {
+.photo[data-detail] .detail {
   opacity: 1;
 }
 
-@media (hover: hover) {
-  .photo:hover .detail {
-    opacity: 1;
-  }
-}
-
-/* The magnifier in the corner: the cue that the photo has a close-up (the only one on touch screens). */
+/* The magnifier in the corner: the cue that the photo opens large. */
 .zoomHint {
   position: absolute;
   right: var(--space-2);
