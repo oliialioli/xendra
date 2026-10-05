@@ -111,6 +111,17 @@
   line-height: 1.6;
 }
 
+/* A video clip under a stop's text (the first song's, in 2024). */
+.video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-top: var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-sand);
+}
+
 @media (max-width: 720px) {
   .stop {
     max-width: calc(100% - 22px - var(--space-6) - var(--space-3));

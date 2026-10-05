@@ -207,6 +207,17 @@ export function HistoryPanel() {
             >
               <h3 className={styles.year}>{stop.year}</h3>
               <p className={styles.text}>{stop.description}</p>
+              {stop.video && (
+                <iframe
+                  className={styles.video}
+                  src={`https://www.youtube-nocookie.com/embed/${stop.video.youtubeId}`}
+                  title={stop.video.title}
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              )}
             </li>
           ))}
         </ol>

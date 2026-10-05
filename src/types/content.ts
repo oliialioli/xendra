@@ -100,6 +100,8 @@ export type HistoryMilestone = {
   id: string;
   year: string;
   description: string;
+  /** A YouTube video shown under the text (`title` names it for screen readers). */
+  video?: { youtubeId: string; title: string };
 };
 
 /** keepsake: a cut-out memento (a concert ticket, a setlist) stuck on top of the board rather than hung in its columns. */
