@@ -85,10 +85,13 @@ export function DiscoveryIndicators({
         // instead of the bare ground point -- see landmarkIndicatorConfig.ts.
         const worldAnchorY = landmark.position.y - config.visualHeight;
         const screenX = (landmark.position.x - worldViewX) * zoom;
-        // Never above the top edge or under the HUD bar: a landmark near the
-        // top of the map (the castle) would otherwise put its badge out of
-        // sight -- it settles just below the bar instead.
-        const screenY = Math.max((worldAnchorY - worldViewY) * zoom, TOP_CLEAR_PX + BADGE_RISE_PX);
+        // While the landmark itself is on screen, its badge never hides under
+        // the HUD bar (the castle, near the top of the map, would otherwise
+        // lose it): it settles just below the bar -- but never below the
+        // landmark's own ground point, so once the landmark scrolls off the
+        // top its badge goes with it instead of piling up there.
+        const groundY = (landmark.position.y - worldViewY) * zoom;
+        const screenY = Math.max((worldAnchorY - worldViewY) * zoom, Math.min(TOP_CLEAR_PX + BADGE_RISE_PX, groundY));
 
         const el = elementRefs.current[landmark.id];
         if (el) {
