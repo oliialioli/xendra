@@ -68,12 +68,14 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: calc(var(--space-6) + var(--space-4));
+  gap: calc(var(--space-7) + var(--space-4));
 }
 
 /* Each stop beside its run of the path, the text turned away from the line. */
 .stop {
   max-width: min(72%, 440px);
+  /* Counted in the stop's height, so the path's crossing below runs well clear of the text. */
+  padding-bottom: var(--space-4);
   opacity: 0;
   transform: translateY(8px);
   transition:
