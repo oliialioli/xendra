@@ -1,6 +1,7 @@
 import { xendraContent } from '../../content/xendraContent';
 import { useAudioPlayer } from '../audio/AudioContext';
 import { assetPath } from '../../lib/assetPath';
+import { YouTubeEmbed } from '../../components/YouTubeEmbed';
 import shared from './panelShared.module.css';
 import styles from './MusicPanel.module.css';
 
@@ -21,21 +22,18 @@ export function MusicPanel() {
   return (
     <div>
       <section className={shared.section}>
-        {album.coverPath && (
-          <img
-            src={assetPath(album.coverPath)}
-            alt={`${album.albumTitle} diskoaren azala`}
-            style={{
-              width: '100%',
-              maxWidth: 280,
-              aspectRatio: '1 / 1',
-              objectFit: 'cover',
-              borderRadius: 'var(--radius-sm)',
-              display: 'block',
-              marginBottom: 'var(--space-3)',
-            }}
-          />
-        )}
+        {/* The cover, with the music video beside it (under it on a phone). */}
+        <div className={album.video ? styles.media : undefined}>
+          {album.coverPath && (
+            <img className={styles.cover} src={assetPath(album.coverPath)} alt={`${album.albumTitle} diskoaren azala`} />
+          )}
+          {album.video && (
+            <figure className={styles.video}>
+              <YouTubeEmbed className={styles.videoFrame} videoId={album.video.youtubeId} title={album.video.title} />
+              <figcaption className={styles.videoCaption}>{album.video.caption}</figcaption>
+            </figure>
+          )}
+        </div>
         <h3>{album.albumTitle}</h3>
         <p className={shared.lead}>{album.credits}</p>
         {album.bandcampAlbumId && (

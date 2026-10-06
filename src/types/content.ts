@@ -68,6 +68,8 @@ export type Album = {
   credits: string;
   /** Bandcamp's numeric album id, for its embedded player (null hides the player). */
   bandcampAlbumId: string | null;
+  /** A music video shown beside the cover (YouTube); `caption` goes under it. */
+  video?: { youtubeId: string; title: string; caption: string };
   externalLinks: { label: string; url: string }[];
   tracks: Track[];
 };

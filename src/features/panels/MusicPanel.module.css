@@ -1,3 +1,51 @@
+.cover {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-3);
+}
+
+/* Cover and music video side by side, bottoms lined up. */
+.media {
+  display: grid;
+  grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+  align-items: end;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.media .cover {
+  margin-bottom: 0;
+}
+
+.video {
+  margin: 0;
+}
+
+.videoFrame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-sand);
+}
+
+.videoCaption {
+  margin-top: var(--space-2);
+  color: var(--ui-ink-muted);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 640px) {
+  .media {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .player {
   display: block;
   width: 100%;

@@ -39,6 +39,11 @@ export const xendraContent: XendraContent = {
     credits:
       'SIMA estudioan grabatua eta nahastua (Irunberri, Nafarroa), Ibai Osinagaren laguntzaz. Masterizazioa: Martxel Arkarazo (Garate estudioak, Andoain). 2025eko urtarrilaren 9an atera zen.',
     bandcampAlbumId: '2903320457',
+    video: {
+      youtubeId: 'MdOVAH9jMdw',
+      title: 'Xendra - Errauts eskuak (bideoklipa)',
+      caption: '“Errauts eskuak” bideoklipa',
+    },
     externalLinks: [
       { label: 'Bandcamp', url: 'https://xendrataldea.bandcamp.com/album/bihia' },
       { label: 'Badok', url: 'https://www.badok.eus/euskal-musika/xendra/bihia' },
