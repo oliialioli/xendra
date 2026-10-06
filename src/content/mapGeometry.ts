@@ -423,7 +423,7 @@ export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
 };
 
 /** Where the snail is taken to watch a newly sent boat leave the dock (when the creator wasn't opened there): on the path down to the pier. */
-export const DOCK_FRONT: Vector2Like = { x: 1968, y: 1084 };
+export const DOCK_FRONT: Vector2Like = { x: 1860, y: 1085 };
 
 /** Where the snail stands when it comes back out of the castle minigame: on the path just in front of the ruin. */
 export const CASTLE_ENTRANCE: Vector2Like = { x: 1500, y: 272 };

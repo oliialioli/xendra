@@ -25,12 +25,12 @@ export const dockConfig = {
 };
 
 /**
- * The sandy path from the workshop's plaza down to the riverbank and the
- * little wooden pier the boats are launched from -- one ground-level image
+ * The sandy path from the front of the workshop's plaza down to the
+ * riverbank and the little wooden pier the boats are launched from -- one ground-level image
  * (ontzi-kaia.png) laid over the base map like the bridges, under every
  * y-sorted sprite so the snail walks on it. `x`/`y` is its top-left corner
  * and `width`/`height` its size, all in world units (the image covers
- * xendra-map-base-v7-4k.png's pixels 2810-3150 x 1470-1800 at 2x).
+ * xendra-map-base-v7-4k.png's pixels 2610-3150 x 1510-1800 at 2x).
  */
 /**
  * The workshop's plaza, fitted around the house: the base map's plaza was
@@ -50,10 +50,10 @@ export const plazaConfig = {
 
 export const pierConfig = {
   src: '/assets/map/ontzi-kaia.png',
-  x: 2810 / 1.5,
-  y: 1470 / 1.5,
-  width: 340 / 1.5,
-  height: 330 / 1.5,
+  x: 2610 / 1.5,
+  y: 1510 / 1.5,
+  width: 540 / 1.5,
+  height: 290 / 1.5,
 };
 
 export const dockPosition: Vector2Like = {
