@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { useSettings } from '../../app/providers/SettingsContext';
 import { SnailFigure } from '../../components/SnailFigure';
-import { YouTubeEmbed } from '../../components/YouTubeEmbed';
 import { xendraContent } from '../../content/xendraContent';
 import shared from './panelShared.module.css';
 import styles from './HistoryPanel.module.css';
@@ -144,10 +143,7 @@ export function HistoryPanel() {
 
   return (
     <div>
-      <p className={shared.lead}>
-        {xendraContent.band.originText} Bide-ideia horrek ematen dio izena Xendrari eta uharte
-        honi.
-      </p>
+      <p className={shared.lead}>{xendraContent.band.originText}</p>
 
       <div ref={boardRef} className={styles.board}>
         {geometry && (
@@ -208,9 +204,6 @@ export function HistoryPanel() {
             >
               <h3 className={styles.year}>{stop.year}</h3>
               <p className={styles.text}>{stop.description}</p>
-              {stop.video && (
-                <YouTubeEmbed className={styles.video} videoId={stop.video.youtubeId} title={stop.video.title} />
-              )}
             </li>
           ))}
         </ol>

@@ -26,8 +26,7 @@ ambienceEngine.setSchoolSource(assetPath(SCHOOL_REHEARSAL_SRC));
 
 /**
  * True while any <audio>/<video> on the page is playing (a gallery video,
- * say) -- or a YouTube embed, which announces itself the same way (see
- * YouTubeEmbed). Something taken off the page mid-play (its section closed)
+ * say). Something taken off the page mid-play (its section closed)
  * never says it stopped, so those are dropped whenever the section changes.
  */
 function useMediaPlaying(panelRoute: string | null): boolean {

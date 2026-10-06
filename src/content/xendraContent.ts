@@ -15,7 +15,7 @@ export const xendraContent: XendraContent = {
   band: {
     name: 'Xendra',
     originText:
-      'Xendra hitza nafar euskara zaharreko hitz batetik dator, bide, senda edo bidezidor bat adierazteko.', // TODO_CONTENT: etimologia zehatza taldearekin berretsi
+      'Xendra hitza nafarrera zaharreko hitza da, bide, senda edo bidezidor bat adierazteko.',
     bio:
       'Xendra Uharten (Nafarroa) sortutako sorkuntza proiektu bat da, pixkanaka osatzen joan den zazpi gazteren taldea: egunerokoan elkarrekin musika sortu eta jotzen dute. Folk, pop eta rock estiloak nahasten dituzte euren kantuetan. Bakoitzaren bizipenetatik abiatuta, taldeak euskarazko kantuak proposatzen ditu, ahal den heinean gai unibertsalak jorratuz.',
     entrySubtitle: 'Arakatu uhartea',
@@ -94,8 +94,8 @@ export const xendraContent: XendraContent = {
   ],
 
   history: [
-    { id: 'history-2020', year: '2020', description: 'Uharteko 4 lagun entsaio gelan elkartzen hasi ginen inongo helburu zehatzik gabe. Bizpahiru kantu sortu eta beste batzuk bertsionatu genituen lehen urteetan. Ondoren ordea, 2 lagunek entsaiatzeari utzi eta pixkanaka taldekide eta instrumentu berriak sartzen joan ginen.' },
-    { id: 'history-2024', year: '2024', description: '6 taldekide ginen eta 8 abestiko disko bat grabatzea erabaki genuen. Grabaketa Irunberriko SIMA estudioan egin genuen udan, Ibai Osinagaren laguntzaz. Abenduaren 22an gure lehen abestia atera genuen, “Errauts eskuak”, bideoklip eta guzti.', video: { youtubeId: 'MdOVAH9jMdw', title: 'Xendra - Errauts eskuak (bideoklipa)' } },
+    { id: 'history-2020', year: '2020', description: 'Uharteko 4 lagun entsaio gelan elkartzen hasi ginen inongo helburu zehatzik gabe. Bizpahiru kantu sortu eta beste batzuk bertsionatu genituen lehen urteetan. Ondoren, kide eta instrumentu berriak sartzen joan ziren eta pixkanaka taldea eta estiloa zehazten joan ginen.' },
+    { id: 'history-2024', year: '2024', description: '6 taldekide ginen eta 8 abestiko disko bat grabatzea erabaki genuen. Grabaketa Irunberriko SIMA estudioan egin genuen udan, Ibai Osinagaren laguntzaz.' },
     { id: 'history-2025', year: '2025', description: `Urtarrilean atera genuen “${albumTitle}” deituriko diska. Horrela, lehen kontzertuak ematen hasi ginen, esperientzia oso politak biziz. Urte bukaeran, Ainhoa eta bere txeloa batu ziren gure proiektura.` },
     { id: 'history-2026', year: '2026', description: 'Kontzertu gehiago eman genituen, Euskal Herriko txoko ezberdinak ezagutuz, eta abesti berriak sortzen ere aritu ginen.' },
   ],
