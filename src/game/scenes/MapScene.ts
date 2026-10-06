@@ -179,7 +179,7 @@ export class MapScene extends Phaser.Scene {
     const { bus } = this.registry.get('bootData') as GameBootData;
     this.load.on(Phaser.Loader.Events.PROGRESS, (progress: number) => bus.emit('map:loadProgress', { progress }));
 
-    this.load.image('xendra-map', assetPath('/assets/map/xendra-map-base-v7-4k.png'));
+    this.load.image('xendra-map', assetPath('/assets/map/xendra-map-base-v7-4k.webp'));
     this.load.svg('xendra-map-fallback', assetPath('/assets/map/placeholder-map.svg'), {
       width: WORLD_WIDTH,
       height: WORLD_HEIGHT,
@@ -615,7 +615,7 @@ export class MapScene extends Phaser.Scene {
   /**
    * The notice board's active state (see entities/NoticeBoardPapers.ts):
    * papers come loose from its cork face, which sits roughly in the middle
-   * of tablon-anuncios.png's own silhouette -- derived here from the sprite's
+   * of tablon-anuncios.webp's own silhouette -- derived here from the sprite's
    * analyzed bounds so it follows any re-sizing.
    */
   private setUpNoticeBoardPapers(): void {
@@ -656,7 +656,7 @@ export class MapScene extends Phaser.Scene {
     if (!info) return;
     const { analysis, renderX, renderY, displayWidth } = info;
     const scale = displayWidth / analysis.imageWidth;
-    // The upper-floor windows in escuela-musica-xendra-default.png: four on the front, one round the side.
+    // The upper-floor windows in escuela-musica-xendra-default.webp: four on the front, one round the side.
     const windowsPx = [
       { x: 795, y: 966 },
       { x: 1029, y: 1050 },
@@ -674,13 +674,13 @@ export class MapScene extends Phaser.Scene {
     });
   }
 
-  /** The train's active state (see entities/TrainSteam.ts): steam from the chimney, placed on tren.png's own pixel grid. */
+  /** The train's active state (see entities/TrainSteam.ts): steam from the chimney, placed on tren.webp's own pixel grid. */
   private setUpTrainSteam(): void {
     const info = this.landmarkSpriteRenderInfo.get('trainHistory');
     if (!info) return;
     const { analysis, renderX, renderY, displayWidth } = info;
     const scale = displayWidth / analysis.imageWidth;
-    // The chimney's mouth in tren.png.
+    // The chimney's mouth in tren.webp.
     const chimneyPx = { x: 924, y: 736 };
     this.trainSteam = new TrainSteam(this, {
       chimney: {

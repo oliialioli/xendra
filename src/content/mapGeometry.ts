@@ -146,9 +146,9 @@ export type ObstacleCircle = { id: string; x: number; y: number; radius: number 
 const BULLETIN_BOARD_POSITION: Vector2Like = { x: 962, y: 976 };
 
 /*
- * The train (tren.png) on the straight run of track east of the fountain:
+ * The train (tren.webp) on the straight run of track east of the fountain:
  * its near-side wheels follow this line, which runs parallel to the drawn
- * rails (slope measured on xendra-map-base-v7-4k.png), from the back of the
+ * rails (slope measured on xendra-map-base-v7-4k.webp), from the back of the
  * last carriage to the front of the engine.
  */
 const TRAIN_NEAR_RAIL = { x0: 1971, x1: 2254, y0: 503, slope: 0.458 };
@@ -343,7 +343,7 @@ export const FOUNTAIN_CONFIG = {
    * from {xPercent, yPercent} alone and is untouched by this.
    */
   /**
-   * Where the water comes out: the top of the column, in fuente-xendra.png's
+   * Where the water comes out: the top of the column, in fuente-xendra.webp's
    * own pixels (measured from the texture). The spray is placed from this
    * through the sprite's own scale and origin, so it follows any re-sizing.
    */
@@ -374,7 +374,7 @@ export const POSTBOX_WIDTH_PERCENT = 1.6;
 /**
  * The kiosk vendor who leans out of the kiosk's side window and waves (see
  * entities/KioskVendor.ts). His three textures are drawn on
- * kiosco-xendra.png's own pixel grid: `windowTopLeftPx` is where the open
+ * kiosco-xendra.webp's own pixel grid: `windowTopLeftPx` is where the open
  * window and the vendor textures' top-left corner sits in the kiosk image,
  * `shoulderPx` is the waving arm's pivot there, and `armPivot` the same
  * shoulder inside the arm texture (an origin fraction).
@@ -388,7 +388,7 @@ export const KIOSK_VENDOR = {
   armPivot: { x: 96 / 128, y: 112 / 128 },
 };
 
-/** The postbox's letter slot in buzon.png's own pixels -- where its letters burst out (see entities/PostboxLetters.ts). */
+/** The postbox's letter slot in buzon.webp's own pixels -- where its letters burst out (see entities/PostboxLetters.ts). */
 export const POSTBOX_SLOT_PX = { x: 313, y: 184 };
 
 /** Same convention, for the bulletin board (the photos & videos landmark). */
@@ -406,7 +406,7 @@ export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   stage: { x: (STAGE_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (STAGE_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   school: { x: (SCHOOL_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (SCHOOL_CONFIG.yPercent / 100) * WORLD_HEIGHT },
   fountain: { x: (FOUNTAIN_CONFIG.xPercent / 100) * WORLD_WIDTH, y: (FOUNTAIN_CONFIG.yPercent / 100) * WORLD_HEIGHT },
-  // Bottom-centre of tren.png's own silhouette (the engine's lowest point
+  // Bottom-centre of tren.webp's own silhouette (the engine's lowest point
   // sets the bottom, the middle carriage the centre) -- see
   // TRAIN_NEAR_RAIL above and LANDMARK_ASSET_OVERRIDES.trainHistory.
   trainHistory: { x: 2113, y: 628 },
@@ -530,7 +530,7 @@ export type LandmarkAssetConfig = {
  */
 export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetConfig>> = {
   kiosk: {
-    path: '/assets/landmarks/kiosco-xendra.png',
+    path: '/assets/landmarks/kiosco-xendra.webp',
     approvedBuildingWidth: (KIOSK_CONFIG.widthPercent / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
     proximityGlow: true,
@@ -539,8 +539,8 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
   // proximityGlow -- a real "lamps turning on" image reads better than a
   // generic highlight for a landmark that's specifically about its lights.
   stage: {
-    path: '/assets/landmarks/escenario-xendra.png',
-    lightsPath: '/assets/landmarks/escenario-xendra-luces.png',
+    path: '/assets/landmarks/escenario-xendra.webp',
+    lightsPath: '/assets/landmarks/escenario-xendra-luces.webp',
     approvedBuildingWidth: (STAGE_CONFIG.widthPercent / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
   },
@@ -549,13 +549,13 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
   // and anchor -- no config changes needed beyond adding its own path once
   // that asset exists.
   school: {
-    path: '/assets/landmarks/escuela-musica-xendra-default.png',
+    path: '/assets/landmarks/escuela-musica-xendra-default.webp',
     approvedBuildingWidth: (SCHOOL_CONFIG.widthPercent / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
     proximityGlow: true,
   },
   fountain: {
-    path: '/assets/landmarks/fuente-xendra.png',
+    path: '/assets/landmarks/fuente-xendra.webp',
     approvedBuildingWidth: (FOUNTAIN_CONFIG.widthPercent / 100) * WORLD_WIDTH,
     renderOffset: { x: FOUNTAIN_CONFIG.offsetX, y: FOUNTAIN_CONFIG.offsetY },
     anchorMode: 'center',
@@ -566,27 +566,27 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
   // down to the pier is pierConfig). Its soft shadow is baked in at low
   // alpha, which the bounds analysis ignores. Position
   // comes from LANDMARK_POSITIONS.dockMessages (== dockConfig.dockPosition),
-  // checked against a composite with xendra-map-base-v7-4k.png.
+  // checked against a composite with xendra-map-base-v7-4k.webp.
   dockMessages: {
-    path: '/assets/landmarks/caseta-ontziak.png',
+    path: '/assets/landmarks/caseta-ontziak.webp',
     approvedBuildingWidth: (HOUSE_WIDTH_PERCENT / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
     proximityGlow: true,
   },
   trainHistory: {
-    path: '/assets/landmarks/tren.png',
+    path: '/assets/landmarks/tren.webp',
     approvedBuildingWidth: TRAIN_WIDTH,
     renderOffset: { x: 0, y: 0 },
     proximityGlow: true,
   },
   bulletinBoard: {
-    path: '/assets/landmarks/tablon-anuncios.png',
+    path: '/assets/landmarks/tablon-anuncios.webp',
     approvedBuildingWidth: (BULLETIN_BOARD_WIDTH_PERCENT / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
     proximityGlow: true,
   },
   postbox: {
-    path: '/assets/landmarks/buzon.png',
+    path: '/assets/landmarks/buzon.webp',
     approvedBuildingWidth: (POSTBOX_WIDTH_PERCENT / 100) * WORLD_WIDTH,
     renderOffset: { x: 0, y: 0 },
     proximityGlow: true,

@@ -12,10 +12,10 @@ The dock is the paper-boat workshop on the plaza where the old
 `fronton`/notes landmark stood (see `types/content.ts`'s `dockMessages` doc
 comment) -- lower-right of the island, below/right of the music school. Its
 artwork is an open shed with the work table, a sign and a bench
-(`public/assets/landmarks/caseta-ontziak.png`, via
+(`public/assets/landmarks/caseta-ontziak.webp`, via
 `LANDMARK_ASSET_OVERRIDES.dockMessages` in `mapGeometry.ts`), on a plaza
-fitted around it (`public/assets/map/ontzi-plaza.png`, `plazaConfig`); a sandy path
-leads down to a small pier (`public/assets/map/ontzi-kaia.png`, placed by
+fitted around it (`public/assets/map/ontzi-plaza.webp`, `plazaConfig`); a sandy path
+leads down to a small pier (`public/assets/map/ontzi-kaia.webp`, placed by
 `pierConfig` in `dockConfig.ts`), and new boats are launched off the pier's
 end, just upstream of the waterfall.
 
@@ -81,15 +81,15 @@ else needs to change:
 ## Needs a visual pass once real assets/art exist
 
 - **`boatPathConfig.bridges`**: each bridge is a cut-out of
-  `xendra-map-base-v7-4k.png` (`public/assets/map/bridge-*.png`) laid over
+  `xendra-map-base-v7-4k.webp` (`public/assets/map/bridge-*.png`) laid over
   the boats. If the base map changes, re-cut them from the new map at the
   same `bounds` (bridge pixels only -- water and the bridge's shadow on it
   transparent) and re-check each `segment` against where the river path
   actually runs under the deck.
 - **`waterfallConfig`**: the house (landmark artwork, `LANDMARK_ASSET_OVERRIDES.dockMessages`
-  in `mapGeometry.ts`) and the waterfall (`content/landmarks/cascada.png`,
+  in `mapGeometry.ts`) and the waterfall (`content/landmarks/cascada.webp`,
   placed via `waterfallConfig`) are both live, positioned and verified
-  against the actual river art on `xendra-map-base-v7-4k.png` (not guessed
+  against the actual river art on `xendra-map-base-v7-4k.webp` (not guessed
   from a reference image -- see `waterfallConfig`'s own comment in
   `dockConfig.ts` for how `x`/`y` were derived). If the base map or either
   asset ever changes, re-verify position/scale/`segmentStart`/`segmentEnd`

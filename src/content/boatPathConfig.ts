@@ -57,7 +57,7 @@ function offsetPolygonOutward(polygon: Vector2Like[], margin: number): Vector2Li
 
 /**
  * Stretches where pushing the coastline outward doesn't follow the water,
- * redrawn by hand against xendra-map-base-v7-4k.png (world = image px / 1.5).
+ * redrawn by hand against xendra-map-base-v7-4k.webp (world = image px / 1.5).
  * Each replaces the offset polygon's points `from`..`to` (inclusive) with
  * `points`; listed last-first so earlier indexes stay valid.
  */
@@ -162,7 +162,7 @@ export const boatPathConfig = {
    * really disappears beneath the deck instead of fading on top of it.
    * Boats are DOM elements above the whole map canvas, so the bridges baked
    * into the map image can't cover them; each `src` is that bridge cut out
-   * of xendra-map-base-v7-4k.png itself (deck, arches and piers only -- the
+   * of xendra-map-base-v7-4k.webp itself (deck, arches and piers only -- the
    * water and the bridge's shadow on it are left transparent), placed at
    * `bounds` (world units) in BoatFleet's own layer.
    *

@@ -9,8 +9,20 @@ export default defineConfig({
   base: process.env.GITHUB_PAGES ? '/xendra/' : '/',
   plugins: [react()],
   build: {
-    // Phaser accounts for most of this; splitting it into its own lazy chunk
-    // is a good follow-up (see README limitations) but out of scope here.
-    chunkSizeWarningLimit: 1800,
+    // Phaser alone is ~1.2 MB, so it gets a chunk of its own (warning raised to fit it).
+    chunkSizeWarningLimit: 1400,
+    rolldownOptions: {
+      output: {
+        // The libraries (Phaser above all) in their own files, apart from
+        // the site's code: they rarely change, so a visitor's browser keeps
+        // them cached across our updates and only re-downloads the app.
+        codeSplitting: {
+          groups: [
+            { name: 'phaser', test: /node_modules[\\/]phaser/ },
+            { name: 'vendor', test: /node_modules/ },
+          ],
+        },
+      },
+    },
   },
 })

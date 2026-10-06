@@ -9,7 +9,7 @@ const STOP_RADIUS = 230;
 const RELEASE_EVERY_MS = 450;
 const MAX_IN_FLIGHT = 7;
 
-/** Paper colours matching the notes pinned on tablon-anuncios.png: cream, salmon, sage. */
+/** Paper colours matching the notes pinned on tablon-anuncios.webp: cream, salmon, sage. */
 const PAPERS = [
   { key: 'paper-cream', fill: 0xf3eedf, line: 0xb9b2a0 },
   { key: 'paper-salmon', fill: 0xe7b7a2, line: 0xc4846c },

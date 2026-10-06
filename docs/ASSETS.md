@@ -4,7 +4,7 @@ Tabla de referencia para sustituir cada asset placeholder por el arte final.
 
 | Asset | Path | Dimensiones recomendadas | Formato | Transparencia | Punto de anclaje | Estado |
 | --- | --- | --- | --- | --- | --- | --- |
-| Mapa completo | `public/assets/map/xendra-map-base.png` | 2560×1440 o superior (múltiplo de 16:9) | WebP/PNG | No | Esquina superior izquierda (0,0) | **Final** (dirección visual aprobada) |
+| Mapa completo | `public/assets/map/xendra-map-base-v7-4k.webp` | 2560×1440 o superior (múltiplo de 16:9) | WebP/PNG | No | Esquina superior izquierda (0,0) | **Final** (dirección visual aprobada) |
 | Mapa de repuesto | `public/assets/map/placeholder-map.svg` | 2560×1440 (vector, escala libre) | SVG | No | (0,0) | Placeholder — solo se usa si falta el PNG anterior |
 | Sprite del caracol (4 direcciones) | generado en código: `src/game/utils/placeholderTextures.ts` | 128×128 por fotograma, 4–6 fotogramas por dirección | PNG/WebP con alpha | Sí | Centro del pie del caracol, igual en todos los fotogramas | Placeholder (vectorial, generado en runtime) |
 | Marcador de destino (no visitado / visitado) | generado en código | 18×18 aprox. | — | Sí | Centro del landmark | Placeholder |
@@ -20,7 +20,7 @@ Tabla de referencia para sustituir cada asset placeholder por el arte final.
 
 ## Cómo reemplazar el mapa
 
-1. Sustituye el archivo `public/assets/map/xendra-map-base.png` manteniendo el
+1. Sustituye el archivo `public/assets/map/xendra-map-base-v7-4k.webp` manteniendo el
    mismo nombre y relación de aspecto 16:9 (o ajusta `WORLD_WIDTH`/`WORLD_HEIGHT` en
    `src/content/mapGeometry.ts` si cambia la proporción).
 2. Si el nuevo mapa mueve la posición de algún destino, actualiza

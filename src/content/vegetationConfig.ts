@@ -16,7 +16,7 @@ export type VegetationItem = {
  * game/utils/vegetationArt.ts and placed by game/systems/vegetation.ts.
  *
  * Positions follow the band's map reference (vegetation-reference, the same
- * composition as xendra-map-base-v7-4k.png at 2000px wide, so world = ref x
+ * composition as xendra-map-base-v7-4k.webp at 2000px wide, so world = ref x
  * 1.28), each then checked against the real map: trees and bushes moved to
  * the nearest spot whose whole footprint is grass and clear of landmarks,
  * reeds in rows along the same stretches of bank as the reference, on the

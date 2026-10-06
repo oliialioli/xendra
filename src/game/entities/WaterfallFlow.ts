@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
 import type { Vector2Like } from '../../types/content';
 
-/** A fall's face in cascada.png's own pixels: its lip and its foot, each a line from left to right. */
+/** A fall's face in cascada.webp's own pixels: its lip and its foot, each a line from left to right. */
 export type FallFace = { top: [Vector2Like, Vector2Like]; bottom: [Vector2Like, Vector2Like] };
 
 /**
- * The two falls in cascada.png and the foam at their feet, measured on the
+ * The two falls in cascada.webp and the foam at their feet, measured on the
  * image itself (the face's light-blue run in each pixel column).
  */
 export const FALL_FACES: FallFace[] = [
@@ -29,9 +29,9 @@ const RES = 3;
 type Streak = { image: Phaser.GameObjects.Image; face: FallFace; along: number; travelled: number; speed: number; length: number };
 
 export type WaterfallFlowOptions = {
-  /** Maps a cascada.png pixel to world units (through the sprite's own placement and scale). */
+  /** Maps a cascada.webp pixel to world units (through the sprite's own placement and scale). */
   toWorld: (px: Vector2Like) => Vector2Like;
-  /** World units per cascada.png pixel. */
+  /** World units per cascada.webp pixel. */
   scale: number;
   depth: number;
 };

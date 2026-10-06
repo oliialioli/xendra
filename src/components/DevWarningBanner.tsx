@@ -7,7 +7,7 @@ export function DevWarningBanner() {
   return (
     <div className={styles.banner} role="status">
       Ordezko mapa erabiltzen: falta da{' '}
-      <code>public/assets/map/xendra-map-base.png</code>. Abisu hau garapenean bakarrik
+      <code>public/assets/map/xendra-map-base-v7-4k.webp</code>. Abisu hau garapenean bakarrik
       erakusten da.
     </div>
   );

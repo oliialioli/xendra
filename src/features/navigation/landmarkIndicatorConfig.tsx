@@ -32,14 +32,14 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
   },
   stage: {
     icon: MicrophoneStage,
-    // Matches escenario-xendra.png's own analyzed height (roof to anchor),
+    // Matches escenario-xendra.webp's own analyzed height (roof to anchor),
     // so the badge clears the roofline -- and the lamps/spiral below it --
     // entirely, rather than sitting over them.
     visualHeight: 228,
   },
   school: {
     icon: VinylRecord,
-    // Slightly less than escuela-musica-xendra-default.png's own analyzed
+    // Slightly less than escuela-musica-xendra-default.webp's own analyzed
     // height (roof to anchor, 260) -- clearing the roofline entirely left
     // the badge looking disconnected, floating well above the building;
     // this sits it right at/just over the roofline instead, per visual review.
@@ -49,19 +49,19 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
     icon: UsersThree,
     // The fountain's own anchor is its analyzed *center* (see
     // LANDMARK_ASSET_OVERRIDES.fountain's anchorMode), not a ground-contact
-    // point -- so this is half fuente-xendra.png's own analyzed height (to
+    // point -- so this is half fuente-xendra.webp's own analyzed height (to
     // clear the top of its central column) plus a small margin, rather than
     // a full building height measured from the ground up.
     visualHeight: 85,
   },
   trainHistory: {
     icon: SteamTrainIcon,
-    // Clears the middle carriage's roof above tren.png's anchor.
+    // Clears the middle carriage's roof above tren.webp's anchor.
     visualHeight: 150,
   },
   bulletinBoard: {
     icon: ImagesSquare,
-    // Roughly tablon-anuncios.png's own height (roof to anchor) at
+    // Roughly tablon-anuncios.webp's own height (roof to anchor) at
     // BULLETIN_BOARD_WIDTH_PERCENT, so the badge sits just over the roof.
     visualHeight: 100,
   },
@@ -74,13 +74,13 @@ export const LANDMARK_INDICATOR_CONFIG: Record<LandmarkId, LandmarkIndicatorConf
   },
   postbox: {
     icon: EnvelopeSimple,
-    // Roughly buzon.png's own analyzed height (cap to anchor) at
+    // Roughly buzon.webp's own analyzed height (cap to anchor) at
     // POSTBOX_WIDTH_PERCENT, so the badge sits just over the cap.
     visualHeight: 88,
   },
   castle: {
     icon: CastleRuinIcon,
-    // Just over the tall corner tower of castillo.png (its anchor sits near
+    // Just over the tall corner tower of castillo.webp (its anchor sits near
     // the top of the map, so a higher badge would be cut off by the edge).
     visualHeight: 120,
   },

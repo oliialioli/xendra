@@ -55,7 +55,7 @@ pasada manual.
 
 ## Rendimiento y fallbacks
 
-- [ ] Si falta `public/assets/map/xendra-map-base.png`, la app sigue
+- [ ] Si falta `public/assets/map/xendra-map-base-v7-4k.webp`, la app sigue
       funcionando con el mapa de repuesto (`placeholder-map.svg`) y muestra un
       aviso solo en desarrollo.
 - [ ] Sin archivos de audio reales, la interfaz no genera peticiones repetidas ni
