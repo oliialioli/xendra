@@ -21,7 +21,7 @@ export const dockConfig = {
   yPercent: 70.49,
   interactionRadius: LANDMARK_INTERACTION_RADIUS,
   /** The far end of the pier (pierConfig below): boats are set on the water there. */
-  launchPoint: { x: 2036, y: 1150 } as Vector2Like,
+  launchPoint: { x: 2013, y: 1138 } as Vector2Like,
 };
 
 /**

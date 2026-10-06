@@ -44,6 +44,10 @@ export const VEGETATION: VegetationItem[] = [
   { kind: 'reedsBroad', x: 1939, y: 1151, scale: 0.81, flip: true },
   { kind: 'reedsCurved', x: 1897, y: 1157, scale: 0.82, flip: true },
   { kind: 'reedsCurved', x: 1924, y: 1142, scale: 0.82 },
+  // ...and on the other side of the boat workshop's pier.
+  { kind: 'reedsBroad', x: 2046, y: 1124, scale: 0.9 },
+  { kind: 'reedsCurved', x: 2066, y: 1117, scale: 0.86, flip: true },
+  { kind: 'reedsSpears', x: 2030, y: 1129, scale: 0.78 },
   { kind: 'reedsBroad', x: 2370, y: 520, scale: 0.89, flip: true },
   { kind: 'reedsCattails', x: 2394, y: 544, scale: 0.81 },
   { kind: 'reedsBroad', x: 2403, y: 565, scale: 0.94, flip: true },
@@ -64,6 +68,10 @@ export const VEGETATION: VegetationItem[] = [
   { kind: 'cypress', x: 598, y: 326, scale: 0.95, flip: true },
   { kind: 'cypress', x: 949, y: 317, scale: 1.05, flip: true },
   { kind: 'bush', x: 958, y: 348, scale: 1.01, flip: true },
+  // Round the boat workshop's pier: either side of the path down to it.
+  { kind: 'bush', x: 1868, y: 1098, scale: 0.85 },
+  { kind: 'bush', x: 2032, y: 1064, scale: 0.9, flip: true },
+  { kind: 'bush', x: 2068, y: 1056, scale: 0.72 },
   { kind: 'cypress', x: 1178, y: 288, scale: 0.87 },
   { kind: 'bush', x: 1226, y: 294, scale: 0.86, flip: true },
   { kind: 'bush', x: 1295, y: 230, scale: 0.87, flip: true },
