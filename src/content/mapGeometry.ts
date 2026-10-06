@@ -198,7 +198,7 @@ export const OBSTACLE_RECTS: ObstacleRect[] = [
   ...TRAIN_FOOTPRINT,
   // The paper-boat workshop's walls (see LANDMARK_ASSET_OVERRIDES.dockMessages),
   // inset from its diamond footprint so the plaza in front stays walkable.
-  { id: 'dock-workshop', x: 1748, y: 942, width: 110, height: 40 },
+  { id: 'dock-workshop', x: 1735, y: 935, width: 115, height: 48 },
 ];
 
 /**
@@ -362,7 +362,7 @@ export const FOUNTAIN_CONFIG = {
  * hotspot -- this constant only sizes the artwork, it doesn't duplicate the
  * position.
  */
-export const HOUSE_WIDTH_PERCENT = 8.35;
+export const HOUSE_WIDTH_PERCENT = 8.98;
 
 /**
  * Approved on-screen width (percentage of WORLD_WIDTH) of the yellow
@@ -414,7 +414,7 @@ export const LANDMARK_POSITIONS: Record<LandmarkId, Vector2Like> = {
   // dockMessages' own position lives in dockConfig.ts (dockPosition) --
   // kept there, not here, since it needs to be shared with the boat
   // launch/river-entry logic without this file importing that one.
-  dockMessages: { x: 1787, y: 1005 },
+  dockMessages: { x: 1782, y: 1015 },
   postbox: POSTBOX_POSITION,
   // The ruin's own anchor (castleConfig.x/y, kept in sync by hand like the
   // 'castle-ruins' obstacle above): the bottom of its walls, where the
@@ -562,8 +562,9 @@ export const LANDMARK_ASSET_OVERRIDES: Partial<Record<LandmarkId, LandmarkAssetC
     proximityGlow: true,
   },
   // The paper-boat workshop: an open shed with the work table, a sign and a
-  // bench, drawn in the map's own isometric angle so it sits square on the
-  // plaza (its path down to the pier is dockConfig's pierConfig). Position
+  // bench, on a plaza fitted around it (dockConfig's plazaConfig; its path
+  // down to the pier is pierConfig). Its soft shadow is baked in at low
+  // alpha, which the bounds analysis ignores. Position
   // comes from LANDMARK_POSITIONS.dockMessages (== dockConfig.dockPosition),
   // checked against a composite with xendra-map-base-v7-4k.png.
   dockMessages: {

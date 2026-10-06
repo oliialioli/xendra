@@ -13,7 +13,8 @@ The dock is the paper-boat workshop on the plaza where the old
 comment) -- lower-right of the island, below/right of the music school. Its
 artwork is an open shed with the work table, a sign and a bench
 (`public/assets/landmarks/caseta-ontziak.png`, via
-`LANDMARK_ASSET_OVERRIDES.dockMessages` in `mapGeometry.ts`); a sandy path
+`LANDMARK_ASSET_OVERRIDES.dockMessages` in `mapGeometry.ts`), on a plaza
+fitted around it (`public/assets/map/ontzi-plaza.png`, `plazaConfig`); a sandy path
 leads down to a small pier (`public/assets/map/ontzi-kaia.png`, placed by
 `pierConfig` in `dockConfig.ts`), and new boats are launched off the pier's
 end, just upstream of the waterfall.

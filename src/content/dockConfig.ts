@@ -16,9 +16,9 @@ export const dockConfig = {
    * of caseta-ontziak.png's silhouette (its bench and tufts included), placed
    * so the shed itself stands in the middle of the plaza.
    */
-  xPercent: 69.8,
+  xPercent: 69.61,
   /** Vertical position, 0-100, percentage of WORLD_HEIGHT -- see xPercent. */
-  yPercent: 69.79,
+  yPercent: 70.49,
   interactionRadius: LANDMARK_INTERACTION_RADIUS,
   /** The far end of the pier (pierConfig below): boats are set on the water there. */
   launchPoint: { x: 2036, y: 1150 } as Vector2Like,
@@ -32,6 +32,22 @@ export const dockConfig = {
  * and `width`/`height` its size, all in world units (the image covers
  * xendra-map-base-v7-4k.png's pixels 2810-3150 x 1470-1800 at 2x).
  */
+/**
+ * The workshop's plaza, fitted around the house: the base map's plaza was
+ * much bigger than the house, so this image paints grass back over it and
+ * draws a smaller plaza (on the map's isometric axes) with the left-hand
+ * path continued into it. Same placement convention as pierConfig, drawn
+ * just under it; covers xendra-map-base-v7-4k.png's pixels 2330-3050 x
+ * 1270-1650 at 2x.
+ */
+export const plazaConfig = {
+  src: '/assets/map/ontzi-plaza.png',
+  x: 2330 / 1.5,
+  y: 1270 / 1.5,
+  width: 720 / 1.5,
+  height: 380 / 1.5,
+};
+
 export const pierConfig = {
   src: '/assets/map/ontzi-kaia.png',
   x: 2810 / 1.5,
