@@ -65,10 +65,12 @@ export type Track = {
 export type Album = {
   albumTitle: string;
   coverPath: string | null;
+  /** A short line under the title, e.g. "Diska · 2025 · 8 abesti". */
+  summary: string;
   credits: string;
   /** Bandcamp's numeric album id, for its embedded player (null hides the player). */
   bandcampAlbumId: string | null;
-  /** A music video shown beside the cover (YouTube); `caption` goes under it. */
+  /** A music video shown under the album (YouTube); `caption` goes under it. */
   video?: { youtubeId: string; title: string; caption: string };
   externalLinks: { label: string; url: string }[];
   tracks: Track[];

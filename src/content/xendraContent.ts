@@ -43,13 +43,14 @@ export const xendraContent: XendraContent = {
   album: {
     albumTitle,
     coverPath: '/assets/music/bihia-azala.jpg',
+    summary: 'Diska · 2025 · 8 abesti',
     credits:
       'SIMA estudioan grabatua eta nahastua (Irunberri, Nafarroa), Ibai Osinagaren laguntzaz. Masterizazioa: Martxel Arkarazo (Garate estudioak, Andoain). 2025eko urtarrilaren 9an atera zen.',
     bandcampAlbumId: '2903320457',
     video: {
       youtubeId: 'MdOVAH9jMdw',
       title: 'Xendra - Errauts eskuak (bideoklipa)',
-      caption: '“Errauts eskuak” bideoklipa',
+      caption: '“Errauts eskuak” · 2024ko abendua',
     },
     externalLinks: [
       { label: 'Bandcamp', url: 'https://xendrataldea.bandcamp.com/album/bihia' },

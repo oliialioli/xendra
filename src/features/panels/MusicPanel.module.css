@@ -1,28 +1,105 @@
+/*
+ * The album: cover, title, credits and the other places to listen in one
+ * column, Bandcamp's track list beside it; the music video below, full width.
+ * On a phone it all stacks.
+ */
+.album {
+  display: grid;
+  grid-template-columns: minmax(0, 250px) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-5);
+}
+
+.albumInfo {
+  min-width: 0;
+}
+
 .cover {
   display: block;
   width: 100%;
-  max-width: 280px;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: var(--radius-sm);
   margin-bottom: var(--space-3);
 }
 
-/* Cover and music video side by side, bottoms lined up. */
-.media {
-  display: grid;
-  grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
-  align-items: end;
-  gap: var(--space-4);
-  margin-bottom: var(--space-3);
-}
-
-.media .cover {
-  margin-bottom: 0;
-}
-
-.video {
+.title {
   margin: 0;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.summary {
+  margin: var(--space-1) 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ui-ink-muted);
+}
+
+.credits {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--ui-ink-muted);
+}
+
+.linksLabel {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ui-ink-muted);
+}
+
+.links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--ui-well);
+  color: var(--ui-ink);
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background var(--duration-fast) var(--ease-organic);
+}
+
+.pill:hover {
+  background: var(--ui-khaki);
+}
+
+.pill:focus-visible {
+  outline: 2px solid var(--ui-ink);
+  outline-offset: 2px;
+}
+
+.player {
+  display: block;
+  width: 100%;
+  /* Bandcamp's large player: header plus 8 tracks of its list. */
+  height: 420px;
+  border: 0;
+  border-radius: var(--ui-radius-md);
+  background: #fff;
+}
+
+.videoHeading {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .videoFrame {
@@ -35,38 +112,60 @@
 }
 
 .videoCaption {
-  margin-top: var(--space-2);
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   color: var(--ui-ink-muted);
-  font-size: 0.8rem;
 }
 
 @media (max-width: 640px) {
-  .media {
+  .album {
     grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
   }
-}
 
-.player {
-  display: block;
-  width: 100%;
-  /* Bandcamp's large player: header plus 8 tracks of its list. */
-  height: 420px;
-  border: 0;
-  border-radius: var(--ui-radius-md);
-  background: #fff;
-  margin: var(--space-3) 0 var(--space-4);
-}
+  /* On a phone the cover goes small, beside the title, so the player comes sooner. */
+  .albumInfo {
+    display: grid;
+    grid-template-columns: 104px minmax(0, 1fr);
+    grid-template-areas:
+      'cover title'
+      'cover summary'
+      'credits credits'
+      'label label'
+      'links links';
+    column-gap: var(--space-4);
+  }
 
-.linksLabel {
-  margin: 0 0 var(--space-2);
-  color: var(--ui-ink-muted);
-}
+  .cover {
+    grid-area: cover;
+    margin-bottom: var(--space-4);
+  }
 
-.links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
+  .title {
+    grid-area: title;
+    align-self: end;
+  }
+
+  .summary {
+    grid-area: summary;
+    align-self: start;
+  }
+
+  .credits {
+    grid-area: credits;
+  }
+
+  .linksLabel {
+    grid-area: label;
+  }
+
+  .links {
+    grid-area: links;
+  }
+
+  /* Narrow, Bandcamp moves buy/share below the list: a little taller so the list needs no scrollbar. */
+  .player {
+    height: 450px;
+  }
 }

@@ -1,5 +1,6 @@
 import { xendraContent } from '../../content/xendraContent';
 import { useAudioPlayer } from '../audio/AudioContext';
+import { ArrowUpRight } from '@phosphor-icons/react';
 import { assetPath } from '../../lib/assetPath';
 import { YouTubeEmbed } from '../../components/YouTubeEmbed';
 import shared from './panelShared.module.css';
@@ -22,49 +23,55 @@ export function MusicPanel() {
   return (
     <div>
       <section className={shared.section}>
-        {/* The cover, with the music video beside it (under it on a phone). */}
-        <div className={album.video ? styles.media : undefined}>
-          {album.coverPath && (
-            <img className={styles.cover} src={assetPath(album.coverPath)} alt={`${album.albumTitle} diskoaren azala`} />
-          )}
-          {album.video && (
-            <figure className={styles.video}>
-              <YouTubeEmbed className={styles.videoFrame} videoId={album.video.youtubeId} title={album.video.title} />
-              <figcaption className={styles.videoCaption}>{album.video.caption}</figcaption>
-            </figure>
+        {/* The album -- cover, title, credits and where else to listen -- beside Bandcamp's track list. */}
+        <div className={styles.album}>
+          <div className={styles.albumInfo}>
+            {album.coverPath && (
+              <img className={styles.cover} src={assetPath(album.coverPath)} alt={`${album.albumTitle} diskoaren azala`} />
+            )}
+            <h3 className={styles.title}>{album.albumTitle}</h3>
+            <p className={styles.summary}>{album.summary}</p>
+            <p className={styles.credits}>{album.credits}</p>
+            {album.externalLinks.length > 0 && (
+              <>
+                <p className={styles.linksLabel}>Entzun hemen ere</p>
+                <ul className={styles.links}>
+                  {album.externalLinks.map((link) => (
+                    <li key={link.url}>
+                      <a className={styles.pill} href={link.url} target="_blank" rel="noreferrer">
+                        {link.label}
+                        <ArrowUpRight size={13} weight="bold" aria-hidden="true" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+          {album.bandcampAlbumId && (
+            <iframe
+              className={styles.player}
+              title={`${album.albumTitle} Bandcamp-en entzun`}
+              src={bandcampPlayerUrl(album.bandcampAlbumId)}
+              loading="lazy"
+              seamless
+            />
           )}
         </div>
-        <h3>{album.albumTitle}</h3>
-        <p className={shared.lead}>{album.credits}</p>
-        {album.bandcampAlbumId && (
-          <iframe
-            className={styles.player}
-            title={`${album.albumTitle} Bandcamp-en entzun`}
-            src={bandcampPlayerUrl(album.bandcampAlbumId)}
-            loading="lazy"
-            seamless
-          />
-        )}
-        {album.externalLinks.length > 0 && (
-          <>
-            <p className={styles.linksLabel}>Entzun hemen ere:</p>
-            <ul className={styles.links}>
-              {album.externalLinks.map((link) => (
-                <li key={link.url}>
-                  <a className={shared.secondaryLink} href={link.url} target="_blank" rel="noreferrer">
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
         {hasPreviews && !soundEnabled && (
           <p className={shared.statusText}>
             Aktibatu soinua mapako menutik aurrebistak entzuteko.
           </p>
         )}
       </section>
+
+      {album.video && (
+        <section className={shared.section}>
+          <h3 className={styles.videoHeading}>Bideoklipa</h3>
+          <YouTubeEmbed className={styles.videoFrame} videoId={album.video.youtubeId} title={album.video.title} />
+          <p className={styles.videoCaption}>{album.video.caption}</p>
+        </section>
+      )}
 
       {hasPreviews && (
         <section className={shared.section}>
