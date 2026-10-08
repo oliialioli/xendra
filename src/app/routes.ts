@@ -111,7 +111,6 @@ export const panelRouteByLandmarkId = new Map(
   PANEL_ROUTES.map((entry) => [entry.landmarkId, entry]),
 );
 
-export const MENU_ENTRIES: { route: string; label: string }[] = [
-  { route: MAP_ROUTE, label: 'Hasiera / Mapa' },
-  ...PANEL_ROUTES.map((entry) => ({ route: entry.route, label: entry.title })),
-];
+export const MENU_ENTRIES: { route: string; label: string; landmarkId: PanelRouteConfig['landmarkId'] }[] = PANEL_ROUTES.map(
+  (entry) => ({ route: entry.route, label: entry.title, landmarkId: entry.landmarkId }),
+);
