@@ -23,12 +23,12 @@
   right: var(--space-4);
 }
 
-/* The item as a single print: white border, a deeper bottom margin carrying the caption. */
+/* The item as a single print: an even white border, no caption (its text is only for screen readers). */
 .print {
   position: relative;
   margin: 0;
   max-width: min(92vw, 1040px);
-  padding: 10px 10px 0;
+  padding: 10px;
   background: #fbfaf6;
   box-shadow: 0 2px 4px rgb(0 0 0 / 25%), 0 24px 60px rgb(0 0 0 / 45%);
   animation: printIn var(--duration-medium) var(--ease-organic);
@@ -48,14 +48,6 @@ video.media {
   width: min(88vw, 820px);
   height: auto;
   background: #1e1a14;
-}
-
-.caption {
-  padding: var(--space-3) var(--space-1) var(--space-3);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  line-height: 1.4;
-  color: #4a4a40;
 }
 
 .nav {

@@ -97,7 +97,6 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
             alt={item.altText}
           />
         )}
-        <figcaption className={styles.caption}>{item.altText}</figcaption>
       </figure>
 
       {items.length > 1 && (
