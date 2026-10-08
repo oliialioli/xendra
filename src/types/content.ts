@@ -90,8 +90,8 @@ export type MerchProduct = {
   id: string;
   name: string;
   imagePath: string | null;
-  /** A close-up (e.g. of the print), shown over the photo on hover, or on tap on touch screens. */
-  detailImagePath: string | null;
+  /** More photos of it, shown after the main one when it's opened large. */
+  views?: { path: string; altText: string }[];
   priceLabel: string | null;
   available: boolean;
   ctaMode: 'externalLink' | 'comingSoon';

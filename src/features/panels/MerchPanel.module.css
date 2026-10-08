@@ -10,8 +10,60 @@
   background: var(--color-sand);
 }
 
-button.photo {
+/* The photos side by side, scrolled sideways one at a time; no scrollbar (the dots show where you are). */
+.strip {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.strip::-webkit-scrollbar {
+  display: none;
+}
+
+/* Each photo is the button that opens it large. */
+.slide {
+  flex: 0 0 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
   cursor: zoom-in;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.slide:focus-visible {
+  outline: 2px solid var(--ui-ink);
+  outline-offset: -2px;
+}
+
+/* Which photo is showing, along the bottom. */
+.dots {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-3);
+  display: flex;
+  gap: 5px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(255 252 245 / 55%);
+  box-shadow: 0 0 2px rgb(40 30 20 / 35%);
+}
+
+.dot[data-current] {
+  background: rgb(255 252 245);
 }
 
 .image {
@@ -19,18 +71,6 @@ button.photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-/* The close-up, laid over the photo, fading in while a mouse hovers it. */
-.detail {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity var(--duration-medium) var(--ease-organic);
-}
-
-.photo[data-detail] .detail {
-  opacity: 1;
 }
 
 /* The magnifier in the corner: the cue that the photo opens large. */
@@ -49,7 +89,3 @@ button.photo {
   pointer-events: none;
 }
 
-.photo:focus-visible {
-  outline: 2px solid var(--ui-ink);
-  outline-offset: 2px;
-}

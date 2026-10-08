@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { MagnifyingGlassPlus } from '@phosphor-icons/react';
 import type { MediaItem, MerchProduct } from '../../types/content';
 import { MediaLightbox } from './MediaLightbox';
@@ -8,68 +8,84 @@ import shared from './panelShared.module.css';
 import styles from './MerchPanel.module.css';
 
 /**
- * The product photo. Pressing it opens it large (MediaLightbox), together
- * with its close-up when it has one, to step between. With a mouse, hovering
- * it already fades the close-up in -- and opens on that one.
+ * The product photo. With more than one, they sit side by side in a strip
+ * that scrolls sideways (a swipe, or a trackpad's sideways scroll), snapping
+ * photo by photo, with dots saying which is showing; pressing one opens it
+ * large (MediaLightbox), to carry on stepping through there.
  */
 function ProductPhoto({ product }: { product: MerchProduct }) {
-  const [hovering, setHovering] = useState(false);
+  const [index, setIndex] = useState(0);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  if (!product.imagePath) return <div aria-hidden="true" className={styles.photo} />;
+  const stripRef = useRef<HTMLDivElement>(null);
 
-  const views: MediaItem[] = [
-    {
-      id: `${product.id}-photo`,
-      kind: 'photo',
-      thumbnailPath: null,
-      fullPath: product.imagePath,
-      altText: product.name,
-    },
-    ...(product.detailImagePath
-      ? [
-          {
-            id: `${product.id}-detail`,
-            kind: 'photo' as const,
-            thumbnailPath: null,
-            fullPath: product.detailImagePath,
-            altText: `${product.name}: xehetasuna`,
-          },
-        ]
-      : []),
-  ];
-  const hasDetail = views.length > 1;
+  const views = useMemo<MediaItem[]>(
+    () =>
+      product.imagePath
+        ? [
+            { id: `${product.id}-photo`, kind: 'photo', thumbnailPath: null, fullPath: product.imagePath, altText: product.name },
+            ...(product.views ?? []).map((view, i) => ({
+              id: `${product.id}-view-${i}`,
+              kind: 'photo' as const,
+              thumbnailPath: null,
+              fullPath: view.path,
+              altText: view.altText,
+            })),
+          ]
+        : [],
+    [product],
+  );
+
+  if (views.length === 0) return <div aria-hidden="true" className={styles.photo} />;
 
   return (
-    <>
-      <button
-        type="button"
-        className={styles.photo}
-        data-detail={(hasDetail && hovering) || undefined}
-        aria-label={`${product.name}: ikusi handian`}
-        onClick={() => setOpenIndex(hasDetail && hovering ? 1 : 0)}
-        // Only a real mouse hovers: phones send these around a tap too.
-        onPointerEnter={(event) => {
-          if (event.pointerType === 'mouse') setHovering(true);
-        }}
-        onPointerLeave={(event) => {
-          if (event.pointerType === 'mouse') setHovering(false);
+    <div className={styles.photo}>
+      <div
+        ref={stripRef}
+        className={styles.strip}
+        onScroll={(event) => {
+          const strip = event.currentTarget;
+          setIndex(Math.round(strip.scrollLeft / Math.max(1, strip.clientWidth)));
         }}
       >
-        <img className={styles.image} src={assetPath(product.imagePath)} alt={product.name} />
-        {hasDetail && <img className={`${styles.image} ${styles.detail}`} src={assetPath(views[1].fullPath!)} alt="" />}
-        <span className={styles.zoomHint} aria-hidden="true">
-          <MagnifyingGlassPlus size={18} weight="bold" />
+        {views.map((view, i) => (
+          <button
+            key={view.id}
+            type="button"
+            className={styles.slide}
+            aria-label={`${view.altText}: ikusi handian`}
+            onClick={() => setOpenIndex(i)}
+          >
+            <img className={styles.image} src={assetPath(view.fullPath!)} alt={view.altText} loading={i === 0 ? undefined : 'lazy'} />
+          </button>
+        ))}
+      </div>
+
+      {views.length > 1 && (
+        <span className={styles.dots} aria-hidden="true">
+          {views.map((view, i) => (
+            <span key={view.id} className={styles.dot} data-current={i === index || undefined} />
+          ))}
         </span>
-      </button>
+      )}
+
+      <span className={styles.zoomHint} aria-hidden="true">
+        <MagnifyingGlassPlus size={18} weight="bold" />
+      </span>
+
       {openIndex !== null && (
         <MediaLightbox
           items={views}
           index={openIndex}
-          onIndexChange={setOpenIndex}
+          onIndexChange={(i) => {
+            setOpenIndex(i);
+            // The card follows along, so closing leaves it on the same photo.
+            const strip = stripRef.current;
+            strip?.scrollTo({ left: i * strip.clientWidth });
+          }}
           onClose={() => setOpenIndex(null)}
         />
       )}
-    </>
+    </div>
   );
 }
 

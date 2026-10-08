@@ -7,6 +7,13 @@ import { dockConfig } from './dockConfig';
  * Content is in Euskera (Basque) throughout. See docs/CONTENT.md for the
  * full list of TODO_CONTENT items to replace.
  */
+/** Photos with both t-shirts in them: shown among each one's views in the shop. */
+const SHIRT_VIEWS_TOGETHER = [
+  { path: '/assets/merch/kamisetak-ibaian.jpg', altText: 'BEGIRA eta SUA kamisetak ibaian' },
+  { path: '/assets/merch/kamisetak-bikotea.jpg', altText: 'BEGIRA eta SUA kamisetak' },
+  { path: '/assets/merch/kamisetak-zintzilik.jpg', altText: 'Bi kamisetak zintzilik, atzetik' },
+];
+
 const MERCH_ORDER_FORM =
   'https://docs.google.com/forms/d/e/1FAIpQLSf4bGHJzfONScfI4GLxOU0auXw7Jk0wtorWRwka4FIQ54_4Gw/viewform';
 const albumTitle = 'Bihia'; // confirmed via badok.eus and Apple Music
@@ -93,9 +100,31 @@ export const xendraContent: XendraContent = {
   ],
 
   merch: [
-    { id: 'merch-begira', name: 'BEGIRA kamiseta', imagePath: '/assets/merch/kamiseta-urdina.jpg', detailImagePath: '/assets/merch/kamiseta-urdina-xehetasuna.jpg', priceLabel: '15€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
-    { id: 'merch-sua', name: 'SUA kamiseta', imagePath: '/assets/merch/kamiseta-naturala.jpg', detailImagePath: '/assets/merch/kamiseta-naturala-xehetasuna.jpg', priceLabel: '15€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
-    { id: 'merch-bihia', name: 'BIHIA diska', imagePath: '/assets/music/bihia-azala.jpg', detailImagePath: null, priceLabel: '10€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
+    {
+      id: 'merch-begira',
+      name: 'BEGIRA kamiseta',
+      imagePath: '/assets/merch/kamiseta-urdina.jpg',
+      views: [
+        { path: '/assets/merch/begira-aurretik.jpg', altText: 'BEGIRA kamiseta, aurretik' },
+        { path: '/assets/merch/begira-atzetik.jpg', altText: 'BEGIRA kamiseta, atzetik eta aurretik' },
+        ...SHIRT_VIEWS_TOGETHER,
+      ],
+      priceLabel: '15€',
+      available: true,
+      ctaMode: 'externalLink',
+      ctaUrl: MERCH_ORDER_FORM,
+    },
+    {
+      id: 'merch-sua',
+      name: 'SUA kamiseta',
+      imagePath: '/assets/merch/kamiseta-naturala.jpg',
+      views: [{ path: '/assets/merch/sua-atzetik.jpg', altText: 'SUA kamiseta, atzetik' }, ...SHIRT_VIEWS_TOGETHER],
+      priceLabel: '15€',
+      available: true,
+      ctaMode: 'externalLink',
+      ctaUrl: MERCH_ORDER_FORM,
+    },
+    { id: 'merch-bihia', name: 'BIHIA diska', imagePath: '/assets/music/bihia-azala.jpg', priceLabel: '10€', available: true, ctaMode: 'externalLink', ctaUrl: MERCH_ORDER_FORM },
   ],
 
   history: [
