@@ -3,10 +3,10 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  // GitHub Pages serves this app from https://<user>.github.io/xendra/, so
-  // asset URLs need the repo name as a base path in production; the local
-  // dev server keeps serving from "/" either way.
-  base: process.env.GITHUB_PAGES ? '/xendra/' : '/',
+  // Served from the root of its own domain (https://xendra.eus, set as
+  // GitHub Pages' custom domain -- see public/CNAME), so no base path: the
+  // repo-name prefix (/xendra/) is only needed on <user>.github.io/<repo>.
+  base: '/',
   plugins: [react()],
   build: {
     // Phaser alone is ~1.2 MB, so it gets a chunk of its own (warning raised to fit it).
