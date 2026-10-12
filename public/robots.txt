@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://xendra.eus/sitemap.xml

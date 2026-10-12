@@ -5,17 +5,39 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xendra — Uharteko (Nafarroa) musika taldea</title>
     <meta
       name="description"
-      content="Xendra: Nafarroako pop-rock taldea. Ezagutu Uharteko uhartea, aurkitu bere musika, kontzertuak, kideak eta historia."
+      content="Xendra, Uharteko (Nafarroa) musika taldea: folk, pop eta rock euskaraz. Entzun «Bihia» diskoa, ikusi kontzertuak eta ezagutu taldea uharte interaktibo batean."
     />
-    <meta property="og:title" content="Xendra" />
+    <link rel="canonical" href="https://xendra.eus/" />
+    <meta name="theme-color" content="#4c4032" />
+
+    <!-- Link previews (WhatsApp, Instagram, X...). -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Xendra" />
+    <meta property="og:locale" content="eu_ES" />
+    <meta property="og:url" content="https://xendra.eus/" />
+    <meta property="og:title" content="Xendra — Uharteko musika taldea" />
     <meta
       property="og:description"
-      content="Ezagutu Xendraren uhartea: musika, kontzertuak, taldea, historia eta kontaktua."
+      content="Folk, pop eta rock doinuak euskaraz. Entzun «Bihia» diskoa, ikusi kontzertuak eta ezagutu taldea uharte interaktibo batean."
     />
-    <meta property="og:type" content="website" />
-    <title>Xendra — arakatu uhartea</title>
+    <meta property="og:image" content="https://xendra.eus/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Xendra: barraskiloa eta taldearen logoa" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Xendra — Uharteko musika taldea" />
+    <meta
+      name="twitter:description"
+      content="Folk, pop eta rock doinuak euskaraz. Entzun «Bihia» diskoa, ikusi kontzertuak eta ezagutu taldea."
+    />
+    <meta name="twitter:image" content="https://xendra.eus/og-image.jpg" />
+
+    <!-- Structured data (the band, its album, members, upcoming concerts): generated from the site's content, see src/seo/siteSeo.ts. -->
+    <!--seo:jsonld-->
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -62,6 +84,13 @@
       @media (prefers-reduced-motion: reduce) {
         #initial-loading .line::after { animation: none; width: 100%; }
       }
+      /* The site's content as plain text, under the loading screen: for crawlers that don't run the app (it replaces all of #root as it starts). */
+      #static-summary {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 24px;
+        font: 1rem/1.5 'Instrument Sans', system-ui, sans-serif;
+      }
     </style>
   </head>
   <body>
@@ -71,10 +100,11 @@
         <div class="line" aria-hidden="true"></div>
         <span>Uhartea prestatzen…</span>
       </div>
+      <!--seo:summary-->
     </div>
     <noscript>
-      Xendra Nafarroako pop-rock talde bat da. Webgune honek JavaScript behar du mapa
-      esperientzia interaktiborako, baina informazio gehiagorako idatz diezagukezu hala ere.
+      <style>#initial-loading { display: none; }</style>
+      <p>Uharte interaktiboak JavaScript behar du; goiko informazioa hala ere irakur dezakezu.</p>
     </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
