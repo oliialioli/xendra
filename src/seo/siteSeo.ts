@@ -95,7 +95,7 @@ export function seoJsonLd(today: Date = new Date()): string {
     },
     event: upcomingConcerts(today).map((concert) => ({
       '@type': 'MusicEvent',
-      name: `${band.name} — ${concert.city}`,
+      name: `${band.name} (${concert.city})`,
       startDate: concert.time ? `${concert.date}T${concert.time}` : concert.date,
       eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
       location: {

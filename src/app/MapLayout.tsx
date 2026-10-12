@@ -224,7 +224,7 @@ export function MapLayout() {
         Salto egin edukira
       </a>
       <h1 id="main-content" tabIndex={-1} className="visually-hidden">
-        Xendra — mapa interaktiboa
+        Xendra: mapa interaktiboa
       </h1>
 
       <PhaserGame
