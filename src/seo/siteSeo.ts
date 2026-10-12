@@ -1,18 +1,24 @@
 import { xendraContent } from '../content/xendraContent';
+import { MAP_PATH, SECTION_PATHS, SECTION_TITLES, normalizePath } from '../content/sectionPaths';
+import type { LandmarkId } from '../types/content';
+import { HOME_META, SECTION_META, type PageMeta } from './pageMeta';
 
 /**
  * What search engines and link previews read, built from the same content
  * the site shows (xendraContent) so it can't drift from it. The app itself
  * is a map drawn on a canvas with its sections opened on demand, so without
- * this a crawler finds little more than the band's name:
+ * this a crawler finds little more than the band's name.
  *
- *  - `seoJsonLd()`: schema.org structured data (the band, its album and
- *    tracks, its members, upcoming concerts), for the <head>;
- *  - `staticSummaryHtml()`: the same information as plain HTML, placed
- *    inside #root under the loading screen -- there for crawlers and
- *    assistants that don't run JavaScript, replaced by the app as it mounts.
+ * Every address (the map and each section, see sectionPaths.ts) is published
+ * as its own HTML page running the same app. For each one this gives:
  *
- * vite.config.ts injects both into index.html at build time.
+ *  - `headHtml()`: its title, description, canonical address, link-preview
+ *    tags and schema.org structured data, for the <head>;
+ *  - `summaryHtml`: that section's content as plain HTML, placed inside
+ *    #root under the loading screen -- there for crawlers and assistants
+ *    that don't run JavaScript, replaced by the app as it mounts.
+ *
+ * vite.config.ts writes the pages (and sitemap.xml, 404.html) at build time.
  */
 export const SITE_URL = 'https://xendra.eus/';
 export const SHARE_IMAGE_URL = `${SITE_URL}og-image.jpg`;
@@ -20,6 +26,12 @@ export const SHARE_IMAGE_URL = `${SITE_URL}og-image.jpg`;
 const HOME_TOWN = 'Uharte, Nafarroa';
 const FOUNDED = '2020';
 const ALBUM_RELEASED = '2025-01-09';
+
+export type SeoPage = PageMeta & {
+  /** The page's own address: a published page's ends in a slash. */
+  url: string;
+  summaryHtml: string;
+};
 
 const escapeHtml = (text: string): string =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -34,15 +46,33 @@ function isoDay(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
+export function pageUrl(path: string): string {
+  return path === MAP_PATH ? SITE_URL : `${SITE_URL}${path.replace(/^\//, '')}/`;
+}
+
 type Concert = (typeof xendraContent.concerts)[number];
 type DatedConcert = Concert & { date: string };
+
+function datedConcerts(): DatedConcert[] {
+  return xendraContent.concerts.filter(
+    (concert): concert is DatedConcert => concert.date !== null && concert.status !== 'cancelled',
+  );
+}
 
 /** Concerts from `today` on that already have a date, soonest first. */
 function upcomingConcerts(today: Date): DatedConcert[] {
   const from = isoDay(today);
-  return xendraContent.concerts
-    .filter((concert): concert is DatedConcert => concert.date !== null && concert.date >= from && concert.status !== 'cancelled')
+  return datedConcerts()
+    .filter((concert) => concert.date >= from)
     .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/** Concerts already played, latest first. */
+function pastConcerts(today: Date): DatedConcert[] {
+  const from = isoDay(today);
+  return datedConcerts()
+    .filter((concert) => concert.date < from)
+    .sort((a, b) => b.date.localeCompare(a.date));
 }
 
 function listenLinks(): { label: string; url: string }[] {
@@ -57,9 +87,11 @@ function sameAs(): string[] {
   return [...xendraContent.contact.socialLinks.map((link) => link.url), ...ARTIST_PROFILES];
 }
 
-export function seoJsonLd(today: Date = new Date()): string {
+// --- structured data -------------------------------------------------------
+
+function groupNode(today: Date) {
   const { band, album, members } = xendraContent;
-  const group = {
+  return {
     '@type': 'MusicGroup',
     '@id': `${SITE_URL}#xendra`,
     name: band.name,
@@ -83,7 +115,7 @@ export function seoJsonLd(today: Date = new Date()): string {
       datePublished: ALBUM_RELEASED,
       numTracks: album.tracks.length,
       byArtist: { '@id': `${SITE_URL}#xendra` },
-      url: listenLinks()[0]?.url ?? SITE_URL,
+      url: pageUrl(SECTION_PATHS.school),
       sameAs: listenLinks().map((link) => link.url),
       ...(album.coverPath ? { image: new URL(album.coverPath, SITE_URL).href } : {}),
       track: album.tracks.map((track) => ({
@@ -107,47 +139,215 @@ export function seoJsonLd(today: Date = new Date()): string {
       ...(concert.ticketsUrl ? { offers: { '@type': 'Offer', url: concert.ticketsUrl } } : {}),
     })),
   };
+}
+
+/** The page's schema.org graph: the site, the band, and (for a section) the page itself with its place in the site. */
+export function seoJsonLd(page: PageMeta = HOME_META, today: Date = new Date()): string {
   const site = {
     '@type': 'WebSite',
     '@id': `${SITE_URL}#website`,
     url: SITE_URL,
-    name: band.name,
+    name: xendraContent.band.name,
     inLanguage: 'eu',
     about: { '@id': `${SITE_URL}#xendra` },
   };
-  // "<" escaped so nothing in the content can close the <script> it sits in.
-  return JSON.stringify({ '@context': 'https://schema.org', '@graph': [site, group] }).replace(/</g, '\\u003c');
-}
-
-export function staticSummaryHtml(today: Date = new Date()): string {
-  const { band, album, members, press, contact } = xendraContent;
-  const concerts = upcomingConcerts(today);
-  const link = ({ label, url }: { label: string; url: string }) => `<a href="${escapeHtml(url)}">${escapeHtml(label)}</a>`;
-  const list = (items: string[]) => `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>`;
-
-  const parts = [
-    `<h1>${escapeHtml(band.name)}</h1>`,
-    `<p>${escapeHtml(band.bio)}</p>`,
-    `<p>${escapeHtml(band.originText)}</p>`,
-    `<h2>${escapeHtml(album.albumTitle)}</h2>`,
-    `<p>${escapeHtml(album.summary)}. ${escapeHtml(album.credits)}</p>`,
-    `<ol>${album.tracks.map((track) => `<li>${escapeHtml(track.title)} (${escapeHtml(track.durationLabel)})</li>`).join('')}</ol>`,
-    `<p>Entzun: ${listenLinks().map(link).join(', ')}.</p>`,
-    '<h2>Taldea</h2>',
-    list(members.map((member) => `${escapeHtml(member.name)}: ${escapeHtml(member.instrument)}`)),
-  ];
-  if (concerts.length > 0) {
-    parts.push(
-      '<h2>Kontzertuak</h2>',
-      list(
-        concerts.map(
-          (concert) =>
-            `<time datetime="${concert.date}">${concert.date}</time>, ${escapeHtml([concert.city, concert.venue].filter(Boolean).join(' · '))}`,
-        ),
-      ),
+  const graph: object[] = [site, groupNode(today)];
+  if (page.path !== MAP_PATH) {
+    const url = pageUrl(page.path);
+    graph.push(
+      {
+        '@type': 'WebPage',
+        '@id': url,
+        url,
+        name: page.title,
+        description: page.description,
+        inLanguage: 'eu',
+        isPartOf: { '@id': `${SITE_URL}#website` },
+        about: { '@id': `${SITE_URL}#xendra` },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: xendraContent.band.name, item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: page.title, item: url },
+        ],
+      },
     );
   }
-  if (press.length > 0) parts.push('<h2>Prentsan</h2>', list(press.map(link)));
-  parts.push('<h2>Kontaktua</h2>', `<p>${contact.socialLinks.map(link).join(', ')}</p>`);
-  return `<main id="static-summary">${parts.join('')}</main>`;
+  // "<" escaped so nothing in the content can close the <script> it sits in.
+  return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
+}
+
+// --- plain-HTML summaries ---------------------------------------------------
+
+const link = ({ label, url }: { label: string; url: string }) => `<a href="${escapeHtml(url)}">${escapeHtml(label)}</a>`;
+const list = (items: string[], ordered = false) =>
+  `<${ordered ? 'ol' : 'ul'}>${items.map((item) => `<li>${item}</li>`).join('')}</${ordered ? 'ol' : 'ul'}>`;
+const paragraph = (text: string) => `<p>${escapeHtml(text)}</p>`;
+
+function concertLine(concert: DatedConcert): string {
+  return `<time datetime="${concert.date}">${concert.date}</time>, ${escapeHtml([concert.city, concert.venue].filter(Boolean).join(' · '))}`;
+}
+
+function albumHtml(): string[] {
+  const { album } = xendraContent;
+  return [
+    paragraph(`${album.summary}. ${album.credits}`),
+    list(
+      album.tracks.map((track) => `${escapeHtml(track.title)} (${escapeHtml(track.durationLabel)})`),
+      true,
+    ),
+    `<p>Entzun: ${listenLinks().map(link).join(', ')}.</p>`,
+  ];
+}
+
+function membersHtml(): string {
+  return list(xendraContent.members.map((member) => `${escapeHtml(member.name)}: ${escapeHtml(member.instrument)}`));
+}
+
+/** Every page links to all the others, so a crawler landing on one finds the rest. */
+function siteNav(current: string): string {
+  const entries = [
+    { path: MAP_PATH, label: xendraContent.band.name },
+    ...(Object.keys(SECTION_PATHS) as LandmarkId[]).map((id) => ({ path: SECTION_PATHS[id], label: SECTION_TITLES[id] })),
+  ];
+  return `<nav aria-label="Xendraren atalak">${list(
+    entries
+      .filter((entry) => entry.path !== current)
+      .map((entry) => `<a href="${entry.path === MAP_PATH ? '/' : `${entry.path}/`}">${escapeHtml(entry.label)}</a>`),
+  )}</nav>`;
+}
+
+function sectionBody(path: string, today: Date): string[] {
+  const { band, album, history, press, merch, kiosk, contact } = xendraContent;
+  switch (path) {
+    case SECTION_PATHS.school:
+      return [
+        `<h2>${escapeHtml(album.albumTitle)}</h2>`,
+        ...albumHtml(),
+        ...(album.video
+          ? [
+              '<h2>Bideoklipa</h2>',
+              `<p>${link({ label: album.video.caption, url: `https://www.youtube.com/watch?v=${album.video.youtubeId}` })}</p>`,
+            ]
+          : []),
+      ];
+    case SECTION_PATHS.stage: {
+      const upcoming = upcomingConcerts(today);
+      const past = pastConcerts(today);
+      return [
+        ...(upcoming.length > 0 ? ['<h2>Hurrengo kontzertuak</h2>', list(upcoming.map(concertLine))] : []),
+        ...(past.length > 0 ? ['<h2>Emandako kontzertuak</h2>', list(past.map(concertLine))] : []),
+      ];
+    }
+    case SECTION_PATHS.fountain:
+      return [paragraph(band.bio), '<h2>Kideak</h2>', membersHtml()];
+    case SECTION_PATHS.trainHistory:
+      return [
+        paragraph(band.originText),
+        ...history.flatMap((stop) => [`<h2>${escapeHtml(stop.year)}</h2>`, paragraph(stop.description)]),
+        ...(press.length > 0 ? ['<h2>Prentsan</h2>', list(press.map(link))] : []),
+      ];
+    case SECTION_PATHS.kiosk:
+      return [
+        paragraph(kiosk.intro),
+        list(merch.map((product) => escapeHtml([product.name, product.priceLabel].filter(Boolean).join(': ')))),
+        ...(kiosk.orderUrl ? [`<p>${link({ label: 'Bete eskaera-orria', url: kiosk.orderUrl })}</p>`] : []),
+      ];
+    case SECTION_PATHS.postbox:
+      return [`<p>${contact.socialLinks.map(link).join(', ')}</p>`];
+    default:
+      return [];
+  }
+}
+
+function homeBody(today: Date): string[] {
+  const { band, album, press, contact } = xendraContent;
+  const concerts = upcomingConcerts(today);
+  return [
+    paragraph(band.bio),
+    paragraph(band.originText),
+    `<h2>${escapeHtml(album.albumTitle)}</h2>`,
+    ...albumHtml(),
+    '<h2>Taldea</h2>',
+    membersHtml(),
+    ...(concerts.length > 0 ? ['<h2>Kontzertuak</h2>', list(concerts.map(concertLine))] : []),
+    ...(press.length > 0 ? ['<h2>Prentsan</h2>', list(press.map(link))] : []),
+    '<h2>Kontaktua</h2>',
+    `<p>${contact.socialLinks.map(link).join(', ')}</p>`,
+  ];
+}
+
+function summaryHtml(meta: PageMeta, today: Date): string {
+  const isHome = meta.path === MAP_PATH;
+  const sectionId = (Object.keys(SECTION_PATHS) as LandmarkId[]).find((id) => SECTION_PATHS[id] === meta.path);
+  const heading = isHome ? xendraContent.band.name : sectionId ? SECTION_TITLES[sectionId] : meta.title;
+  const body = isHome ? homeBody(today) : [paragraph(meta.description), ...sectionBody(meta.path, today)];
+  return `<main id="static-summary"><h1>${escapeHtml(heading)}</h1>${body.join('')}${siteNav(meta.path)}</main>`;
+}
+
+// --- pages --------------------------------------------------------------------
+
+/** Every published page: the map, then each section. */
+export function seoPages(today: Date = new Date()): SeoPage[] {
+  return [HOME_META, ...SECTION_META].map((meta) => ({
+    ...meta,
+    url: pageUrl(meta.path),
+    summaryHtml: summaryHtml(meta, today),
+  }));
+}
+
+/** The page for an address, as the dev server needs it (an unknown one gets the home page's). */
+export function seoPageFor(path: string, today: Date = new Date()): SeoPage {
+  const pages = seoPages(today);
+  return pages.find((page) => page.path === path) ?? pages[0];
+}
+
+/** The same, from a request's URL (query and trailing slash ignored). */
+export function seoPageForUrl(url: string, today: Date = new Date()): SeoPage {
+  return seoPageFor(normalizePath(new URL(url, SITE_URL).pathname), today);
+}
+
+/** What an address that isn't a page gets: the app (which says so itself), kept out of search results. */
+export function notFoundPage(): SeoPage {
+  return {
+    path: '/404',
+    title: 'Xendra: orri ezezaguna',
+    description: 'Helbide hau ez dagokio Xendraren atal bati ere.',
+    url: SITE_URL,
+    summaryHtml: `<main id="static-summary"><h1>Orri ezezaguna</h1><p>Helbide hau ez dagokio Xendraren atal bati ere.</p>${siteNav('/404')}</main>`,
+  };
+}
+
+export function headHtml(page: SeoPage, today: Date = new Date(), options: { noindex?: boolean } = {}): string {
+  const title = escapeHtml(page.title);
+  const description = escapeHtml(page.description);
+  return [
+    `<title>${title}</title>`,
+    `<meta name="description" content="${description}" />`,
+    options.noindex ? '<meta name="robots" content="noindex" />' : `<link rel="canonical" href="${page.url}" />`,
+    '<meta property="og:type" content="website" />',
+    `<meta property="og:site_name" content="${escapeHtml(xendraContent.band.name)}" />`,
+    '<meta property="og:locale" content="eu_ES" />',
+    `<meta property="og:url" content="${page.url}" />`,
+    `<meta property="og:title" content="${title}" />`,
+    `<meta property="og:description" content="${description}" />`,
+    `<meta property="og:image" content="${SHARE_IMAGE_URL}" />`,
+    '<meta property="og:image:width" content="1200" />',
+    '<meta property="og:image:height" content="630" />',
+    '<meta property="og:image:alt" content="Xendra: barraskiloa eta taldearen logoa" />',
+    '<meta name="twitter:card" content="summary_large_image" />',
+    `<meta name="twitter:title" content="${title}" />`,
+    `<meta name="twitter:description" content="${description}" />`,
+    `<meta name="twitter:image" content="${SHARE_IMAGE_URL}" />`,
+    // An address that isn't a page describes the site, not a page of its own.
+    `<script type="application/ld+json">${seoJsonLd(options.noindex ? HOME_META : page, today)}</script>`,
+  ].join('\n    ');
+}
+
+export function sitemapXml(today: Date = new Date()): string {
+  const urls = seoPages(today)
+    .map((page) => `  <url>\n    <loc>${page.url}</loc>\n    <lastmod>${isoDay(today)}</lastmod>\n  </url>`)
+    .join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
 }

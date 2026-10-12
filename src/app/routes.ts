@@ -10,7 +10,9 @@ import { BoatCreator } from '../features/boats/BoatCreator';
 import { ContactPanel } from '../features/panels/ContactPanel';
 import { CastleGame } from '../features/castleGame/CastleGame';
 
-export const MAP_ROUTE = '/mapa';
+import { MAP_PATH, SECTION_PATHS, SECTION_TITLES } from '../content/sectionPaths';
+
+export const MAP_ROUTE = MAP_PATH;
 
 export type PanelRouteConfig = {
   route: string;
@@ -29,49 +31,49 @@ export type PanelRouteConfig = {
  */
 export const PANEL_ROUTES: PanelRouteConfig[] = [
   {
-    route: '/musica',
+    route: SECTION_PATHS.school,
     landmarkId: 'school',
-    title: 'Musika',
+    title: SECTION_TITLES.school,
     Component: MusicPanel,
     variant: 'wide',
     icon: '♪',
   },
   {
-    route: '/conciertos',
+    route: SECTION_PATHS.stage,
     landmarkId: 'stage',
-    title: 'Kontzertuak',
+    title: SECTION_TITLES.stage,
     Component: ConcertsPanel,
     variant: 'wide',
     icon: '☾',
   },
   {
-    route: '/grupo',
+    route: SECTION_PATHS.fountain,
     landmarkId: 'fountain',
-    title: 'Taldea',
+    title: SECTION_TITLES.fountain,
     Component: GroupPanel,
     variant: 'wide',
     icon: '◔',
   },
   {
-    route: '/historia',
+    route: SECTION_PATHS.trainHistory,
     landmarkId: 'trainHistory',
-    title: 'Gure Xendra',
+    title: SECTION_TITLES.trainHistory,
     Component: HistoryPanel,
     variant: 'wide',
     icon: '☖',
   },
   {
-    route: '/merch',
+    route: SECTION_PATHS.kiosk,
     landmarkId: 'kiosk',
-    title: 'Denda',
+    title: SECTION_TITLES.kiosk,
     Component: MerchPanel,
     variant: 'wide',
     icon: '✦',
   },
   {
-    route: '/archivo',
+    route: SECTION_PATHS.bulletinBoard,
     landmarkId: 'bulletinBoard',
-    title: 'Galeria',
+    title: SECTION_TITLES.bulletinBoard,
     Component: ArchivePanel,
     variant: 'wide',
     icon: '▣',
@@ -82,25 +84,25 @@ export const PANEL_ROUTES: PanelRouteConfig[] = [
     // uses (see MapLayout's own special case for landmarkId === 'dockMessages') --
     // Component/icon/title below stay only so this entry still type-checks
     // and still lists correctly in the menu drawer.
-    route: '/mezuak',
+    route: SECTION_PATHS.dockMessages,
     landmarkId: 'dockMessages',
-    title: 'Bidali zure ontzia',
+    title: SECTION_TITLES.dockMessages,
     Component: BoatCreator,
     icon: '✎',
   },
   {
-    // Like '/mezuak', rendered by MapLayout as its own full-screen modal
+    // Like the boat creator, rendered by MapLayout as its own full-screen modal
     // (the minigame) instead of the generic <Panel> shell.
-    route: '/gaztelua',
+    route: SECTION_PATHS.castle,
     landmarkId: 'castle',
-    title: 'Gaztelu magikoa',
+    title: SECTION_TITLES.castle,
     Component: CastleGame,
     icon: '♜',
   },
   {
-    route: '/contacto',
+    route: SECTION_PATHS.postbox,
     landmarkId: 'postbox',
-    title: 'Kontaktua',
+    title: SECTION_TITLES.postbox,
     Component: ContactPanel,
     icon: '✉',
   },

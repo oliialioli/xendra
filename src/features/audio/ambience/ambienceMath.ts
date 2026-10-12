@@ -1,3 +1,4 @@
+import { SECTION_PATHS } from '../../../content/sectionPaths';
 import type { Vector2Like } from '../../../types/content';
 import { DUCK, REACH } from './ambienceConfig';
 
@@ -110,7 +111,7 @@ export function ambienceDuck({ panelRoute, musicPlaying, mediaPlaying }: DuckSta
   if (panelRoute) level = Math.min(level, DUCK.panel);
   // The band's music lives in Musika (its Bandcamp player can't tell us when it plays, so being there is enough).
   // ...and the castle game has its own music.
-  if (panelRoute === '/musica' || panelRoute === '/gaztelua' || musicPlaying) level = Math.min(level, DUCK.music);
+  if (panelRoute === SECTION_PATHS.school || panelRoute === SECTION_PATHS.castle || musicPlaying) level = Math.min(level, DUCK.music);
   if (mediaPlaying) level = Math.min(level, DUCK.media);
   return level;
 }

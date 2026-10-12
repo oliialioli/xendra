@@ -25,6 +25,8 @@ import { useSettings } from './providers/SettingsContext';
 import { useProgress } from './providers/ProgressContext';
 import { xendraContent, landmarkById } from '../content/xendraContent';
 import { MAP_ROUTE, panelRouteByLandmarkId, panelRouteByPath } from './routes';
+import { normalizePath } from '../content/sectionPaths';
+import { pageMetaFor } from '../seo/pageMeta';
 import { sendAnalyticsEvent } from '../lib/analytics';
 import type { LandmarkId } from '../types/content';
 
@@ -54,18 +56,25 @@ export function MapLayout() {
   // Captured once: the game reads later updates via the 'visited:hydrate' bridge event.
   const [initialVisitedIds] = useState<LandmarkId[]>(() => Array.from(progress.visited));
 
-  const panelEntry = panelRouteByPath.get(location.pathname) ?? null;
+  // A published page's own address ends in a slash (/musika/); in-app links don't.
+  const path = normalizePath(location.pathname);
+  const panelEntry = panelRouteByPath.get(path) ?? null;
   // Same line icon as the landmark's own map badge, so a panel reads as
   // "the thing you just opened".
   const PanelIcon = panelEntry ? LANDMARK_INDICATOR_CONFIG[panelEntry.landmarkId].icon : null;
-  const isMapRoute = location.pathname === MAP_ROUTE;
+  const isMapRoute = path === MAP_ROUTE;
   useWorldAmbience(bus, panelEntry ? panelEntry.route : null);
+
+  // The tab's title follows the section that's open, as its published page's does.
+  useEffect(() => {
+    document.title = pageMetaFor(path).title;
+  }, [path]);
   const isUnknownRoute = !isMapRoute && !panelEntry;
   // The intro opens on every visit (every page load), not just the first --
   // it's the way into the island. Only leaving it dismisses it, for this load.
   // A visit that starts on a link straight to a panel (or the castle game)
   // skips it: closing that panel goes straight to the map.
-  const [introDismissed, setIntroDismissed] = useState(() => location.pathname !== MAP_ROUTE);
+  const [introDismissed, setIntroDismissed] = useState(() => path !== MAP_ROUTE);
   const showIntro = isMapRoute && !introDismissed && !menuOpen;
   const controlsBlocked = Boolean(panelEntry) || isUnknownRoute || menuOpen || showIntro;
 

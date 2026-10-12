@@ -1,6 +1,7 @@
 import type { XendraContent } from '../types/content';
 import { FOUNTAIN_INTERACTION_RADIUS, LANDMARK_INTERACTION_RADIUS, LANDMARK_POSITIONS } from './mapGeometry';
 import { dockConfig } from './dockConfig';
+import { SECTION_PATHS } from './sectionPaths';
 
 /**
  * Single source of truth for every editable string in the experience.
@@ -211,7 +212,7 @@ export const xendraContent: XendraContent = {
   landmarks: [
     {
       id: 'kiosk',
-      route: '/merch',
+      route: SECTION_PATHS.kiosk,
       title: 'Kioskoa',
       shortLabel: 'Denda',
       description: 'Xendraren kioskoa, taldearen berritasunekin.',
@@ -220,7 +221,7 @@ export const xendraContent: XendraContent = {
     },
     {
       id: 'stage',
-      route: '/conciertos',
+      route: SECTION_PATHS.stage,
       title: 'Eszenatoki txikia',
       shortLabel: 'Kontzertuak',
       description: 'Xendrak eszenatokira igotzen den lekua. Hurrengo kontzertuak.',
@@ -229,7 +230,7 @@ export const xendraContent: XendraContent = {
     },
     {
       id: 'school',
-      route: '/musica',
+      route: SECTION_PATHS.school,
       title: 'Musika eskola',
       shortLabel: 'Musika',
       description: `${albumTitle} diskoa eta bere zortzi abestiak.`,
@@ -238,7 +239,7 @@ export const xendraContent: XendraContent = {
     },
     {
       id: 'fountain',
-      route: '/grupo',
+      route: SECTION_PATHS.fountain,
       title: 'Iturri zirkularra',
       shortLabel: 'Taldea',
       description: 'Xendraren zazpi kideak, plazan bilduta.',
@@ -247,7 +248,7 @@ export const xendraContent: XendraContent = {
     },
     {
       id: 'trainHistory',
-      route: '/historia',
+      route: SECTION_PATHS.trainHistory,
       title: 'Trenbideak, Irati trena eta sua',
       shortLabel: 'Historia',
       description: 'Xendraren ibilbidea, suaren ondoan kontatua.',
@@ -256,7 +257,7 @@ export const xendraContent: XendraContent = {
     },
     {
       id: 'bulletinBoard',
-      route: '/archivo',
+      route: SECTION_PATHS.bulletinBoard,
       title: 'Iragarki-taula',
       shortLabel: 'Galeria',
       description: 'Xendraren artxibo bisuala.',
@@ -265,7 +266,7 @@ export const xendraContent: XendraContent = {
     },
     {
       id: 'dockMessages',
-      route: '/mezuak',
+      route: SECTION_PATHS.dockMessages,
       title: 'Mezuen kaia',
       shortLabel: 'Mezuak',
       description: 'Marraztu zure ontzia, idatzi mezu bat eta bota ibaira.',
@@ -274,7 +275,7 @@ export const xendraContent: XendraContent = {
     },
     {
       id: 'castle',
-      route: '/gaztelua',
+      route: SECTION_PATHS.castle,
       title: 'Gaztelu magikoa',
       shortLabel: 'Jokoa',
       description: 'Xendraren minijokoa: zeharkatu gaztelu magikoa eta iritsi ahalik eta azkarren bukaerara.',
@@ -283,7 +284,7 @@ export const xendraContent: XendraContent = {
     },
     {
       id: 'postbox',
-      route: '/contacto',
+      route: SECTION_PATHS.postbox,
       title: 'Postontzi horia',
       shortLabel: 'Kontaktua',
       description: 'Kontaktu orokorra eta kontratazioa.',

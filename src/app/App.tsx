@@ -1,10 +1,9 @@
-import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { GameBridgeProvider } from './providers/GameBridgeContext';
 import { SettingsProvider } from './providers/SettingsContext';
 import { ProgressProvider } from './providers/ProgressContext';
 import { AudioProvider } from '../features/audio/AudioContext';
 import { MapLayout } from './MapLayout';
-import { MAP_ROUTE } from './routes';
 
 export function App() {
   return (
@@ -12,12 +11,12 @@ export function App() {
       <ProgressProvider>
         <GameBridgeProvider>
           <AudioProvider>
-            <HashRouter>
+            {/* Real paths (xendra.eus/musika...): every one is the map, with that section open on it. */}
+            <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Navigate to={MAP_ROUTE} replace />} />
                 <Route path="*" element={<MapLayout />} />
               </Routes>
-            </HashRouter>
+            </BrowserRouter>
           </AudioProvider>
         </GameBridgeProvider>
       </ProgressProvider>
