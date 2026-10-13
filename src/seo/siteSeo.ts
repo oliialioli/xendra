@@ -24,7 +24,8 @@ export const SITE_URL = 'https://xendra.eus/';
 export const SHARE_IMAGE_URL = `${SITE_URL}og-image.jpg`;
 /** Where the band comes from (the island in the site is this town's namesake). */
 const HOME_TOWN = 'Uharte, Nafarroa';
-const FOUNDED = '2020';
+// As the band has it on MusicBrainz and Wikidata (the history page starts earlier, in 2020, with four friends rehearsing).
+const FOUNDED = '2024';
 const ALBUM_RELEASED = '2025-01-09';
 
 export type SeoPage = PageMeta & {
