@@ -79,8 +79,16 @@ function listenLinks(): { label: string; url: string }[] {
   return xendraContent.album.externalLinks;
 }
 
-/** The band's own pages on the music sites (the album's pages there are the album's `sameAs`). */
-const ARTIST_PROFILES = ['https://xendrataldea.bandcamp.com/', 'https://www.badok.eus/euskal-musika/xendra'];
+/**
+ * The band's own pages on the music sites and databases (the album's pages
+ * there are the album's `sameAs`). Not Apple Music's artist page: Apple has
+ * this band's releases on one page with those of other artists called Xendra.
+ */
+const ARTIST_PROFILES = [
+  'https://xendrataldea.bandcamp.com/',
+  'https://www.badok.eus/euskal-musika/xendra',
+  'https://musicbrainz.org/artist/6f648d68-98ce-4d0c-9c0d-2533d53d6483',
+];
 
 /** Every profile of the band elsewhere: its social accounts and its artist pages. */
 function sameAs(): string[] {
