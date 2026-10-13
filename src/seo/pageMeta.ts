@@ -1,4 +1,6 @@
 import { MAP_PATH, SECTION_PATHS } from '../content/sectionPaths';
+import { LYRICS_PATH, SONGS } from '../content/lyricsPaths';
+import { xendraContent } from '../content/xendraContent';
 
 /**
  * Each page's title and description: what a search result shows for it, and
@@ -65,7 +67,21 @@ export const SECTION_META: PageMeta[] = [
   },
 ];
 
-const META_BY_PATH = new Map(SECTION_META.map((meta) => [meta.path, meta]));
+/** The songs' words: the list, then one page per song. */
+export const LYRICS_META: PageMeta[] = [
+  {
+    path: LYRICS_PATH,
+    title: 'Xendraren abestien hitzak',
+    description: `Xendraren «${xendraContent.album.albumTitle}» diskoko abestien hitzak.`,
+  },
+  ...SONGS.map((song) => ({
+    path: song.path,
+    title: `${song.title}: hitzak (Xendra)`,
+    description: `Xendraren «${song.title}» abestiaren hitzak, «${xendraContent.album.albumTitle}» diskokoa.`,
+  })),
+];
+
+const META_BY_PATH = new Map([...SECTION_META, ...LYRICS_META].map((meta) => [meta.path, meta]));
 
 export function pageMetaFor(path: string): PageMeta {
   return META_BY_PATH.get(path) ?? HOME_META;

@@ -3,6 +3,8 @@ import { useAudioPlayer } from '../audio/AudioContext';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { assetPath } from '../../lib/assetPath';
 import { YouTubeEmbed } from '../../components/YouTubeEmbed';
+import { SONGS } from '../../content/lyricsPaths';
+import { SongList } from './LyricsPanel';
 import shared from './panelShared.module.css';
 import styles from './MusicPanel.module.css';
 
@@ -65,9 +67,16 @@ export function MusicPanel() {
         )}
       </section>
 
+      {SONGS.length > 0 && (
+        <section className={shared.section}>
+          <h3 className={styles.sectionHeading}>Hitzak</h3>
+          <SongList />
+        </section>
+      )}
+
       {album.video && (
         <section className={shared.section}>
-          <h3 className={styles.videoHeading}>Bideoklipa</h3>
+          <h3 className={styles.sectionHeading}>Bideoklipa</h3>
           <YouTubeEmbed className={styles.videoFrame} videoId={album.video.youtubeId} title={album.video.title} />
           <p className={styles.videoCaption}>{album.video.caption}</p>
         </section>

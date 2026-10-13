@@ -95,7 +95,7 @@
   background: #fff;
 }
 
-.videoHeading {
+.sectionHeading {
   margin: 0 0 var(--space-3);
   font-family: var(--font-mono);
   font-size: 0.95rem;

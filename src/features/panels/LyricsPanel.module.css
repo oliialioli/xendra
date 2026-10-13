@@ -1,0 +1,126 @@
+/* The way back (to the song list, or to Musika), above everything. */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: var(--space-4);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ui-ink-muted);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--ui-ink);
+}
+
+.back:focus-visible,
+.song:focus-visible,
+.neighbour:focus-visible {
+  outline: 2px solid var(--ui-ink);
+  outline-offset: 2px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.meta {
+  margin: var(--space-1) 0 var(--space-5);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ui-ink-muted);
+}
+
+/* The words: set as verse, one line per line, a stanza's gap between stanzas. */
+.lyrics {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.stanza {
+  margin: 0 0 var(--space-5);
+}
+
+.line,
+.note {
+  display: block;
+}
+
+/* "(musikala)", "(x2)" on a line of their own: a note, not sung. */
+.note {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ui-ink-muted);
+}
+
+.neighbours {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--ui-border);
+}
+
+.neighbour {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ui-ink);
+  text-decoration: none;
+}
+
+.neighbour:hover {
+  text-decoration: underline;
+}
+
+/* The list of songs: number, title, length; a hairline between rows. */
+.songs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.song {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-1);
+  border-top: 1px solid var(--ui-border);
+  color: var(--ui-ink);
+  text-decoration: none;
+  transition: background var(--duration-fast) var(--ease-organic);
+}
+
+.songs li:last-child .song {
+  border-bottom: 1px solid var(--ui-border);
+}
+
+.song:hover {
+  background: var(--ui-well);
+}
+
+.songNumber,
+.songDuration {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ui-ink-muted);
+}
+
+.songTitle {
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 500;
+}

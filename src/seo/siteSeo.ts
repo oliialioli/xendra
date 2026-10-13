@@ -1,7 +1,8 @@
 import { xendraContent } from '../content/xendraContent';
 import { MAP_PATH, SECTION_PATHS, SECTION_TITLES, normalizePath } from '../content/sectionPaths';
 import type { LandmarkId } from '../types/content';
-import { HOME_META, SECTION_META, type PageMeta } from './pageMeta';
+import { LYRICS_PATH, SONGS, songBySlug, lyricsSlugFromPath, type Song } from '../content/lyricsPaths';
+import { HOME_META, LYRICS_META, SECTION_META, type PageMeta } from './pageMeta';
 
 /**
  * What search engines and link previews read, built from the same content
@@ -151,6 +152,31 @@ function groupNode(today: Date) {
   };
 }
 
+/** A song with its words, as the page about it describes it. */
+function songNode(song: Song) {
+  const url = pageUrl(song.path);
+  return {
+    '@type': 'MusicComposition',
+    '@id': `${url}#song`,
+    name: song.title,
+    url,
+    inLanguage: 'eu',
+    composer: { '@id': `${SITE_URL}#xendra` },
+    lyrics: {
+      '@type': 'CreativeWork',
+      inLanguage: 'eu',
+      text: song.stanzas.map((stanza) => stanza.join('\n')).join('\n\n'),
+    },
+    recordedAs: {
+      '@type': 'MusicRecording',
+      name: song.title,
+      duration: isoDuration(song.durationLabel),
+      byArtist: { '@id': `${SITE_URL}#xendra` },
+      inAlbum: { '@type': 'MusicAlbum', name: xendraContent.album.albumTitle },
+    },
+  };
+}
+
 /** The page's schema.org graph: the site, the band, and (for a section) the page itself with its place in the site. */
 export function seoJsonLd(page: PageMeta = HOME_META, today: Date = new Date()): string {
   const site = {
@@ -184,6 +210,8 @@ export function seoJsonLd(page: PageMeta = HOME_META, today: Date = new Date()):
       },
     );
   }
+  const song = songBySlug(lyricsSlugFromPath(page.path) ?? '');
+  if (song) graph.push(songNode(song));
   // "<" escaped so nothing in the content can close the <script> it sits in.
   return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
 }
@@ -220,6 +248,7 @@ function siteNav(current: string): string {
   const entries = [
     { path: MAP_PATH, label: xendraContent.band.name },
     ...(Object.keys(SECTION_PATHS) as LandmarkId[]).map((id) => ({ path: SECTION_PATHS[id], label: SECTION_TITLES[id] })),
+    ...(SONGS.length > 0 ? [{ path: LYRICS_PATH, label: 'Hitzak' }] : []),
   ];
   return `<nav aria-label="Xendraren atalak">${list(
     entries
@@ -235,6 +264,7 @@ function sectionBody(path: string, today: Date): string[] {
       return [
         `<h2>${escapeHtml(album.albumTitle)}</h2>`,
         ...albumHtml(),
+        ...(SONGS.length > 0 ? ['<h2>Hitzak</h2>', list(SONGS.map(songLink), true)] : []),
         ...(album.video
           ? [
               '<h2>Bideoklipa</h2>',
@@ -288,7 +318,31 @@ function homeBody(today: Date): string[] {
   ];
 }
 
+const songLink = (song: Song) => `<a href="${song.path}/">${escapeHtml(song.title)}</a>`;
+
+/** The list of songs (/hitzak), or one song's words. */
+function lyricsSummaryHtml(meta: PageMeta, slug: string): string {
+  const song = songBySlug(slug);
+  if (!song) {
+    return `<main id="static-summary"><h1>Hitzak</h1>${paragraph(meta.description)}${list(SONGS.map(songLink), true)}${siteNav(meta.path)}</main>`;
+  }
+  const position = SONGS.indexOf(song);
+  const neighbours = [SONGS[position - 1], SONGS[position + 1]].filter(Boolean).map(songLink);
+  const words = song.stanzas.map((stanza) => `<p>${stanza.map(escapeHtml).join('<br>')}</p>`).join('');
+  return [
+    '<main id="static-summary">',
+    `<h1>${escapeHtml(song.title)}</h1>`,
+    paragraph(`${xendraContent.band.name} · ${xendraContent.album.albumTitle} · ${song.durationLabel}`),
+    `<div lang="eu">${words}</div>`,
+    `<p><a href="${LYRICS_PATH}/">Abesti guztiak</a>${neighbours.length > 0 ? `: ${neighbours.join(', ')}` : ''}</p>`,
+    siteNav(meta.path),
+    '</main>',
+  ].join('');
+}
+
 function summaryHtml(meta: PageMeta, today: Date): string {
+  const lyricsSlug = lyricsSlugFromPath(meta.path);
+  if (lyricsSlug !== null) return lyricsSummaryHtml(meta, lyricsSlug);
   const isHome = meta.path === MAP_PATH;
   const sectionId = (Object.keys(SECTION_PATHS) as LandmarkId[]).find((id) => SECTION_PATHS[id] === meta.path);
   const heading = isHome ? xendraContent.band.name : sectionId ? SECTION_TITLES[sectionId] : meta.title;
@@ -298,9 +352,9 @@ function summaryHtml(meta: PageMeta, today: Date): string {
 
 // --- pages --------------------------------------------------------------------
 
-/** Every published page: the map, then each section. */
+/** Every published page: the map, each section, then the songs' words. */
 export function seoPages(today: Date = new Date()): SeoPage[] {
-  return [HOME_META, ...SECTION_META].map((meta) => ({
+  return [HOME_META, ...SECTION_META, ...LYRICS_META].map((meta) => ({
     ...meta,
     url: pageUrl(meta.path),
     summaryHtml: summaryHtml(meta, today),

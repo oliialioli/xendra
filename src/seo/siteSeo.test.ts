@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { xendraContent } from '../content/xendraContent';
 import { MAP_PATH, SECTION_PATHS } from '../content/sectionPaths';
+import { LYRICS_PATH, SONGS } from '../content/lyricsPaths';
 import { HOME_META, SECTION_META } from './pageMeta';
 import { SITE_URL, headHtml, isoDuration, notFoundPage, seoJsonLd, seoPageForUrl, seoPages, sitemapXml } from './siteSeo';
 
@@ -49,16 +50,22 @@ describe('seoPages', () => {
   const pages = seoPages(DAY);
 
   it('has the map and one page per section, each with its own address, title and description', () => {
-    expect(pages.map((page) => page.path)).toEqual([MAP_PATH, ...Object.values(SECTION_PATHS)]);
+    expect(pages.map((page) => page.path)).toEqual([
+      MAP_PATH,
+      ...Object.values(SECTION_PATHS),
+      LYRICS_PATH,
+      ...SONGS.map((song) => song.path),
+    ]);
     expect(new Set(pages.map((page) => page.url)).size).toBe(pages.length);
     expect(new Set(pages.map((page) => page.title)).size).toBe(pages.length);
     expect(new Set(pages.map((page) => page.description)).size).toBe(pages.length);
     pages.forEach((page) => expect(page.url.startsWith(SITE_URL) && page.url.endsWith('/')).toBe(true));
   });
 
-  it('links every page to all the others', () => {
+  it('links every page to the map, every section and the list of songs (which leads to each song)', () => {
+    const hubs = pages.filter((page) => !SONGS.some((song) => song.path === page.path));
     pages.forEach((page) => {
-      pages
+      hubs
         .filter((other) => other.path !== page.path)
         .forEach((other) => {
           const href = other.path === MAP_PATH ? 'href="/"' : `href="${other.path}/"`;
@@ -87,6 +94,41 @@ describe('seoPages', () => {
     expect(seoPageForUrl('/musika', DAY).path).toBe(SECTION_PATHS.school);
     expect(seoPageForUrl('/', DAY).path).toBe(MAP_PATH);
     expect(seoPageForUrl('/ez-dago', DAY).path).toBe(MAP_PATH);
+  });
+});
+
+describe('lyrics pages', () => {
+  const pages = seoPages(DAY);
+
+  it('has the words of every song on the album', () => {
+    expect(SONGS.map((song) => song.title)).toEqual(xendraContent.album.tracks.map((track) => track.title));
+    SONGS.forEach((song) => expect(song.stanzas.flat().length).toBeGreaterThan(0));
+  });
+
+  it("puts each song's words, line by line, on its own page", () => {
+    SONGS.forEach((song) => {
+      const page = pages.find((entry) => entry.path === song.path)!;
+      expect(page.url).toBe(`${SITE_URL}hitzak/${song.slug}/`);
+      expect(page.summaryHtml).toContain(`<h1>${song.title}</h1>`);
+      song.stanzas.flat().forEach((line) => expect(page.summaryHtml).toContain(line));
+    });
+  });
+
+  it('describes the song, with its words, in the structured data', () => {
+    const song = SONGS[0];
+    const graph = JSON.parse(seoJsonLd(pages.find((entry) => entry.path === song.path)!, DAY))['@graph'];
+    const node = graph.find((entry: { '@type': string }) => entry['@type'] === 'MusicComposition');
+    expect(node.name).toBe(song.title);
+    expect(node.lyrics.text).toBe(song.stanzas.map((stanza) => stanza.join('\n')).join('\n\n'));
+  });
+
+  it('lists every song from /hitzak and from Musika', () => {
+    const index = pages.find((entry) => entry.path === LYRICS_PATH)!.summaryHtml;
+    const musika = pages.find((entry) => entry.path === SECTION_PATHS.school)!.summaryHtml;
+    SONGS.forEach((song) => {
+      expect(index).toContain(`href="${song.path}/"`);
+      expect(musika).toContain(`href="${song.path}/"`);
+    });
   });
 });
 
