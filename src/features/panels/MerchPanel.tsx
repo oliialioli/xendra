@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { MagnifyingGlassPlus } from '@phosphor-icons/react';
 import type { MediaItem, MerchProduct } from '../../types/content';
 import { MediaLightbox } from './MediaLightbox';
-import { xendraContent } from '../../content/xendraContent';
+import { useContent, useT } from '../../i18n/LanguageContext';
 import { assetPath } from '../../lib/assetPath';
 import shared from './panelShared.module.css';
 import styles from './MerchPanel.module.css';
@@ -17,6 +17,7 @@ function ProductPhoto({ product }: { product: MerchProduct }) {
   const [index, setIndex] = useState(0);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const stripRef = useRef<HTMLDivElement>(null);
+  const t = useT();
 
   const views = useMemo<MediaItem[]>(
     () =>
@@ -52,7 +53,7 @@ function ProductPhoto({ product }: { product: MerchProduct }) {
             key={view.id}
             type="button"
             className={styles.slide}
-            aria-label={`${view.altText}: ikusi handian`}
+            aria-label={t('{what}: ikusi handian', { what: view.altText })}
             onClick={() => setOpenIndex(i)}
           >
             <img className={styles.image} src={assetPath(view.fullPath!)} alt={view.altText} loading={i === 0 ? undefined : 'lazy'} />
@@ -90,7 +91,8 @@ function ProductPhoto({ product }: { product: MerchProduct }) {
 }
 
 export function MerchPanel() {
-  const { kiosk, merch, contact } = xendraContent;
+  const { kiosk, merch, contact } = useContent();
+  const t = useT();
   const instagram = contact.socialLinks.find((link) => link.label === 'Instagram');
 
   return (
@@ -98,7 +100,7 @@ export function MerchPanel() {
       <p className={shared.lead}>{kiosk.intro}</p>
       {kiosk.orderUrl && (
         <a className={shared.primaryButton} href={kiosk.orderUrl} target="_blank" rel="noreferrer">
-          Bete eskaera-orria
+          {t('Bete eskaera-orria')}
         </a>
       )}
       <p className={`${shared.statusText} ${shared.section}`} style={{ marginTop: 'var(--space-4)' }}>
@@ -123,14 +125,14 @@ export function MerchPanel() {
             <ProductPhoto product={product} />
             <h3 className={shared.cardTitle}>{product.name}</h3>
             <p className={shared.statusText}>
-              {product.priceLabel ?? 'Prezioa zehazteke'}
+              {product.priceLabel ?? t('Prezioa zehazteke')}
             </p>
             {product.ctaMode === 'externalLink' && product.ctaUrl ? (
               <a className={shared.secondaryLink} href={product.ctaUrl} target="_blank" rel="noreferrer">
-                Erosi
+                {t('Erosi')}
               </a>
             ) : (
-              <span className={shared.statusText}>Laster</span>
+              <span className={shared.statusText}>{t('Laster')}</span>
             )}
           </article>
         ))}

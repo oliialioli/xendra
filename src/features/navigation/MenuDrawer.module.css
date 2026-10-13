@@ -38,3 +38,10 @@
   background: var(--ui-surface);
   color: var(--landmark-icon);
 }
+
+/* The site's languages, under the sections. */
+.languages {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--ui-well);
+}

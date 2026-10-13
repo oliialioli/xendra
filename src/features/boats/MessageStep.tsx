@@ -3,15 +3,19 @@ import { PencilSimple } from '@phosphor-icons/react';
 import { BOAT_MESSAGE_MAX_LENGTH, BOAT_NAME_MAX_LENGTH, validateBoatMessageInput } from './boatValidation';
 import { BoatPreview } from './BoatPreview';
 import type { BoatDrawing } from './boatTypes';
+import { useT } from '../../i18n/LanguageContext';
+import { msg } from '../../i18n/translate';
 import shared from '../panels/panelShared.module.css';
 import styles from './MessageStep.module.css';
 
 const ERROR_MESSAGES: Record<string, string> = {
-  messageEmpty: 'Idatzi mezu bat aurrera egin baino lehen.',
-  messageTooLong: `Mezuak ezin ditu ${BOAT_MESSAGE_MAX_LENGTH} karaktere baino gehiago izan.`,
-  messageHasLink: 'Mezuak ezin du estekarik izan.',
-  nameTooLong: `Izenak ezin ditu ${BOAT_NAME_MAX_LENGTH} karaktere baino gehiago izan.`,
+  messageEmpty: msg('Idatzi mezu bat aurrera egin baino lehen.'),
+  messageTooLong: msg('Mezuak ezin ditu {max} karaktere baino gehiago izan.'),
+  messageHasLink: msg('Mezuak ezin du estekarik izan.'),
+  nameTooLong: msg('Izenak ezin ditu {max} karaktere baino gehiago izan.'),
 };
+/** What `{max}` stands for in each. */
+const ERROR_LIMITS: Record<string, number> = { messageTooLong: BOAT_MESSAGE_MAX_LENGTH, nameTooLong: BOAT_NAME_MAX_LENGTH };
 
 export type MessageStepProps = {
   /** The boat just drawn, shown small beside the form: this is what will carry the message. */
@@ -42,13 +46,14 @@ export function MessageStep({
   submitError,
 }: MessageStepProps) {
   const formId = useId();
+  const t = useT();
   const [error, setError] = useState<string | null>(null);
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const validationError = validateBoatMessageInput(message, displayName);
     if (validationError) {
-      setError(ERROR_MESSAGES[validationError]);
+      setError(t(ERROR_MESSAGES[validationError], { max: ERROR_LIMITS[validationError] ?? 0 }));
       return;
     }
     setError(null);
@@ -62,17 +67,17 @@ export function MessageStep({
       <div className={styles.boatRow}>
         <BoatPreview drawing={drawing} size="large" />
         <div>
-          <h3 className={styles.title}>Zer eramango du zure ontziak?</h3>
-          <p className={styles.intro}>Idatzi Xendrari esan nahi diozuna eta utzi ibaiari eramaten.</p>
+          <h3 className={styles.title}>{t('Zer eramango du zure ontziak?')}</h3>
+          <p className={styles.intro}>{t('Idatzi Xendrari esan nahi diozuna eta utzi ibaiari eramaten.')}</p>
           <button type="button" className={styles.editDrawing} onClick={onEditDrawing}>
             <PencilSimple size={16} aria-hidden="true" />
-            Aldatu marrazkia
+            {t('Aldatu marrazkia')}
           </button>
         </div>
       </div>
 
       <div className={shared.field}>
-        <label htmlFor={`${formId}-message`}>Zure mezua</label>
+        <label htmlFor={`${formId}-message`}>{t('Zure mezua')}</label>
         <textarea
           id={`${formId}-message`}
           rows={4}
@@ -95,7 +100,7 @@ export function MessageStep({
       </div>
 
       <div className={shared.field}>
-        <label htmlFor={`${formId}-name`}>Izena (aukerakoa)</label>
+        <label htmlFor={`${formId}-name`}>{t('Izena (aukerakoa)')}</label>
         <input
           id={`${formId}-name`}
           value={displayName}
@@ -107,13 +112,13 @@ export function MessageStep({
 
       {submitError && (
         <p className={shared.errorText} role="alert">
-          {submitError}
+          {t(submitError)}
         </p>
       )}
 
       <div className={styles.footer}>
         <button type="submit" className="xnd-btn-primary" disabled={submitting} aria-busy={submitting}>
-          {submitting ? 'Bidaltzen...' : 'Bota ontzia ibaira'}
+          {submitting ? t('Bidaltzen...') : t('Bota ontzia ibaira')}
         </button>
       </div>
     </form>

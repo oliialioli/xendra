@@ -4,6 +4,7 @@ import { CaretLeft, CaretRight, X } from '@phosphor-icons/react';
 import { useFocusTrap } from '../../components/useFocusTrap';
 import { assetPath } from '../../lib/assetPath';
 import type { MediaItem } from '../../types/content';
+import { useT } from '../../i18n/LanguageContext';
 import styles from './MediaLightbox.module.css';
 
 export type MediaLightboxProps = {
@@ -26,6 +27,7 @@ const SWIPE_THRESHOLD_PX = 50;
  */
 export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLightboxProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const t = useT();
   const swipeStartX = useRef<number | null>(null);
   useFocusTrap(rootRef, true);
 
@@ -63,7 +65,7 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
     >
       <div className={styles.scrim} onClick={onClose} />
 
-      <button type="button" className={`xnd-btn-icon ${styles.close}`} onClick={onClose} aria-label="Itxi" title="Itxi">
+      <button type="button" className={`xnd-btn-icon ${styles.close}`} onClick={onClose} aria-label={t('Itxi')} title={t('Itxi')}>
         <X size={20} aria-hidden="true" />
       </button>
 
@@ -106,8 +108,8 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
             className="xnd-btn-icon"
             onClick={() => onIndexChange(index - 1)}
             disabled={!hasPrevious}
-            aria-label="Aurrekoa"
-            title="Aurrekoa"
+            aria-label={t('Aurrekoa')}
+            title={t('Aurrekoa')}
           >
             <CaretLeft size={20} aria-hidden="true" />
           </button>
@@ -119,8 +121,8 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
             className="xnd-btn-icon"
             onClick={() => onIndexChange(index + 1)}
             disabled={!hasNext}
-            aria-label="Hurrengoa"
-            title="Hurrengoa"
+            aria-label={t('Hurrengoa')}
+            title={t('Hurrengoa')}
           >
             <CaretRight size={20} aria-hidden="true" />
           </button>

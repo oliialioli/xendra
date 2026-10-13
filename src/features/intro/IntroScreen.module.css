@@ -53,6 +53,13 @@
 }
 
 
+/* The languages, in the corner. */
+.languages {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+}
+
 .column {
   display: flex;
   flex-direction: column;

@@ -4,10 +4,11 @@ import react from '@vitejs/plugin-react'
 import { createServer, defineConfig, type Plugin, type ViteDevServer } from 'vite'
 
 /**
- * Publishes every address of the site -- the map and each section -- as its
- * own HTML page running the same app, each with its own title, description,
+ * Publishes every address of the site -- the map and each section, in each
+ * language (/musika, /es/musika, /en/musika) -- as its own HTML page running
+ * the same app, each with its own language, title, description,
  * structured data and plain-HTML summary (src/seo/siteSeo.ts), so it can be
- * found and linked to on its own. index.html carries two placeholders for
+ * found and linked to on its own. index.html carries placeholders for
  * them:
  *
  *  - dev: filled per request, for whichever address is being opened;
@@ -39,8 +40,14 @@ function seoHtml(): Plugin {
       if (!devServer) await server.close()
     }
   }
-  const fill = (html: string, head: string, summary: string) =>
-    html.replace('<!--seo:head-->', head).replace('<!--seo:summary-->', summary)
+  type Page = { lang: string; url: string; summaryHtml: string; loadingText: string; noscriptText: string }
+  const fill = (html: string, head: string, page: Page) =>
+    html
+      .replace('<html lang="eu">', `<html lang="${page.lang}">`)
+      .replace('<!--seo:head-->', head)
+      .replace('<!--seo:summary-->', page.summaryHtml)
+      .replace('<!--seo:loading-->', page.loadingText)
+      .replace('<!--seo:noscript-->', page.noscriptText)
   return {
     name: 'xendra-seo',
     configResolved(config) {
@@ -56,20 +63,21 @@ function seoHtml(): Plugin {
         if (isBuild) return html
         const seo = await loadSeo()
         const page = seo.seoPageForUrl(ctx.originalUrl ?? '/')
-        return fill(html, seo.headHtml(page), page.summaryHtml)
+        return fill(html, seo.headHtml(page), page)
       },
     },
     async closeBundle() {
       if (!isBuild) return
       const seo = await loadSeo()
       const template = readFileSync(join(outDir, 'index.html'), 'utf8')
-      for (const page of seo.seoPages()) {
-        const file = page.path === '/' ? join(outDir, 'index.html') : join(outDir, page.path, 'index.html')
+      for (const page of seo.seoPages() as Page[]) {
+        // https://xendra.eus/es/musika/ -> dist/es/musika/index.html
+        const file = join(outDir, new URL(page.url).pathname, 'index.html')
         mkdirSync(dirname(file), { recursive: true })
-        writeFileSync(file, fill(template, seo.headHtml(page), page.summaryHtml))
+        writeFileSync(file, fill(template, seo.headHtml(page), page))
       }
       const notFound = seo.notFoundPage()
-      writeFileSync(join(outDir, '404.html'), fill(template, seo.headHtml(notFound, undefined, { noindex: true }), notFound.summaryHtml))
+      writeFileSync(join(outDir, '404.html'), fill(template, seo.headHtml(notFound, undefined, { noindex: true }), notFound))
       writeFileSync(join(outDir, 'sitemap.xml'), seo.sitemapXml())
     },
   }

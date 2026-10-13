@@ -1,13 +1,14 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent, type PointerEvent as ReactPointerEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import { ArrowFatLeft, ArrowFatRight, ArrowFatUp, Pause, X } from '@phosphor-icons/react';
-import { useNavigate } from 'react-router-dom';
 import { MAP_ROUTE } from '../../app/routes';
 import { useFocusTrap } from '../../components/useFocusTrap';
 import { useSettings } from '../../app/providers/SettingsContext';
 import { assetPath } from '../../lib/assetPath';
 import { GameMusic } from './music';
 import { SnailFigure } from '../../components/SnailFigure';
-import { BOSS, COPY, LEADERBOARD, LIVES, MUSIC_SRC } from './config';
+import { BOSS, COPY as COPY_EU, LEADERBOARD, LIVES, MUSIC_SRC } from './config';
+import { useLang, useLocalNavigate, useT } from '../../i18n/LanguageContext';
+import { localizeDeep } from '../../i18n/translate';
 import { advance, createGame, type GameState } from './engine';
 import { InputController, isGameKey, type TouchButton } from './input';
 import { cleanAlias, loadLeaderboard, qualifies, saveScore, type LeaderboardEntry } from './leaderboard';
@@ -60,8 +61,16 @@ function prefersTouch(): boolean {
 
 type SavedEntry = { alias: string; score: number };
 
+/** The game's texts (config.ts's COPY, written in Basque) in the current language. */
+function useCopy() {
+  const lang = useLang();
+  return useMemo(() => localizeDeep(lang, COPY_EU), [lang]);
+}
+
 /** The top 3 -- everyone's (shared, from Supabase) or, when that's unavailable, this browser's. */
 function Leaderboard({ entries, saved, shared }: { entries: LeaderboardEntry[]; saved: SavedEntry | null; shared: boolean }) {
+  const COPY = useCopy();
+  const lang = useLang();
   const highlighted = saved ? entries.findIndex((e) => e.alias === saved.alias && e.score === saved.score) : -1;
   return (
     <section className={styles.board} aria-labelledby="castle-board-title">
@@ -77,7 +86,7 @@ function Leaderboard({ entries, saved, shared }: { entries: LeaderboardEntry[]; 
               <span className={styles.boardPos}>{i + 1}.</span>
               <span className={styles.boardAlias}>{entry.alias}</span>
               <span className={styles.boardTime}>{entry.time !== undefined ? formatTime(entry.time) : ''}</span>
-              <span className={styles.boardScore}>{entry.score.toLocaleString('eu')}</span>
+              <span className={styles.boardScore}>{entry.score.toLocaleString(lang)}</span>
             </li>
           ))}
         </ol>
@@ -104,7 +113,10 @@ export type CastleGameProps = {
  * listeners, the resize observer) is stopped when it unmounts.
  */
 export function CastleGame({ onClose }: CastleGameProps) {
-  const navigate = useNavigate();
+  const navigate = useLocalNavigate();
+  const COPY = useCopy();
+  const lang = useLang();
+  const t = useT();
   // Read through a ref so the key listeners below are set up once, not on every render.
   const closeRef = useRef<() => void>(() => {});
   useEffect(() => {
@@ -285,7 +297,8 @@ export function CastleGame({ onClose }: CastleGameProps) {
         effectsRef.current.handle(game.events, game);
         for (const e of game.events) {
           if (e.type === 'bossDefeated' || e.type === 'checkpoint') {
-            setNotice(e.type === 'bossDefeated' ? COPY.bossDefeated : COPY.checkpoint);
+            // Kept in Basque here (this loop is set up once) and translated where it's shown.
+            setNotice(e.type === 'bossDefeated' ? COPY_EU.bossDefeated : COPY_EU.checkpoint);
             window.clearTimeout(noticeTimer);
             noticeTimer = window.setTimeout(() => setNotice(null), 2200);
           }
@@ -502,7 +515,7 @@ export function CastleGame({ onClose }: CastleGameProps) {
                 </span>
                 <span className={styles.score}>
                   <span className="visually-hidden">{COPY.score}: </span>
-                  {hud.score.toLocaleString('eu')}
+                  {hud.score.toLocaleString(lang)}
                 </span>
                 <span className={styles.timer}>
                   <span className="visually-hidden">{COPY.time}: </span>
@@ -535,7 +548,7 @@ export function CastleGame({ onClose }: CastleGameProps) {
 
           {screen === 'playing' && notice && (
             <div className={styles.notice} role="status">
-              {notice}
+              {t(notice)}
             </div>
           )}
 
@@ -600,7 +613,7 @@ export function CastleGame({ onClose }: CastleGameProps) {
                 <p className={styles.finalScore}>
                   <span>{COPY.finalScore}</span>
                   <strong>
-                    {finalScore.toLocaleString('eu')} {COPY.points}
+                    {finalScore.toLocaleString(lang)} {COPY.points}
                   </strong>
                 </p>
                 <p className={styles.finalBreakdown}>
@@ -608,7 +621,7 @@ export function CastleGame({ onClose }: CastleGameProps) {
                   {screen === 'victory' && (
                     <>
                       {' · '}
-                      {COPY.timeBonus}: +{finalBonus.toLocaleString('eu')}
+                      {COPY.timeBonus}: +{finalBonus.toLocaleString(lang)}
                     </>
                   )}
                 </p>
@@ -634,7 +647,7 @@ export function CastleGame({ onClose }: CastleGameProps) {
                       </button>
                     </div>
                     <p id="castle-alias-hint" className={aliasError ? styles.aliasError : styles.aliasHint} role={aliasError ? 'alert' : undefined}>
-                      {aliasError ?? COPY.aliasHint}
+                      {aliasError ?? COPY.aliasHint.replace('{max}', String(LEADERBOARD.aliasMaxLength))}
                     </p>
                   </form>
                 )}

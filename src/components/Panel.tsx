@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { X } from '@phosphor-icons/react';
 import { useFocusTrap } from './useFocusTrap';
+import { useT } from '../i18n/LanguageContext';
 import styles from './Panel.module.css';
 
 export type PanelProps = {
@@ -23,6 +24,7 @@ export type PanelProps = {
  */
 export function Panel({ title, onClose, children, variant = 'side', icon }: PanelProps) {
   const titleId = useId();
+  const t = useT();
   const containerRef = useRef<HTMLDivElement>(null);
   useFocusTrap(containerRef, true);
 
@@ -61,8 +63,8 @@ export function Panel({ title, onClose, children, variant = 'side', icon }: Pane
             type="button"
             className="xnd-btn-icon"
             onClick={onClose}
-            aria-label="Itxi"
-            title="Itxi"
+            aria-label={t('Itxi')}
+            title={t('Itxi')}
           >
             <X size={20} aria-hidden="true" />
           </button>

@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { X } from '@phosphor-icons/react';
 import { useFocusTrap } from '../../components/useFocusTrap';
 import { MAP_ROUTE } from '../../app/routes';
+import { useLocalNavigate, useT } from '../../i18n/LanguageContext';
+import { msg } from '../../i18n/translate';
 import { MessageStep } from './MessageStep';
 import { BoatDrawingCanvas } from './BoatDrawingCanvas';
 import { BoatPreview } from './BoatPreview';
@@ -23,18 +24,19 @@ export type BoatCreatorProps = {
 type Step = 'draw' | 'message';
 
 const STEPS: { id: Step; label: string }[] = [
-  { id: 'draw', label: 'Zure ontzia' },
-  { id: 'message', label: 'Zure mezua' },
+  { id: 'draw', label: msg('Zure ontzia') },
+  { id: 'message', label: msg('Zure mezua') },
 ];
 
 /** "1. Zure ontzia -> 2. Zure mezua", the current one highlighted. */
 function StepIndicator({ step }: { step: Step }) {
+  const t = useT();
   return (
-    <ol className={styles.steps} aria-label="Urratsak">
+    <ol className={styles.steps} aria-label={t('Urratsak')}>
       {STEPS.map((s, i) => (
         <li key={s.id} className={styles.stepItem} aria-current={s.id === step ? 'step' : undefined}>
           <span className={styles.stepNumber}>{i + 1}</span>
-          {s.label}
+          {t(s.label)}
           {i < STEPS.length - 1 && (
             <span className={styles.stepArrow} aria-hidden="true">
               →
@@ -47,16 +49,16 @@ function StepIndicator({ step }: { step: Step }) {
 }
 
 const SUBMIT_ERROR_MESSAGES: Record<string, string> = {
-  messageEmpty: 'Idatzi mezu bat aurrera egin baino lehen.',
-  messageTooLong: 'Mezua luzeegia da.',
-  messageHasLink: 'Mezuak ezin du estekarik izan.',
-  nameTooLong: 'Izena luzeegia da.',
-  drawingEmpty: 'Marraztu zerbait ontzia bidali aurretik.',
-  tooManyStrokes: 'Marrazkiak trazu gehiegi ditu.',
-  tooManyPoints: 'Marrazkiak puntu gehiegi ditu.',
-  tooLarge: 'Marrazkia handiegia da.',
+  messageEmpty: msg('Idatzi mezu bat aurrera egin baino lehen.'),
+  messageTooLong: msg('Mezua luzeegia da.'),
+  messageHasLink: msg('Mezuak ezin du estekarik izan.'),
+  nameTooLong: msg('Izena luzeegia da.'),
+  drawingEmpty: msg('Marraztu zerbait ontzia bidali aurretik.'),
+  tooManyStrokes: msg('Marrazkiak trazu gehiegi ditu.'),
+  tooManyPoints: msg('Marrazkiak puntu gehiegi ditu.'),
+  tooLarge: msg('Marrazkia handiegia da.'),
 };
-const GENERIC_SUBMIT_ERROR = 'Ezin izan da ontzia gorde. Egiaztatu konexioa eta saiatu berriro.';
+const GENERIC_SUBMIT_ERROR = msg('Ezin izan da ontzia gorde. Egiaztatu konexioa eta saiatu berriro.');
 
 /**
  * The dock landmark's own two-step experience: draw a paper boat first (the
@@ -70,7 +72,8 @@ const GENERIC_SUBMIT_ERROR = 'Ezin izan da ontzia gorde. Egiaztatu konexioa eta 
  * the generic <Panel>).
  */
 export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
-  const navigate = useNavigate();
+  const navigate = useLocalNavigate();
+  const t = useT();
   const handleClose = onClose ?? (() => navigate(MAP_ROUTE));
 
   const [step, setStep] = useState<Step>('draw');
@@ -166,11 +169,11 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
         <header className={styles.header}>
           <div className={styles.heading}>
             <h2 id="boat-creator-title" className={styles.title}>
-              Zure mezua, ibaian barrena
+              {t('Zure mezua, ibaian barrena')}
             </h2>
-            <p className={styles.subtitle}>Marraztu paperezko ontzi bat, idatzi Xendrarentzako mezua eta bota ibaira.</p>
+            <p className={styles.subtitle}>{t('Marraztu paperezko ontzi bat, idatzi Xendrarentzako mezua eta bota ibaira.')}</p>
           </div>
-          <button type="button" className="xnd-btn-icon" onClick={handleClose} aria-label="Itxi" title="Itxi">
+          <button type="button" className="xnd-btn-icon" onClick={handleClose} aria-label={t('Itxi')} title={t('Itxi')}>
             <X size={20} aria-hidden="true" />
           </button>
         </header>
@@ -182,8 +185,8 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
               <div className={styles.reference}>
                 <PaperBoatSketch className={styles.referenceSketch} />
                 <div>
-                  <h3 className={styles.stepTitle}>Marraztu zure ontzia</h3>
-                  <p className={styles.stepText}>Ontzi honek zure mezua eramango du Arga ibaian barrena.</p>
+                  <h3 className={styles.stepTitle}>{t('Marraztu zure ontzia')}</h3>
+                  <p className={styles.stepText}>{t('Ontzi honek zure mezua eramango du Arga ibaian barrena.')}</p>
                 </div>
               </div>
               <div className={styles.canvasArea}>
@@ -191,7 +194,7 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
               </div>
               {submitError && (
                 <p className={styles.errorText} role="alert">
-                  {submitError}
+                  {t(submitError)}
                 </p>
               )}
               <div className={styles.drawFooter}>
@@ -205,7 +208,7 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
                   }}
                   disabled={drawingEmpty}
                 >
-                  Gehitu zure mezua
+                  {t('Gehitu zure mezua')}
                 </button>
               </div>
             </div>

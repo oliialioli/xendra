@@ -2,6 +2,7 @@ import { List, Question, SpeakerHigh, SpeakerSlash } from '@phosphor-icons/react
 import { useSettings } from '../../app/providers/SettingsContext';
 import { useAudioPlayer } from '../audio/AudioContext';
 import { assetPath } from '../../lib/assetPath';
+import { useT } from '../../i18n/LanguageContext';
 import styles from './Hud.module.css';
 
 export type HudProps = {
@@ -23,6 +24,7 @@ export function Hud({
 }: HudProps) {
   const { soundEnabled } = useSettings();
   const { toggleSound } = useAudioPlayer();
+  const t = useT();
 
   return (
     <>
@@ -35,8 +37,8 @@ export function Hud({
             type="button"
             className="xnd-btn-icon"
             onClick={onOpenNavigationHint}
-            aria-label="Kontrolen laguntza"
-            title="Kontrolen laguntza"
+            aria-label={t('Kontrolen laguntza')}
+            title={t('Kontrolen laguntza')}
           >
             <Question size={20} aria-hidden="true" />
           </button>
@@ -45,8 +47,8 @@ export function Hud({
             className="xnd-btn-icon"
             onClick={toggleSound}
             aria-pressed={soundEnabled}
-            aria-label={soundEnabled ? 'Soinua desaktibatu' : 'Soinua aktibatu'}
-            title={soundEnabled ? 'Soinua desaktibatu' : 'Soinua aktibatu'}
+            aria-label={soundEnabled ? t('Soinua desaktibatu') : t('Soinua aktibatu')}
+            title={soundEnabled ? t('Soinua desaktibatu') : t('Soinua aktibatu')}
           >
             {soundEnabled ? (
               <SpeakerHigh size={20} aria-hidden="true" />
@@ -58,8 +60,8 @@ export function Hud({
             type="button"
             className="xnd-btn-icon"
             onClick={onOpenMenu}
-            aria-label="Ireki menua"
-            title="Ireki menua"
+            aria-label={t('Ireki menua')}
+            title={t('Ireki menua')}
           >
             <List size={20} aria-hidden="true" />
           </button>
@@ -70,7 +72,7 @@ export function Hud({
         <div className={styles.proximityBar} role="status">
           <span>{nearestLabel}</span>
           {/* On a keyboard, E opens it too. */}
-          <kbd className={styles.keyHint} aria-label="E tekla">
+          <kbd className={styles.keyHint} aria-label={t('E tekla')}>
             E
           </kbd>
           <button
@@ -78,7 +80,7 @@ export function Hud({
             className="xnd-btn-primary"
             onClick={onInteract}
           >
-            Ireki
+            {t('Ireki')}
           </button>
         </div>
       )}

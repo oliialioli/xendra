@@ -1,4 +1,4 @@
-import { xendraContent } from '../../content/xendraContent';
+import { useContent, useT } from '../../i18n/LanguageContext';
 import { useAudioPlayer } from '../audio/AudioContext';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { assetPath } from '../../lib/assetPath';
@@ -18,7 +18,8 @@ function bandcampPlayerUrl(albumId: string): string {
 }
 
 export function MusicPanel() {
-  const { album } = xendraContent;
+  const { album } = useContent();
+  const t = useT();
   const { playTrack, stopTrack, currentTrackId, isPlaying, soundEnabled } = useAudioPlayer();
   const hasPreviews = album.tracks.some((track) => track.previewUrl);
 
@@ -29,14 +30,14 @@ export function MusicPanel() {
         <div className={styles.album}>
           <div className={styles.albumInfo}>
             {album.coverPath && (
-              <img className={styles.cover} src={assetPath(album.coverPath)} alt={`${album.albumTitle} diskoaren azala`} />
+              <img className={styles.cover} src={assetPath(album.coverPath)} alt={t('{album} diskoaren azala', { album: album.albumTitle })} />
             )}
             <h3 className={styles.title}>{album.albumTitle}</h3>
             <p className={styles.summary}>{album.summary}</p>
             <p className={styles.credits}>{album.credits}</p>
             {album.externalLinks.length > 0 && (
               <>
-                <p className={styles.linksLabel}>Entzun hemen ere</p>
+                <p className={styles.linksLabel}>{t('Entzun hemen ere')}</p>
                 <ul className={styles.links}>
                   {album.externalLinks.map((link) => (
                     <li key={link.url}>
@@ -53,7 +54,7 @@ export function MusicPanel() {
           {album.bandcampAlbumId && (
             <iframe
               className={styles.player}
-              title={`${album.albumTitle} Bandcamp-en entzun`}
+              title={t('{album} Bandcamp-en entzun', { album: album.albumTitle })}
               src={bandcampPlayerUrl(album.bandcampAlbumId)}
               loading="lazy"
               seamless
@@ -62,21 +63,21 @@ export function MusicPanel() {
         </div>
         {hasPreviews && !soundEnabled && (
           <p className={shared.statusText}>
-            Aktibatu soinua mapako menutik aurrebistak entzuteko.
+            {t('Aktibatu soinua mapako menutik aurrebistak entzuteko.')}
           </p>
         )}
       </section>
 
       {SONGS.length > 0 && (
         <section className={shared.section}>
-          <h3 className={styles.sectionHeading}>Hitzak</h3>
+          <h3 className={styles.sectionHeading}>{t('Hitzak')}</h3>
           <SongList />
         </section>
       )}
 
       {album.video && (
         <section className={shared.section}>
-          <h3 className={styles.sectionHeading}>Bideoklipa</h3>
+          <h3 className={styles.sectionHeading}>{t('Bideoklipa')}</h3>
           <YouTubeEmbed className={styles.videoFrame} videoId={album.video.youtubeId} title={album.video.title} />
           <p className={styles.videoCaption}>{album.video.caption}</p>
         </section>
@@ -102,15 +103,15 @@ export function MusicPanel() {
                     }
                     aria-label={
                       track.previewUrl
-                        ? `${isCurrent && isPlaying ? 'Pausatu' : 'Erreproduzitu'} ${track.title}`
-                        : `Aurrebista ez dago erabilgarri: ${track.title}`
+                        ? `${isCurrent && isPlaying ? t('Pausatu') : t('Erreproduzitu')} ${track.title}`
+                        : `${t('Aurrebista ez dago erabilgarri')}: ${track.title}`
                     }
                   >
                     {track.previewUrl
                       ? isCurrent && isPlaying
-                        ? 'Pausatu'
-                        : 'Erreproduzitu'
-                      : 'Aurrebista ez dago erabilgarri'}
+                        ? t('Pausatu')
+                        : t('Erreproduzitu')
+                      : t('Aurrebista ez dago erabilgarri')}
                   </button>
                 </li>
               );

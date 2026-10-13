@@ -1,4 +1,4 @@
-import { xendraContent } from '../../content/xendraContent';
+import { useContent } from '../../i18n/LanguageContext';
 import { assetPath } from '../../lib/assetPath';
 import shared from './panelShared.module.css';
 import styles from './GroupPanel.module.css';
@@ -7,12 +7,12 @@ import styles from './GroupPanel.module.css';
 const TOP_ROW = 3;
 
 export function GroupPanel() {
-  const { members } = xendraContent;
+  const { members, band } = useContent();
   const rows = [members.slice(0, TOP_ROW), members.slice(TOP_ROW)];
 
   return (
     <div>
-      <p className={shared.lead}>{xendraContent.band.bio}</p>
+      <p className={shared.lead}>{band.bio}</p>
       {rows.map((row, i) => (
         <div key={i} className={styles.members}>
           {row.map((member) => (

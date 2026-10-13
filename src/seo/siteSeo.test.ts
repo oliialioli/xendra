@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { xendraContent } from '../content/xendraContent';
 import { MAP_PATH, SECTION_PATHS } from '../content/sectionPaths';
 import { LYRICS_PATH, SONGS } from '../content/lyricsPaths';
-import { HOME_META, SECTION_META } from './pageMeta';
-import { SITE_URL, headHtml, isoDuration, notFoundPage, seoJsonLd, seoPageForUrl, seoPages, sitemapXml } from './siteSeo';
+import { HOME_META, SECTION_META, pageMetaFor } from './pageMeta';
+import { SITE_URL, headHtml, isoDuration, notFoundPage, pageUrl, seoJsonLd, seoPageForUrl, seoPages, sitemapXml } from './siteSeo';
+import { LANGUAGES } from '../i18n/languages';
 
 const DAY = new Date('2026-01-01');
 
@@ -47,7 +48,8 @@ describe('seoJsonLd', () => {
 });
 
 describe('seoPages', () => {
-  const pages = seoPages(DAY);
+  // The Basque pages: the site as it's written. The other languages have their own tests below.
+  const pages = seoPages(DAY).filter((page) => page.lang === 'eu');
 
   it('has the map and one page per section, each with its own address, title and description', () => {
     expect(pages.map((page) => page.path)).toEqual([
@@ -98,7 +100,7 @@ describe('seoPages', () => {
 });
 
 describe('lyrics pages', () => {
-  const pages = seoPages(DAY);
+  const pages = seoPages(DAY).filter((page) => page.lang === 'eu');
 
   it('has the words of every song on the album', () => {
     expect(SONGS.map((song) => song.title)).toEqual(xendraContent.album.tracks.map((track) => track.title));
@@ -132,6 +134,86 @@ describe('lyrics pages', () => {
   });
 });
 
+describe('the other languages', () => {
+  const all = seoPages(DAY);
+  const basque = all.filter((page) => page.lang === 'eu');
+
+  it('publishes every page in every language, under the language (Basque at the plain addresses)', () => {
+    expect(all).toHaveLength(basque.length * LANGUAGES.length);
+    expect(new Set(all.map((page) => page.url)).size).toBe(all.length);
+    basque.forEach((page) => {
+      const rest = page.path === MAP_PATH ? '' : `${page.path.slice(1)}/`;
+      expect(all.find((other) => other.lang === 'es' && other.path === page.path)!.url).toBe(`${SITE_URL}es/${rest}`);
+      expect(all.find((other) => other.lang === 'en' && other.path === page.path)!.url).toBe(`${SITE_URL}en/${rest}`);
+    });
+  });
+
+  it('gives each language its own titles, descriptions and section texts', () => {
+    (['es', 'en'] as const).forEach((lang) => {
+      const translated = all.filter((page) => page.lang === lang);
+      translated.forEach((page) => {
+        const original = basque.find((other) => other.path === page.path)!;
+        expect(page.title, page.url).not.toBe(original.title);
+        expect(page.description, page.url).not.toBe(original.description);
+        expect(page.title).toBe(pageMetaFor(page.path, lang).title);
+      });
+      const group = translated.find((page) => page.path === SECTION_PATHS.fountain)!.summaryHtml;
+      expect(group).not.toContain(xendraContent.band.bio);
+      // People's names are the same in every language.
+      xendraContent.members.forEach((member) => expect(group).toContain(member.name));
+    });
+  });
+
+  it('keeps the songs in Basque, and says so', () => {
+    const song = SONGS[0];
+    const page = all.find((entry) => entry.lang === 'es' && entry.path === song.path)!;
+    expect(page.summaryHtml).toContain(`<h1 lang="eu">${song.title}</h1>`);
+    expect(page.summaryHtml).toContain('<div lang="eu">');
+    song.stanzas.flat().forEach((line) => expect(page.summaryHtml).toContain(line));
+  });
+
+  it("links a page to the others in its own language and to itself in the other languages", () => {
+    const page = all.find((entry) => entry.lang === 'es' && entry.path === SECTION_PATHS.school)!;
+    expect(page.summaryHtml).toContain('href="/es/kontzertuak/"');
+    expect(page.summaryHtml).toContain('href="/es/"');
+    expect(page.summaryHtml).not.toContain('href="/kontzertuak/"');
+    expect(page.summaryHtml).toContain('<a href="/musika/" hreflang="eu" lang="eu">Euskara</a>');
+    expect(page.summaryHtml).toContain('<a href="/en/musika/" hreflang="en" lang="en">English</a>');
+  });
+
+  it('names every language version of a page in its head, Basque being the default', () => {
+    all
+      .filter((page) => page.path === SECTION_PATHS.stage)
+      .forEach((page) => {
+        const head = headHtml(page, DAY);
+        expect(head).toContain(`<link rel="canonical" href="${page.url}" />`);
+        LANGUAGES.forEach((lang) =>
+          expect(head).toContain(`<link rel="alternate" hreflang="${lang}" href="${pageUrl(page.path, lang)}" />`),
+        );
+        expect(head).toContain(`<link rel="alternate" hreflang="x-default" href="${SITE_URL}kontzertuak/" />`);
+      });
+    expect(headHtml(all.find((page) => page.lang === 'en')!, DAY)).toContain('<meta property="og:locale" content="en_GB" />');
+  });
+
+  it('finds the page for a request in its language', () => {
+    expect(seoPageForUrl('/es/musika/', DAY)).toMatchObject({ lang: 'es', path: SECTION_PATHS.school });
+    expect(seoPageForUrl('/en', DAY)).toMatchObject({ lang: 'en', path: MAP_PATH });
+    expect(seoPageForUrl('/en/ez-dago', DAY)).toMatchObject({ lang: 'en', path: MAP_PATH });
+    expect(seoPageForUrl('/musika', DAY).lang).toBe('eu');
+  });
+
+  it('describes the page in its language in the structured data', () => {
+    const page = all.find((entry) => entry.lang === 'en' && entry.path === SECTION_PATHS.school)!;
+    const graph = JSON.parse(seoJsonLd(page, DAY, 'en'))['@graph'];
+    const webPage = graph.find((node: { '@type': string }) => node['@type'] === 'WebPage');
+    expect(webPage).toMatchObject({ url: `${SITE_URL}en/musika/`, inLanguage: 'en', name: page.title });
+    const group = graph.find((node: { '@type': string }) => node['@type'] === 'MusicGroup');
+    expect(group.description).not.toBe(xendraContent.band.bio);
+    // The band's own address is the same whatever the page's language.
+    expect(group.url).toBe(SITE_URL);
+  });
+});
+
 describe('headHtml', () => {
   it('writes the title, description and canonical address of the page', () => {
     const page = seoPages(DAY).find((entry) => entry.path === SECTION_PATHS.stage)!;
@@ -149,10 +231,11 @@ describe('headHtml', () => {
 });
 
 describe('sitemapXml', () => {
-  it('lists every page once', () => {
+  it('lists every page of every language once, each with its other versions', () => {
     const xml = sitemapXml(DAY);
     seoPages(DAY).forEach((page) => expect(xml).toContain(`<loc>${page.url}</loc>`));
     expect(xml.match(/<url>/g)).toHaveLength(seoPages(DAY).length);
+    expect(xml.match(/<xhtml:link /g)).toHaveLength(seoPages(DAY).length * LANGUAGES.length);
   });
 });
 

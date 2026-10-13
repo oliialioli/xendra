@@ -142,7 +142,8 @@ export const COPY = {
   saving: 'Gordetzen…',
   newRecord: 'Onenen artean zaude! Idatzi zure ezizena:',
   aliasLabel: 'Ezizena',
-  aliasHint: `Gehienez ${LEADERBOARD.aliasMaxLength} karaktere.`,
+  /** `{max}` is LEADERBOARD.aliasMaxLength, filled in where it's shown. */
+  aliasHint: 'Gehienez {max} karaktere.',
   aliasEmpty: 'Idatzi ezizen bat.',
   save: 'Gorde',
   saved: 'Gordeta!',

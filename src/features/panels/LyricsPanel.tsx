@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
 import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { LYRICS_PATH, SONGS, songBySlug } from '../../content/lyricsPaths';
 import { SECTION_PATHS, SECTION_TITLES } from '../../content/sectionPaths';
 import { xendraContent } from '../../content/xendraContent';
+import { LocalLink as Link, useT } from '../../i18n/LanguageContext';
 import shared from './panelShared.module.css';
 import styles from './LyricsPanel.module.css';
 
@@ -29,11 +29,12 @@ export function SongList() {
  * with the way back to it at the top.
  */
 export function LyricsPanel({ slug }: { slug: string }) {
+  const t = useT();
   const song = songBySlug(slug);
   const back = (
     <Link className={styles.back} to={song ? LYRICS_PATH : SECTION_PATHS.school}>
       <CaretLeft size={14} weight="bold" aria-hidden="true" />
-      {song ? 'Abesti guztiak' : SECTION_TITLES.school}
+      {song ? t('Abesti guztiak') : t(SECTION_TITLES.school)}
     </Link>
   );
 
@@ -41,8 +42,8 @@ export function LyricsPanel({ slug }: { slug: string }) {
     return (
       <div>
         {back}
-        {slug !== '' && <p className={shared.lead}>Ez dugu abesti hori aurkitu.</p>}
-        <p className={shared.lead}>«{xendraContent.album.albumTitle}» diskoko abestien hitzak.</p>
+        {slug !== '' && <p className={shared.lead}>{t('Ez dugu abesti hori aurkitu.')}</p>}
+        <p className={shared.lead}>{t('«{album}» diskoko abestien hitzak.', { album: xendraContent.album.albumTitle })}</p>
         <SongList />
       </div>
     );
@@ -57,7 +58,7 @@ export function LyricsPanel({ slug }: { slug: string }) {
       {back}
       <h3 className={styles.title}>{song.title}</h3>
       <p className={styles.meta}>
-        {xendraContent.album.albumTitle} · {song.index}. abestia · {song.durationLabel}
+        {xendraContent.album.albumTitle} · {t('{n}. abestia', { n: song.index })} · {song.durationLabel}
       </p>
       <div className={styles.lyrics} lang="eu">
         {song.stanzas.map((stanza, i) => (
@@ -70,7 +71,7 @@ export function LyricsPanel({ slug }: { slug: string }) {
           </p>
         ))}
       </div>
-      <nav className={styles.neighbours} aria-label="Beste abestiak">
+      <nav className={styles.neighbours} aria-label={t('Beste abestiak')}>
         {previous ? (
           <Link className={styles.neighbour} to={previous.path}>
             <CaretLeft size={14} weight="bold" aria-hidden="true" />

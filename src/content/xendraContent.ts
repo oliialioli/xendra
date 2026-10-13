@@ -5,8 +5,10 @@ import { SECTION_PATHS } from './sectionPaths';
 
 /**
  * Single source of truth for every editable string in the experience.
- * Content is in Euskera (Basque) throughout. See docs/CONTENT.md for the
- * full list of TODO_CONTENT items to replace.
+ * Content is in Euskera (Basque) throughout; the site shows it in its other
+ * languages through src/i18n (a text changed here needs its translations
+ * there: the tests say which). See docs/CONTENT.md for the full list of
+ * TODO_CONTENT items to replace.
  */
 /** Photos with both t-shirts in them: shown among each one's views in the shop. */
 const SHIRT_VIEWS_TOGETHER = [

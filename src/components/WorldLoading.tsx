@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { assetPath } from '../lib/assetPath';
 import { SnailFigure } from './SnailFigure';
+import { useT } from '../i18n/LanguageContext';
+import { msg } from '../i18n/translate';
 import styles from './WorldLoading.module.css';
 
 const LOGO_SRC = assetPath('/assets/brand/xendra-logo-cream.svg');
@@ -8,12 +10,12 @@ const PAPER_SRC = assetPath('/assets/brand/intro-paper-tile.jpg');
 
 /** Little things the island is "doing" while it loads, one after another. */
 const MESSAGES = [
-  'Ibaia betetzen…',
-  'Zuhaitzak landatzen…',
-  'Ontziak uretaratzen…',
-  'Kioskoa irekitzen…',
-  'Sua pizten…',
-  'Barraskiloa esnatzen…',
+  msg('Ibaia betetzen…'),
+  msg('Zuhaitzak landatzen…'),
+  msg('Ontziak uretaratzen…'),
+  msg('Kioskoa irekitzen…'),
+  msg('Sua pizten…'),
+  msg('Barraskiloa esnatzen…'),
 ];
 const MESSAGE_MS = 1800;
 
@@ -31,6 +33,7 @@ export type WorldLoadingProps = {
  */
 export function WorldLoading({ progress, done }: WorldLoadingProps) {
   const [message, setMessage] = useState(0);
+  const t = useT();
 
   useEffect(() => {
     if (done) return undefined;
@@ -54,7 +57,7 @@ export function WorldLoading({ progress, done }: WorldLoadingProps) {
         <div
           className={styles.trail}
           role="progressbar"
-          aria-label="Uhartea kargatzen"
+          aria-label={t('Uhartea kargatzen')}
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={percent}
@@ -63,9 +66,9 @@ export function WorldLoading({ progress, done }: WorldLoadingProps) {
           <span className={styles.trailDone} />
           <SnailFigure direction="right" className={styles.snail} />
         </div>
-        <p className={styles.title}>Uhartea prestatzen</p>
+        <p className={styles.title}>{t('Uhartea prestatzen')}</p>
         <p key={message} className={styles.message}>
-          {MESSAGES[message]}
+          {t(MESSAGES[message])}
         </p>
       </div>
     </div>

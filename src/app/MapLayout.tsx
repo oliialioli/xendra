@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { Question } from '@phosphor-icons/react';
 import { LANDMARK_INDICATOR_CONFIG } from '../features/navigation/landmarkIndicatorConfig';
 import { PhaserGame } from '../game/PhaserGame';
@@ -24,8 +23,9 @@ import { useGameBridge } from './providers/GameBridgeContext';
 import { useSettings } from './providers/SettingsContext';
 import { useProgress } from './providers/ProgressContext';
 import { xendraContent, landmarkById } from '../content/xendraContent';
+import { useContent, useLangPath, useLocalNavigate, useT } from '../i18n/LanguageContext';
 import { MAP_ROUTE, panelRouteByLandmarkId, panelRouteByPath } from './routes';
-import { SECTION_PATHS, normalizePath } from '../content/sectionPaths';
+import { SECTION_PATHS } from '../content/sectionPaths';
 import { lyricsSlugFromPath } from '../content/lyricsPaths';
 import { LyricsPanel } from '../features/panels/LyricsPanel';
 import { pageMetaFor } from '../seo/pageMeta';
@@ -33,8 +33,11 @@ import { sendAnalyticsEvent } from '../lib/analytics';
 import type { LandmarkId } from '../types/content';
 
 export function MapLayout() {
-  const location = useLocation();
-  const navigate = useNavigate();
+  // The language comes with the address (/es/musika); `path` is the address without it.
+  const { lang, path } = useLangPath();
+  const navigate = useLocalNavigate();
+  const t = useT();
+  const content = useContent();
   const bus = useGameBridge();
   const settings = useSettings();
   const progress = useProgress();
@@ -58,8 +61,6 @@ export function MapLayout() {
   // Captured once: the game reads later updates via the 'visited:hydrate' bridge event.
   const [initialVisitedIds] = useState<LandmarkId[]>(() => Array.from(progress.visited));
 
-  // A published page's own address ends in a slash (/musika/); in-app links don't.
-  const path = normalizePath(location.pathname);
   const panelEntry = panelRouteByPath.get(path) ?? null;
   // Same line icon as the landmark's own map badge, so a panel reads as
   // "the thing you just opened".
@@ -73,8 +74,9 @@ export function MapLayout() {
 
   // The tab's title follows the section that's open, as its published page's does.
   useEffect(() => {
-    document.title = pageMetaFor(path).title;
-  }, [path]);
+    document.title = pageMetaFor(path, lang).title;
+    document.documentElement.lang = lang;
+  }, [path, lang]);
   const isUnknownRoute = !isMapRoute && !panelEntry && !isLyricsRoute;
   // The intro opens on every visit (every page load), not just the first --
   // it's the way into the island. Only leaving it dismisses it, for this load.
@@ -150,14 +152,14 @@ export function MapLayout() {
       progress.markVisited(id);
       sendAnalyticsEvent({ type: 'landmark_discovered', landmarkId: id });
       const landmark = landmarkById.get(id);
-      if (landmark) setLiveMessage(`Aurkitu duzu: ${landmark.title}.`);
+      if (landmark) setLiveMessage(t('Aurkitu duzu: {title}.', { title: t(landmark.title) }));
     });
 
     const offProximity = bus.on('landmark:proximityChanged', ({ nearestId: id }) => {
       setNearestId(id);
       if (id) {
         const landmark = landmarkById.get(id);
-        if (landmark) setLiveMessage(`${landmark.title} ondoan. Sakatu E elkarreragiteko.`);
+        if (landmark) setLiveMessage(t('{title} ondoan. Sakatu E elkarreragiteko.', { title: t(landmark.title) }));
       }
     });
 
@@ -178,7 +180,7 @@ export function MapLayout() {
       offProgress();
       offReady();
     };
-  }, [bus, navigate, progress]);
+  }, [bus, navigate, progress, t]);
 
   // The loading screen, once the island would be on screen (past the intro)
   // but isn't ready yet -- after a short beat, so a quick (cached) load never
@@ -236,10 +238,10 @@ export function MapLayout() {
       }}
     >
       <a className="skip-link" href="#main-content">
-        Salto egin edukira
+        {t('Salto egin edukira')}
       </a>
       <h1 id="main-content" tabIndex={-1} className="visually-hidden">
-        Xendra: mapa interaktiboa
+        {t('Xendra: mapa interaktiboa')}
       </h1>
 
       <PhaserGame
@@ -256,7 +258,7 @@ export function MapLayout() {
 
       <DiscoveryIndicators
         bus={bus}
-        landmarks={xendraContent.landmarks}
+        landmarks={content.landmarks}
         nearestId={nearestId}
         suppressed={controlsBlocked}
         reducedMotion={settings.effectiveReducedMotion}
@@ -265,7 +267,7 @@ export function MapLayout() {
 
       <Hud
         // The section's own name, as the menu and the map badge call it.
-        nearestLabel={nearestLandmark ? (panelRouteByLandmarkId.get(nearestLandmark.id)?.title ?? nearestLandmark.shortLabel) : null}
+        nearestLabel={nearestLandmark ? t(panelRouteByLandmarkId.get(nearestLandmark.id)?.title ?? nearestLandmark.shortLabel) : null}
         onOpenMenu={() => setMenuOpen(true)}
         onInteract={() => bus.emit('controls:interactPressed', undefined)}
         onOpenNavigationHint={() => setNavigationHintOpen(true)}
@@ -328,14 +330,14 @@ export function MapLayout() {
             // from the menu or a link, take the snail there so it's seen.
             if (openedOnMapRef.current !== 'dockMessages') bus.emit('snail:placeAt', DOCK_FRONT);
             openedOnMapRef.current = null;
-            setToastMessage('Zure mezua Argan barrena doa!');
+            setToastMessage(t('Zure mezua Argan barrena doa!'));
           }}
         />
       ) : (
         panelEntry &&
         PanelIcon && (
           <Panel
-            title={panelEntry.title}
+            title={t(panelEntry.title)}
             variant={panelEntry.variant}
             icon={<PanelIcon size={20} aria-hidden="true" />}
             onClose={() => navigate(MAP_ROUTE)}
@@ -346,16 +348,16 @@ export function MapLayout() {
       )}
 
       {isLyricsRoute && (
-        <Panel title="Hitzak" icon={<LyricsIcon size={20} aria-hidden="true" />} onClose={() => navigate(MAP_ROUTE)}>
+        <Panel title={t('Hitzak')} icon={<LyricsIcon size={20} aria-hidden="true" />} onClose={() => navigate(MAP_ROUTE)}>
           <LyricsPanel slug={lyricsSlug} />
         </Panel>
       )}
 
       {isUnknownRoute && (
-        <Panel title="Orri ezezaguna" icon={<Question size={20} aria-hidden="true" />} onClose={() => navigate(MAP_ROUTE)}>
-          <p>Helbide hau ez dagokio Xendraren atal bati ere.</p>
+        <Panel title={t('Orri ezezaguna')} icon={<Question size={20} aria-hidden="true" />} onClose={() => navigate(MAP_ROUTE)}>
+          <p>{t('Helbide hau ez dagokio Xendraren atal bati ere.')}</p>
           <button type="button" className="xnd-btn-primary" onClick={() => navigate(MAP_ROUTE)}>
-            Itzuli mapara
+            {t('Itzuli mapara')}
           </button>
         </Panel>
       )}

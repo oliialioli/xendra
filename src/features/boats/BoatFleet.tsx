@@ -10,6 +10,7 @@ import { waterfallPose } from './waterfallRoute';
 import { getBoatBitmapDataUrl } from './boatBitmap';
 import { BoatMessageCard } from './BoatMessageCard';
 import { assetPath } from '../../lib/assetPath';
+import { useT } from '../../i18n/LanguageContext';
 import styles from './BoatFleet.module.css';
 
 export type BoatFleetProps = {
@@ -113,6 +114,7 @@ function lerpAngle(a: number, b: number, t: number): number {
  * projection.
  */
 export function BoatFleet({ bus, boats, loaded, reducedMotion, suppressed, onBoatCardOpenChange }: BoatFleetProps) {
+  const t = useT();
   const elementRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const innerRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const bridgeRefs = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -432,7 +434,7 @@ export function BoatFleet({ bus, boats, loaded, reducedMotion, suppressed, onBoa
                   setSelectedRect(event.currentTarget.getBoundingClientRect());
                   setSelectedBoat(boat);
                 }}
-                aria-label={`${boat.displayName ?? 'Anonimoa'}-ren mezua irakurri`}
+                aria-label={t('{name}-ren mezua irakurri', { name: boat.displayName ?? t('Anonimoa') })}
                 tabIndex={suppressed ? -1 : 0}
               >
                 <img src={bitmapUrls.get(boat.id)} alt="" className={styles.image} draggable={false} />

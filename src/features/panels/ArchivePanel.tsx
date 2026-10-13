@@ -1,6 +1,8 @@
 import { useMemo, useState, type CSSProperties } from 'react';
 import { Play } from '@phosphor-icons/react';
 import { xendraContent } from '../../content/xendraContent';
+import { useContent, useT } from '../../i18n/LanguageContext';
+import { msg } from '../../i18n/translate';
 import { EmptyState } from '../../components/EmptyState';
 import { assetPath } from '../../lib/assetPath';
 import type { MediaItem } from '../../types/content';
@@ -11,10 +13,10 @@ import styles from './ArchivePanel.module.css';
 type Filter = 'all' | 'photo' | 'video' | 'poster';
 
 const FILTER_LABELS: Record<Filter, string> = {
-  all: 'Guztiak',
-  photo: 'Argazkiak',
-  video: 'Bideoak',
-  poster: 'Kartelak',
+  all: msg('Guztiak'),
+  photo: msg('Argazkiak'),
+  video: msg('Bideoak'),
+  poster: msg('Kartelak'),
 };
 
 /** poster: the gig poster is the paper itself -- no white border. */
@@ -88,11 +90,12 @@ function Tape({ tone, placement }: { tone: TapeTone; placement: TapePlacement })
 }
 
 function BoardItem({ item, onOpen }: { item: MediaItem; onOpen: () => void }) {
+  const t = useT();
   // Keyed to the item's place in the whole archive, not the filtered list,
   // so each print keeps the same look whichever filter is on.
   const { tilt, frame, paper, tapeTone, tapePlacement, size, align, drift, overlap, layer } = hangingFor(
     item,
-    xendraContent.media.indexOf(item),
+    xendraContent.media.findIndex((other) => other.id === item.id),
   );
   return (
     <li
@@ -110,7 +113,7 @@ function BoardItem({ item, onOpen }: { item: MediaItem; onOpen: () => void }) {
         } as CSSProperties
       }
     >
-      <button type="button" className={styles.photo} onClick={onOpen} aria-label={`Ireki: ${item.altText}`}>
+      <button type="button" className={styles.photo} onClick={onOpen} aria-label={t('Ireki: {what}', { what: item.altText })}>
         <span className={styles.paper}>
           {item.thumbnailPath ? (
             <img src={assetPath(item.thumbnailPath)} alt="" loading="lazy" className={styles.image} />
@@ -145,6 +148,7 @@ const KEEPSAKE_SPOTS: Record<string, KeepsakeSpot> = {
 const FALLBACK_SPOT: KeepsakeSpot = { top: '40%', left: '10%', width: '34%', tilt: -4, taped: true };
 
 function Keepsake({ item, onOpen }: { item: MediaItem; onOpen: () => void }) {
+  const t = useT();
   const spot = KEEPSAKE_SPOTS[item.id] ?? FALLBACK_SPOT;
   return (
     <div
@@ -154,7 +158,7 @@ function Keepsake({ item, onOpen }: { item: MediaItem; onOpen: () => void }) {
         { '--top': spot.top, '--left': spot.left, '--width': spot.width, '--tilt': `${spot.tilt}deg` } as CSSProperties
       }
     >
-      <button type="button" className={styles.keepsakeButton} onClick={onOpen} aria-label={`Ireki: ${item.altText}`}>
+      <button type="button" className={styles.keepsakeButton} onClick={onOpen} aria-label={t('Ireki: {what}', { what: item.altText })}>
         {item.thumbnailPath && <img src={assetPath(item.thumbnailPath)} alt="" className={styles.keepsakeImage} />}
       </button>
       {spot.taped && (
@@ -202,28 +206,30 @@ function shuffleForBoard(items: MediaItem[]): MediaItem[] {
 export function ArchivePanel() {
   const [filter, setFilter] = useState<Filter>('all');
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { media } = useContent();
+  const t = useT();
 
   // Everything the lightbox can step through, in board order: keepsakes
   // first (they sit on top of the board), then the hung prints.
   const items = useMemo(() => {
-    if (filter !== 'all') return xendraContent.media.filter((item) => item.kind === filter);
-    const keepsakes = xendraContent.media.filter((item) => item.kind === 'keepsake');
-    return [...keepsakes, ...shuffleForBoard(xendraContent.media.filter((item) => item.kind !== 'keepsake'))];
-  }, [filter]);
+    if (filter !== 'all') return media.filter((item) => item.kind === filter);
+    const keepsakes = media.filter((item) => item.kind === 'keepsake');
+    return [...keepsakes, ...shuffleForBoard(media.filter((item) => item.kind !== 'keepsake'))];
+  }, [filter, media]);
   const keepsakes = items.filter((item) => item.kind === 'keepsake');
   const prints = items.filter((item) => item.kind !== 'keepsake');
 
-  if (xendraContent.media.length === 0) {
+  if (media.length === 0) {
     return (
-      <EmptyState title="Artxiboa oraindik hutsik dago">
-        Oraindik ez dago erakusteko argazki edo bideo errealik. Itzuli aurrerago.
+      <EmptyState title={t('Artxiboa oraindik hutsik dago')}>
+        {t('Oraindik ez dago erakusteko argazki edo bideo errealik. Itzuli aurrerago.')}
       </EmptyState>
     );
   }
 
   return (
     <div>
-      <div role="group" aria-label="Iragazi artxiboa" className={`xnd-control-module ${shared.section} ${styles.filters}`}>
+      <div role="group" aria-label={t('Iragazi artxiboa')} className={`xnd-control-module ${shared.section} ${styles.filters}`}>
         {(Object.keys(FILTER_LABELS) as Filter[]).map((option) => (
           <button
             key={option}
@@ -235,7 +241,7 @@ export function ArchivePanel() {
               setOpenIndex(null);
             }}
           >
-            {FILTER_LABELS[option]}
+            {t(FILTER_LABELS[option])}
           </button>
         ))}
       </div>

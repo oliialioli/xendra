@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type AnimationEvent } from 'react';
 import { SpeakerHigh, SpeakerSlash } from '@phosphor-icons/react';
 import { useSettings } from '../../app/providers/SettingsContext';
-import { xendraContent } from '../../content/xendraContent';
+import { useContent, useT } from '../../i18n/LanguageContext';
+import { LanguageSwitch } from '../navigation/LanguageSwitch';
 import { assetPath } from '../../lib/assetPath';
 import { IntroSnail } from './IntroSnail';
 import { IntroLogo } from './IntroLogo';
@@ -41,6 +42,8 @@ export function IntroScreen({ onEnter, onOpenMenu }: IntroScreenProps) {
   const mode = settings.effectiveReducedMotion ? 'static' : 'play';
   const { soundEnabled, toggleSound } = useAudioPlayer();
   const [ready, setReady] = useState(false);
+  const t = useT();
+  const content = useContent();
   const enterButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -73,6 +76,9 @@ export function IntroScreen({ onEnter, onOpenMenu }: IntroScreenProps) {
       aria-modal="true"
       aria-labelledby="intro-title"
     >
+      {/* There from the first frame, for whoever doesn't read the language it opened in. */}
+      <LanguageSwitch variant="codes" tone="light" className={styles.languages} />
+
       <div className={styles.column}>
         <IntroLogo className={styles.logo} />
 
@@ -81,37 +87,37 @@ export function IntroScreen({ onEnter, onOpenMenu }: IntroScreenProps) {
         </div>
 
         <h1 id="intro-title" className={styles.tagline}>
-          {xendraContent.band.entrySubtitle}
+          {content.band.entrySubtitle}
         </h1>
 
         <div className={styles.actions} onAnimationEnd={handleActionsShown}>
           <button ref={enterButtonRef} type="button" className="xnd-btn-primary" onClick={onEnter}>
-            Sartu uhartera
+            {t('Sartu uhartera')}
           </button>
           <button type="button" className="xnd-btn-secondary" onClick={onOpenMenu}>
-            Ikusi menua
+            {t('Ikusi menua')}
           </button>
         </div>
 
         <div className={styles.controls}>
-          <p className={`${styles.controlsLabel} ${styles.controlsDesktop}`}>Mugitu geziekin edo WASD teklak erabiliz.</p>
-          <p className={`${styles.controlsLabel} ${styles.controlsTouch}`}>Ukitu edo irristatu mugitzeko.</p>
+          <p className={`${styles.controlsLabel} ${styles.controlsDesktop}`}>{t('Mugitu geziekin edo WASD teklak erabiliz.')}</p>
+          <p className={`${styles.controlsLabel} ${styles.controlsTouch}`}>{t('Ukitu edo irristatu mugitzeko.')}</p>
 
           <button
             type="button"
             className={styles.soundToggle}
             onClick={toggleSound}
             aria-pressed={soundEnabled}
-            aria-label={soundEnabled ? 'Soinua aktibatuta. Desaktibatu' : 'Soinua desaktibatuta. Aktibatu'}
+            aria-label={soundEnabled ? t('Soinua aktibatuta. Desaktibatu') : t('Soinua desaktibatuta. Aktibatu')}
           >
             {soundEnabled ? (
               <SpeakerHigh size={18} weight="fill" aria-hidden="true" />
             ) : (
               <SpeakerSlash size={18} weight="fill" aria-hidden="true" />
             )}
-            <span>{soundEnabled ? 'Soinua aktibatuta' : 'Soinua desaktibatuta'}</span>
+            <span>{soundEnabled ? t('Soinua aktibatuta') : t('Soinua desaktibatuta')}</span>
             <span className={styles.soundAction} aria-hidden="true">
-              {soundEnabled ? 'Desaktibatu' : 'Aktibatu'}
+              {soundEnabled ? t('Desaktibatu') : t('Aktibatu')}
             </span>
           </button>
         </div>

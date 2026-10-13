@@ -1,17 +1,23 @@
 import type { ReactElement } from 'react';
 import type { Concert } from '../../types/content';
-import { xendraContent } from '../../content/xendraContent';
+import { useContent, useLang, useT } from '../../i18n/LanguageContext';
+import type { Lang } from '../../i18n/languages';
+import { msg } from '../../i18n/translate';
 import { EmptyState } from '../../components/EmptyState';
 import { SnailFigure } from '../../components/SnailFigure';
 import shared from './panelShared.module.css';
 import styles from './ConcertsPanel.module.css';
 
-const MONTHS = ['urt', 'ots', 'mar', 'api', 'mai', 'eka', 'uzt', 'abu', 'ira', 'urr', 'aza', 'abe'];
+const MONTHS: Record<Lang, string[]> = {
+  eu: ['urt', 'ots', 'mar', 'api', 'mai', 'eka', 'uzt', 'abu', 'ira', 'urr', 'aza', 'abe'],
+  es: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+};
 
 /** Only the statuses worth flagging on a card; upcoming/past show through the road itself. */
 const STATUS_LABEL: Partial<Record<Concert['status'], string>> = {
-  soldOut: 'Sarrerak agortuta',
-  cancelled: 'Bertan behera utzita',
+  soldOut: msg('Sarrerak agortuta'),
+  cancelled: msg('Bertan behera utzita'),
 };
 
 /** Today as YYYY-MM-DD in the visitor's own time zone, to compare with concert dates. */
@@ -41,6 +47,8 @@ function YearMarker({ year, past }: { year: string; past: boolean }) {
 }
 
 function ConcertStop({ concert, past }: { concert: Concert; past: boolean }) {
+  const t = useT();
+  const lang = useLang();
   const [, month, day] = concert.date?.split('-') ?? [];
   const status = STATUS_LABEL[concert.status];
   const details = [concert.venue, concert.time].filter(Boolean).join(', ');
@@ -49,16 +57,16 @@ function ConcertStop({ concert, past }: { concert: Concert; past: boolean }) {
     <li className={styles.stop} data-past={past || undefined}>
       <span className={styles.dot} aria-hidden="true" />
       <span className={styles.date}>
-        {concert.date ? `${Number(day)} ${MONTHS[Number(month) - 1]}` : 'Laster'}
+        {concert.date ? `${Number(day)} ${MONTHS[lang][Number(month) - 1]}` : t('Laster')}
       </span>
       <span className={styles.info}>
         <span className={styles.city}>{concert.city}</span>
         {details && <span className={styles.details}>{details}</span>}
-        {status && <span className={styles.details}>{status}</span>}
-        {past && <span className="visually-hidden">(iragana)</span>}
+        {status && <span className={styles.details}>{t(status)}</span>}
+        {past && <span className="visually-hidden">{t('(iragana)')}</span>}
         {!past && concert.ticketsUrl && (
           <a className={shared.secondaryLink} href={concert.ticketsUrl} target="_blank" rel="noreferrer">
-            Sarrerak
+            {t('Sarrerak')}
           </a>
         )}
       </span>
@@ -73,12 +81,13 @@ function ConcertStop({ concert, past }: { concert: Concert; past: boolean }) {
  * coming next; the year is marked on the path wherever it changes.
  */
 export function ConcertsPanel({ now = new Date() }: { now?: Date }) {
-  const { concerts } = xendraContent;
+  const { concerts } = useContent();
+  const t = useT();
 
   if (concerts.length === 0) {
     return (
-      <EmptyState title="Oraindik ez dago kontzerturik baieztatuta">
-        Xendra bere agenda prestatzen ari da. Itzuli laster hurrengo datak ikusteko.
+      <EmptyState title={t('Oraindik ez dago kontzerturik baieztatuta')}>
+        {t('Xendra bere agenda prestatzen ari da. Itzuli laster hurrengo datak ikusteko.')}
       </EmptyState>
     );
   }
@@ -95,7 +104,7 @@ export function ConcertsPanel({ now = new Date() }: { now?: Date }) {
   if (upcoming.length === 0) {
     items.push(
       <li key="soon" className={`${styles.stop} ${styles.soonStop}`}>
-        <span className={styles.soon}>Kontzertu berriak laster!</span>
+        <span className={styles.soon}>{t('Kontzertu berriak laster!')}</span>
       </li>,
     );
   }
@@ -111,7 +120,7 @@ export function ConcertsPanel({ now = new Date() }: { now?: Date }) {
   items.push(
     <li key="now" className={`${styles.stop} ${styles.nowStop}`}>
       <SnailFigure direction="up" className={styles.snail} />
-      <span className={styles.nowLabel}>Gaur</span>
+      <span className={styles.nowLabel}>{t('Gaur')}</span>
     </li>,
   );
 
@@ -127,7 +136,7 @@ export function ConcertsPanel({ now = new Date() }: { now?: Date }) {
 
   return (
     <div>
-      <ol className={styles.stops} aria-label="Xendraren kontzertuak, berrienetik zaharrenera">
+      <ol className={styles.stops} aria-label={t('Xendraren kontzertuak, berrienetik zaharrenera')}>
         {items}
       </ol>
     </div>

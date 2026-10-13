@@ -4,6 +4,7 @@ import type { Landmark, LandmarkId } from '../../types/content';
 import { panelRouteByLandmarkId } from '../../app/routes';
 import { LANDMARK_INDICATOR_CONFIG } from './landmarkIndicatorConfig';
 import { LandmarkIndicator } from './LandmarkIndicator';
+import { useT } from '../../i18n/LanguageContext';
 import styles from './DiscoveryIndicators.module.css';
 
 export type DiscoveryIndicatorsProps = {
@@ -51,6 +52,7 @@ export function DiscoveryIndicators({
   reducedMotion,
   onInteract,
 }: DiscoveryIndicatorsProps) {
+  const t = useT();
   const elementRefs = useRef<Partial<Record<LandmarkId, HTMLDivElement>>>({});
   const flipStateRef = useRef<Partial<Record<LandmarkId, boolean>>>({});
 
@@ -116,7 +118,7 @@ export function DiscoveryIndicators({
           key={landmark.id}
           title={landmark.title}
           // The same name the menu gives it.
-          label={panelRouteByLandmarkId.get(landmark.id)?.title ?? landmark.shortLabel}
+          label={t(panelRouteByLandmarkId.get(landmark.id)?.title ?? landmark.shortLabel)}
           config={LANDMARK_INDICATOR_CONFIG[landmark.id]}
           // Its label opens exactly when it can be opened -- the same landmark the Hud's bar offers.
           autoRevealed={nearestId === landmark.id}

@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { useSettings } from '../../app/providers/SettingsContext';
 import { SnailFigure } from '../../components/SnailFigure';
-import { xendraContent } from '../../content/xendraContent';
+import { useContent, useT } from '../../i18n/LanguageContext';
 import shared from './panelShared.module.css';
 import styles from './HistoryPanel.module.css';
 
@@ -84,7 +84,9 @@ function buildPath(width: number, height: number, stops: { top: number; bottom: 
  */
 export function HistoryPanel() {
   const { effectiveReducedMotion } = useSettings();
-  const stops = xendraContent.history;
+  const content = useContent();
+  const t = useT();
+  const stops = content.history;
   const boardRef = useRef<HTMLDivElement>(null);
   const stopRefs = useRef<(HTMLLIElement | null)[]>([]);
   const visible = useRef(new Set<number>());
@@ -143,7 +145,7 @@ export function HistoryPanel() {
 
   return (
     <div>
-      <p className={shared.lead}>{xendraContent.band.originText}</p>
+      <p className={shared.lead}>{content.band.originText}</p>
 
       <div ref={boardRef} className={styles.board}>
         {geometry && (
@@ -209,11 +211,11 @@ export function HistoryPanel() {
         </ol>
       </div>
 
-      {xendraContent.press.length > 0 && (
+      {content.press.length > 0 && (
         <div className={shared.section}>
-          <h3>Prentsan</h3>
+          <h3>{t('Prentsan')}</h3>
           <ul className={shared.list}>
-            {xendraContent.press.map((item) => (
+            {content.press.map((item) => (
               <li key={item.id}>
                 <a className={shared.secondaryLink} href={item.url} target="_blank" rel="noreferrer">
                   {item.label}

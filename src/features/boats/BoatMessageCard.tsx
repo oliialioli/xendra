@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { X } from '@phosphor-icons/react';
 import { useFocusTrap } from '../../components/useFocusTrap';
 import type { Boat } from './boatTypes';
+import { useT } from '../../i18n/LanguageContext';
 import styles from './BoatMessageCard.module.css';
 
 export type BoatMessageCardProps = {
@@ -38,6 +39,7 @@ function clampDesktopPosition(anchorRect: DOMRect | null): { left: number; top: 
  */
 export function BoatMessageCard({ boat, anchorRect, onClose }: BoatMessageCardProps) {
   const titleId = useId();
+  const t = useT();
   const containerRef = useRef<HTMLDivElement>(null);
   useFocusTrap(containerRef, true);
   const [position] = useState(() => clampDesktopPosition(anchorRect));
@@ -67,9 +69,9 @@ export function BoatMessageCard({ boat, anchorRect, onClose }: BoatMessageCardPr
       >
         <header className={styles.header}>
           <h3 id={titleId} className={styles.name}>
-            {boat.displayName ?? 'Anonimoa'}
+            {boat.displayName ?? t('Anonimoa')}
           </h3>
-          <button type="button" className="xnd-btn-icon" onClick={onClose} aria-label="Itxi" title="Itxi">
+          <button type="button" className="xnd-btn-icon" onClick={onClose} aria-label={t('Itxi')} title={t('Itxi')}>
             <X size={20} aria-hidden="true" />
           </button>
         </header>

@@ -1,9 +1,10 @@
-import { xendraContent } from '../../content/xendraContent';
+import { useContent, useT } from '../../i18n/LanguageContext';
 import shared from './panelShared.module.css';
 
 /** How to reach the band: email, phone and their social profiles, all as plain links. */
 export function ContactPanel() {
-  const { contact } = xendraContent;
+  const { contact } = useContent();
+  const t = useT();
 
   return (
     <div>
@@ -11,7 +12,7 @@ export function ContactPanel() {
         <ul className={`${shared.list} ${shared.section}`}>
           {contact.email && (
             <li className={shared.listItem}>
-              <span className={shared.statusText}>Emaila</span>
+              <span className={shared.statusText}>{t('Emaila')}</span>
               <br />
               <a className={shared.secondaryLink} href={`mailto:${contact.email}`}>
                 {contact.email}
@@ -20,7 +21,7 @@ export function ContactPanel() {
           )}
           {contact.phone && (
             <li className={shared.listItem}>
-              <span className={shared.statusText}>Telefonoa</span>
+              <span className={shared.statusText}>{t('Telefonoa')}</span>
               <br />
               <a className={shared.secondaryLink} href={`tel:${contact.phoneHref ?? contact.phone}`}>
                 {contact.phone}
@@ -32,7 +33,7 @@ export function ContactPanel() {
 
       {contact.socialLinks.length > 0 && (
         <div className={shared.section}>
-          <h3>Sareak</h3>
+          <h3>{t('Sareak')}</h3>
           <ul className={shared.list}>
             {contact.socialLinks.map((link) => (
               <li key={link.url}>

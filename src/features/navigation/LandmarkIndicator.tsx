@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { LandmarkIndicatorConfig } from './landmarkIndicatorConfig';
+import { useT } from '../../i18n/LanguageContext';
 import styles from './LandmarkIndicator.module.css';
 
 export type LandmarkIndicatorProps = {
@@ -42,6 +43,7 @@ export function LandmarkIndicator({
   onInteract,
   registerElement,
 }: LandmarkIndicatorProps) {
+  const t = useT();
   const [hoverOrFocus, setHoverOrFocus] = useState(false);
   const [justBecameInteractable, setJustBecameInteractable] = useState(false);
   const wasInteractable = useRef(false);
@@ -86,7 +88,7 @@ export function LandmarkIndicator({
           onBlur={() => setHoverOrFocus(false)}
           onClick={onInteract}
           aria-expanded={revealed}
-          aria-label={`${title}. Sakatu irekitzeko.`}
+          aria-label={t('{title}. Sakatu irekitzeko.', { title })}
           tabIndex={suppressed ? -1 : 0}
         >
           <span

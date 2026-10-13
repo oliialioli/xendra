@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Eraser, ArrowCounterClockwise, Trash } from '@phosphor-icons/react';
 import type { BoatDrawing, DrawingPoint, DrawingStroke } from './boatTypes';
 import { appendPointIfFarEnough, createStroke, isDrawingEmpty } from './drawingUtils';
+import { useT } from '../../i18n/LanguageContext';
+import { msg } from '../../i18n/translate';
 import styles from './BoatDrawingCanvas.module.css';
 
 export type BoatDrawingCanvasProps = {
@@ -17,20 +19,20 @@ export type BoatDrawingCanvasProps = {
  * update this list to match.
  */
 const PALETTE = [
-  { name: 'Ikatza', hex: '#3a3530' },
-  { name: 'Teila', hex: '#b5654a' },
-  { name: 'Granatea', hex: '#6e3f3d' },
-  { name: 'Goroldioa', hex: '#7c9070' },
-  { name: 'Ibaia', hex: '#6f97a0' },
-  { name: 'Mostaza', hex: '#c99a3e' },
-  { name: 'Horia', hex: '#e2b53c' },
-  { name: 'Koralea', hex: '#c98a6e' },
+  { name: msg('Ikatza'), hex: '#3a3530' },
+  { name: msg('Teila'), hex: '#b5654a' },
+  { name: msg('Granatea'), hex: '#6e3f3d' },
+  { name: msg('Goroldioa'), hex: '#7c9070' },
+  { name: msg('Ibaia'), hex: '#6f97a0' },
+  { name: msg('Mostaza'), hex: '#c99a3e' },
+  { name: msg('Horia'), hex: '#e2b53c' },
+  { name: msg('Koralea'), hex: '#c98a6e' },
 ];
 
 const BRUSH_SIZES = [
-  { label: 'Mehea', value: 0.008 },
-  { label: 'Ertaina', value: 0.018 },
-  { label: 'Lodia', value: 0.034 },
+  { label: msg('Mehea'), value: 0.008 },
+  { label: msg('Ertaina'), value: 0.018 },
+  { label: msg('Lodia'), value: 0.034 },
 ];
 
 const ERASER_SIZE = 0.05;
@@ -44,6 +46,7 @@ const ERASER_SIZE = 0.05;
  * BoatCreator) is the serializable source of truth once a stroke ends.
  */
 export function BoatDrawingCanvas({ drawing, onChange }: BoatDrawingCanvasProps) {
+  const t = useT();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const activePointerId = useRef<number | null>(null);
@@ -178,22 +181,22 @@ export function BoatDrawingCanvas({ drawing, onChange }: BoatDrawingCanvasProps)
           onPointerUp={endStroke}
           onPointerCancel={endStroke}
           onPointerLeave={endStroke}
-          aria-label="Marrazteko lienzoa"
+          aria-label={t('Marrazteko lienzoa')}
           role="img"
         />
-        {empty && <p className={styles.emptyHint}>Marraztu hemen zure ontzia</p>}
+        {empty && <p className={styles.emptyHint}>{t('Marraztu hemen zure ontzia')}</p>}
       </div>
 
       <div className={styles.tools}>
-        <div className={styles.swatches} role="radiogroup" aria-label="Kolorea">
+        <div className={styles.swatches} role="radiogroup" aria-label={t('Kolorea')}>
           {PALETTE.map((swatch) => (
             <button
               key={swatch.hex}
               type="button"
               role="radio"
               aria-checked={tool === 'pen' && color === swatch.hex}
-              aria-label={swatch.name}
-              title={swatch.name}
+              aria-label={t(swatch.name)}
+              title={t(swatch.name)}
               className={styles.swatch}
               data-selected={tool === 'pen' && color === swatch.hex}
               style={{ background: swatch.hex }}
@@ -205,7 +208,7 @@ export function BoatDrawingCanvas({ drawing, onChange }: BoatDrawingCanvasProps)
           ))}
         </div>
 
-        <div className={styles.sizes} role="radiogroup" aria-label="Pintzelaren lodiera">
+        <div className={styles.sizes} role="radiogroup" aria-label={t('Pintzelaren lodiera')}>
           {BRUSH_SIZES.map((size) => (
             <button
               key={size.label}
@@ -224,7 +227,7 @@ export function BoatDrawingCanvas({ drawing, onChange }: BoatDrawingCanvasProps)
                 style={{ width: `${6 + size.value * 220}px`, height: `${6 + size.value * 220}px` }}
                 aria-hidden="true"
               />
-              <span className={styles.sizeLabel}>{size.label}</span>
+              <span className={styles.sizeLabel}>{t(size.label)}</span>
             </button>
           ))}
         </div>
@@ -234,8 +237,8 @@ export function BoatDrawingCanvas({ drawing, onChange }: BoatDrawingCanvasProps)
             type="button"
             className="xnd-btn-icon"
             aria-pressed={tool === 'eraser'}
-            aria-label="Borragoma"
-            title="Borragoma"
+            aria-label={t('Borragoma')}
+            title={t('Borragoma')}
             onClick={() => setTool((t) => (t === 'eraser' ? 'pen' : 'eraser'))}
           >
             <Eraser size={18} weight={tool === 'eraser' ? 'fill' : 'regular'} aria-hidden="true" />
@@ -243,8 +246,8 @@ export function BoatDrawingCanvas({ drawing, onChange }: BoatDrawingCanvasProps)
           <button
             type="button"
             className="xnd-btn-icon"
-            aria-label="Desegin"
-            title="Desegin"
+            aria-label={t('Desegin')}
+            title={t('Desegin')}
             onClick={handleUndo}
             disabled={drawing.strokes.length === 0}
           >
@@ -253,8 +256,8 @@ export function BoatDrawingCanvas({ drawing, onChange }: BoatDrawingCanvasProps)
           <button
             type="button"
             className="xnd-btn-icon"
-            aria-label="Garbitu dena"
-            title="Garbitu dena"
+            aria-label={t('Garbitu dena')}
+            title={t('Garbitu dena')}
             onClick={handleClear}
             disabled={drawing.strokes.length === 0}
           >

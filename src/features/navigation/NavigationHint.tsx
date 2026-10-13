@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { HandSwipeRight, HandTap, MouseLeftClick, X } from '@phosphor-icons/react';
+import { useT } from '../../i18n/LanguageContext';
 import styles from './NavigationHint.module.css';
 
 export type NavigationHintProps = {
@@ -45,6 +46,7 @@ const SWIPE_THRESHOLD_PX = 24;
  */
 export function NavigationHint({ open, raised = false, onDismiss }: NavigationHintProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const t = useT();
   const [step, setStep] = useState<Step>('move');
 
   // Each time it opens (first visit, or the Hud's ? button) it starts from moving.
@@ -133,7 +135,7 @@ export function NavigationHint({ open, raised = false, onDismiss }: NavigationHi
       data-visible={open}
       data-raised={raised}
       role="region"
-      aria-label="Mapa arakatzeko gida"
+      aria-label={t('Mapa arakatzeko gida')}
       aria-hidden={!open}
     >
       {step === 'move' ? (
@@ -157,11 +159,11 @@ export function NavigationHint({ open, raised = false, onDismiss }: NavigationHi
             <HandSwipeRight size={28} weight="fill" />
           </div>
           <div className={styles.text}>
-            <p className={styles.title}>Arakatu mapa</p>
+            <p className={styles.title}>{t('Arakatu mapa')}</p>
             <p className={`${styles.subtitle} ${styles.subtitleDesktop}`}>
-              Mugitu geziekin edo WASD teklekin, edo egin klik mapan bertara joateko.
+              {t('Mugitu geziekin edo WASD teklekin, edo egin klik mapan bertara joateko.')}
             </p>
-            <p className={`${styles.subtitle} ${styles.subtitleTouch}`}>Irristatu edo ukitu mapa mugitzeko.</p>
+            <p className={`${styles.subtitle} ${styles.subtitleTouch}`}>{t('Irristatu edo ukitu mapa mugitzeko.')}</p>
           </div>
         </>
       ) : (
@@ -173,11 +175,11 @@ export function NavigationHint({ open, raised = false, onDismiss }: NavigationHi
             <HandTap size={28} weight="fill" />
           </div>
           <div className={styles.text}>
-            <p className={styles.title}>Sartu lekuetan</p>
+            <p className={styles.title}>{t('Sartu lekuetan')}</p>
             <p className={`${styles.subtitle} ${styles.subtitleDesktop}`}>
-              Hurbildu leku batera: argitzen denean, sakatu E edo Ireki.
+              {t('Hurbildu leku batera: argitzen denean, sakatu E edo Ireki.')}
             </p>
-            <p className={`${styles.subtitle} ${styles.subtitleTouch}`}>Hurbildu leku batera eta sakatu Ireki.</p>
+            <p className={`${styles.subtitle} ${styles.subtitleTouch}`}>{t('Hurbildu leku batera eta sakatu Ireki.')}</p>
           </div>
         </>
       )}
@@ -186,8 +188,8 @@ export function NavigationHint({ open, raised = false, onDismiss }: NavigationHi
         type="button"
         className={`xnd-btn-icon ${styles.closeButton}`}
         onClick={onDismiss}
-        aria-label="Itxi nabigazio-gida"
-        title="Itxi"
+        aria-label={t('Itxi nabigazio-gida')}
+        title={t('Itxi')}
         tabIndex={open ? 0 : -1}
       >
         <X size={20} aria-hidden="true" />
