@@ -195,7 +195,7 @@ export const xendraContent: XendraContent = {
 
   contact: {
     email: 'xendra.taldea@gmail.com',
-    phone: '616 04 08 06',
+    phone: '+34 616 04 08 06',
     phoneHref: '+34616040806',
     socialLinks: [
       { label: 'Instagram', url: 'https://www.instagram.com/_xendra_/' },

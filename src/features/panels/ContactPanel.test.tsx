@@ -6,7 +6,7 @@ describe('ContactPanel', () => {
   it('shows the band email and phone as links', () => {
     render(<ContactPanel />);
     expect(screen.getByRole('link', { name: 'xendra.taldea@gmail.com' })).toHaveAttribute('href', 'mailto:xendra.taldea@gmail.com');
-    expect(screen.getByRole('link', { name: '616 04 08 06' })).toHaveAttribute('href', 'tel:+34616040806');
+    expect(screen.getByRole('link', { name: '+34 616 04 08 06' })).toHaveAttribute('href', 'tel:+34616040806');
   });
 
   it('lists the social profiles', () => {
