@@ -58,6 +58,7 @@ export const xendraContent: XendraContent = {
       { label: 'Badok', url: 'https://www.badok.eus/euskal-musika/xendra/bihia' },
       { label: 'YouTube', url: 'https://www.youtube.com/playlist?list=OLAK5uy_kbWls6s4OfqWO5WhMT08M6W8UT9s6ZZYw' },
       { label: 'Apple Music', url: 'https://music.apple.com/es/album/bihia/1785223280' },
+      { label: 'Musikariak.eus', url: 'https://musikariak.eus/#/album/2903320457' },
     ],
     // Durations from the album's Bandcamp page.
     tracks: (
