@@ -88,6 +88,7 @@ const ARTIST_PROFILES = [
   'https://xendrataldea.bandcamp.com/',
   'https://www.badok.eus/euskal-musika/xendra',
   'https://musicbrainz.org/artist/6f648d68-98ce-4d0c-9c0d-2533d53d6483',
+  'https://www.wikidata.org/wiki/Q141726929',
 ];
 
 /** Every profile of the band elsewhere: its social accounts and its artist pages. */
