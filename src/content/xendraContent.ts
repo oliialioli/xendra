@@ -183,11 +183,22 @@ export const xendraContent: XendraContent = {
     { id: 'setlist', kind: 'keepsake', thumbnailPath: '/assets/media/setlist-thumb.webp', fullPath: '/assets/media/setlist-full.webp', altText: '2026ko martxoaren 25eko kontzertuko zerrenda, Iruñeako Herriko tabernan emandako kontzertua' },
   ],
 
+  // Newest first.
   press: [
     {
       id: 'press-1',
       label: 'Xendra taldeko pop-rock doinuek jantziko dute larunbatean Artziko jauregia (Irati Irratia, 2026-05-12)',
       url: 'https://iratiirratia.eus/index.php/2026/05/12/xendra-taldeko-pop-rock-doinuek-jantziko-dute-larunbatean-artziko-jauregia/',
+    },
+    {
+      id: 'press-3',
+      label: 'Xendra, Kantu eta Hitza 2025en itxiera (Gazteon KZ, 2025-06-16)',
+      url: 'https://gazteonkz.eus/archivos/14217',
+    },
+    {
+      id: 'press-4',
+      label: '«Xendra taldearen estiloa zaila da deskribatzeko, musika lasaia egiten dugu» (Noaua, 2025-04-16)',
+      url: 'https://noaua.eus/usurbil/1744540135675-xendra-taldearen-estiloa-zaila-da-deskribatzeko-musika-lasaia-egiten-dugu',
     },
     {
       id: 'press-2',
