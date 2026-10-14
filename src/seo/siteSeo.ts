@@ -132,7 +132,8 @@ function groupNode(today: Date, lang: Lang) {
     inLanguage: 'eu',
     foundingDate: FOUNDED,
     foundingLocation: { '@type': 'Place', name: HOME_TOWN },
-    image: SHARE_IMAGE_URL,
+    // The band itself first (on stage, all of them), then the site's share image: search engines pick the band's picture from here.
+    image: [`${SITE_URL}assets/media/photo-04.jpg`, SHARE_IMAGE_URL],
     logo: `${SITE_URL}favicon-512.png`,
     sameAs: sameAs(),
     member: members.map((member) => ({
