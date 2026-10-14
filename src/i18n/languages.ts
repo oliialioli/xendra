@@ -1,18 +1,24 @@
 /**
  * The site's languages. Basque is the default and lives at the plain
  * addresses (/musika); the others live under their code (/es/musika,
- * /en/musika). The language is always read from the address, so a link
+ * /ca/musika, /gl/musika, /en/musika). The language is always read from the address, so a link
  * carries it and each language's pages can be found on their own.
  */
-export const LANGUAGES = ['eu', 'es', 'en'] as const;
+export const LANGUAGES = ['eu', 'es', 'ca', 'gl', 'en'] as const;
 export type Lang = (typeof LANGUAGES)[number];
 export const DEFAULT_LANG = 'eu' satisfies Lang;
 
 /** Each language's own name, as the switch shows it. */
-export const LANGUAGE_NAMES: Record<Lang, string> = { eu: 'Euskara', es: 'Castellano', en: 'English' };
+export const LANGUAGE_NAMES: Record<Lang, string> = {
+  eu: 'Euskara',
+  es: 'Castellano',
+  ca: 'Català',
+  gl: 'Galego',
+  en: 'English',
+};
 
 /** For og:locale. */
-export const OG_LOCALES: Record<Lang, string> = { eu: 'eu_ES', es: 'es_ES', en: 'en_GB' };
+export const OG_LOCALES: Record<Lang, string> = { eu: 'eu_ES', es: 'es_ES', ca: 'ca_ES', gl: 'gl_ES', en: 'en_GB' };
 
 export function isLang(value: string): value is Lang {
   return (LANGUAGES as readonly string[]).includes(value);

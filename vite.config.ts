@@ -5,7 +5,7 @@ import { createServer, defineConfig, type Plugin, type ViteDevServer } from 'vit
 
 /**
  * Publishes every address of the site -- the map and each section, in each
- * language (/musika, /es/musika, /en/musika) -- as its own HTML page running
+ * language (/musika, /es/musika, /en/musika...) -- as its own HTML page running
  * the same app, each with its own language, title, description,
  * structured data and plain-HTML summary (src/seo/siteSeo.ts), so it can be
  * found and linked to on its own. index.html carries placeholders for

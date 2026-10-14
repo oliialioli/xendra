@@ -149,7 +149,7 @@ describe('the other languages', () => {
   });
 
   it('gives each language its own titles, descriptions and section texts', () => {
-    (['es', 'en'] as const).forEach((lang) => {
+    (['es', 'ca', 'gl', 'en'] as const).forEach((lang) => {
       const translated = all.filter((page) => page.lang === lang);
       translated.forEach((page) => {
         const original = basque.find((other) => other.path === page.path)!;

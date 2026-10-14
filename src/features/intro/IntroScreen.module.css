@@ -53,9 +53,10 @@
 }
 
 
-/* The languages, in the corner. */
-.languages {
+/* The languages, in the corner (over the switch's own positioning, hence the extra class). */
+.root .languages {
   position: absolute;
+  z-index: 1;
   top: var(--space-3);
   right: var(--space-3);
 }

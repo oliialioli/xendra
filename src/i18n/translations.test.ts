@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { es } from './es';
+import { ca } from './ca';
+import { gl } from './gl';
 import { en } from './en';
 import { contentTexts } from './usedTexts';
 
@@ -18,7 +20,7 @@ const placeholders = (text: string) => (text.match(/\{\w+\}/g) ?? []).sort().joi
 
 describe('translations', () => {
   const used = [...new Set([...textsInCode(), ...contentTexts()])];
-  const dictionaries = { es, en };
+  const dictionaries = { es, ca, gl, en };
 
   it('finds the texts in the code', () => {
     expect(used).toContain('Itxi');

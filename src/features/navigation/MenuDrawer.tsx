@@ -29,7 +29,7 @@ export function MenuDrawer({ onClose }: { onClose: () => void }) {
         </ul>
       </nav>
       <div className={styles.languages}>
-        <LanguageSwitch />
+        <LanguageSwitch placement="up" />
       </div>
     </Panel>
   );

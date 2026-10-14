@@ -1,61 +1,105 @@
-/* The site's languages as a row of small links; the current one is filled in. */
-.list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
+/* The current language as a small pill; the list of languages drops from it. */
+.root {
+  position: relative;
+  display: inline-block;
 }
 
-.option {
+.button {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
   min-height: 36px;
-  min-width: 36px;
   padding: 0 var(--space-3);
+  border: none;
   border-radius: 999px;
-  color: var(--ui-ink-muted);
+  background: var(--ui-well);
+  color: var(--ui-ink);
   font-family: var(--font-mono);
   font-size: 0.78rem;
   font-weight: 500;
-  text-decoration: none;
-  transition:
-    background-color var(--duration-fast) var(--ease-organic),
-    color var(--duration-fast) var(--ease-organic);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-organic);
 }
 
-.option:hover {
-  background: var(--ui-well);
-  color: var(--ui-ink);
-}
-
-.option[aria-current='true'] {
+.button:hover,
+.button[aria-expanded='true'] {
   background: var(--ui-khaki);
-  color: var(--ui-ink);
 }
 
-.option:focus-visible {
+.button:focus-visible {
   outline: 2px solid var(--ui-ink);
   outline-offset: 2px;
 }
 
-/* On the intro's dark paper. */
-.root[data-tone='light'] .option {
-  color: rgb(215 198 175 / 82%);
+.caret {
+  transition: transform var(--duration-fast) var(--ease-organic);
 }
 
-.root[data-tone='light'] .option:hover {
+.button[aria-expanded='true'] .caret {
+  transform: rotate(180deg);
+}
+
+.list {
+  position: absolute;
+  z-index: 2;
+  min-width: 160px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border-radius: var(--ui-radius-lg);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow);
+}
+
+/* From the top of the intro: down, lined up with the button's right edge. */
+.root[data-placement='down'] .list {
+  top: calc(100% + 6px);
+  right: 0;
+}
+
+/* From the bottom of the menu: up, lined up with its left edge. */
+.root[data-placement='up'] .list {
+  bottom: calc(100% + 6px);
+  left: 0;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  border-radius: var(--ui-radius-md);
+  color: var(--ui-ink);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.option:hover {
+  background: var(--ui-well);
+}
+
+.option[aria-current='true'] {
+  background: var(--ui-khaki);
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--ui-ink);
+  outline-offset: -2px;
+}
+
+/* On the intro's dark paper: the pill in cream ink; the open list stays a cream card, readable over the paper. */
+.root[data-tone='light'] .button {
   background: rgb(215 198 175 / 12%);
   color: #ebdfca;
 }
 
-.root[data-tone='light'] .option[aria-current='true'] {
-  background: rgb(215 198 175 / 16%);
-  color: #ebdfca;
+.root[data-tone='light'] .button:hover,
+.root[data-tone='light'] .button[aria-expanded='true'] {
+  background: rgb(215 198 175 / 22%);
 }
 
-.root[data-tone='light'] .option:focus-visible {
+.root[data-tone='light'] .button:focus-visible {
   outline-color: #ebdfca;
 }

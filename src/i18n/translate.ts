@@ -1,5 +1,7 @@
 import { DEFAULT_LANG, type Lang } from './languages';
 import { es } from './es';
+import { ca } from './ca';
+import { gl } from './gl';
 import { en } from './en';
 
 /**
@@ -8,7 +10,7 @@ import { en } from './en';
  * Basque, if nobody has translated it yet, so a missing entry never breaks
  * anything. `{name}` in a text is filled from `values`.
  */
-const DICTIONARIES: Record<Exclude<Lang, typeof DEFAULT_LANG>, Record<string, string>> = { es, en };
+const DICTIONARIES: Record<Exclude<Lang, typeof DEFAULT_LANG>, Record<string, string>> = { es, ca, gl, en };
 
 export type TranslateValues = Record<string, string | number>;
 

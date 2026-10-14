@@ -77,7 +77,7 @@ export function IntroScreen({ onEnter, onOpenMenu }: IntroScreenProps) {
       aria-labelledby="intro-title"
     >
       {/* There from the first frame, for whoever doesn't read the language it opened in. */}
-      <LanguageSwitch variant="codes" tone="light" className={styles.languages} />
+      <LanguageSwitch label="code" tone="light" className={styles.languages} />
 
       <div className={styles.column}>
         <IntroLogo className={styles.logo} />
