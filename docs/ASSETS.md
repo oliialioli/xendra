@@ -16,7 +16,7 @@ Tabla de referencia para sustituir cada asset placeholder por el arte final.
 | Logotipo (wordmark) | `public/assets/brand/xendra-logo.svg` | 454×88 (vector, escala libre) | SVG | Sí | — | **Final** |
 | Logotipo crema (pantalla de inicio) | `public/assets/brand/xendra-logo-cream.svg` | 454×88 (vector, escala libre) | SVG | Sí | — | **Final** (mismo trazado, relleno `#D7C6AF`) |
 | Papel kraft de la pantalla de inicio | `public/assets/brand/intro-paper.jpg` | 920×1024 (se estira con `cover`) | JPG | No | — | **Final** (textura del Figma *xendra-mundua*, nodo 10:20, ya multiplicada sobre `#F3EAE1`) |
-| Favicon | `public/favicon.svg` | vector | SVG | Sí | — | Placeholder de marca |
+| Favicon | `public/favicon.ico`, `public/favicon-{48,96,192,512}.png`, `public/apple-touch-icon.png` | 16–512 px | ICO / PNG | Sí | — | El caracol del arte del disco (recorte cuadrado, cabe en el círculo de Google) |
 
 ## Cómo reemplazar el mapa
 

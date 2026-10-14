@@ -133,6 +133,7 @@ function groupNode(today: Date, lang: Lang) {
     foundingDate: FOUNDED,
     foundingLocation: { '@type': 'Place', name: HOME_TOWN },
     image: SHARE_IMAGE_URL,
+    logo: `${SITE_URL}favicon-512.png`,
     sameAs: sameAs(),
     member: members.map((member) => ({
       '@type': 'OrganizationRole',
