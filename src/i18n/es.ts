@@ -324,7 +324,7 @@ export const es: Record<string, string> = {
   // What search results and link previews show (seo/pageMeta.ts)
   'Xendra, Uharteko (Nafarroa) musika taldea': 'Xendra, grupo de música de Uharte (Navarra)',
   'Xendra, Uharteko (Nafarroa) musika taldea: folk, pop eta rock euskaraz. Entzun «Bihia» diskoa, ikusi kontzertuak eta ezagutu taldea uharte interaktibo batean.':
-    'Xendra, grupo de música de Uharte/Huarte (Navarra): folk, pop y rock en euskera. Escucha el disco «Bihia», consulta los conciertos y conoce al grupo en una isla interactiva.',
+    'Xendra, grupo de Uharte/Huarte (Navarra): folk, pop y rock en euskera. Escucha «Bihia», consulta los conciertos y conoce al grupo en una isla interactiva.',
   'Xendraren musika: «Bihia» diskoa': 'La música de Xendra: el disco «Bihia»',
   'Entzun Xendraren «Bihia» diskoa (2025): zortzi abesti, «Errauts eskuak» bideoklipa eta Bandcamp, Badok, YouTube eta Apple Musiceko estekak.':
     'Escucha «Bihia» (2025), el disco de Xendra: ocho canciones, el videoclip de «Errauts eskuak» y enlaces a Bandcamp, Badok, YouTube y Apple Music.',
@@ -341,7 +341,8 @@ export const es: Record<string, string> = {
   'Xendraren kamisetak (BEGIRA eta SUA) eta «Bihia» diskoa: prezioak eta eskaera-orria.':
     'Las camisetas de Xendra (BEGIRA y SUA) y el disco «Bihia»: precios y formulario de pedido.',
   'Xendraren galeria: argazkiak, bideoak eta kartelak': 'La galería de Xendra: fotos, vídeos y carteles',
-  'Xendraren argazkiak, bideoak eta kontzertuetako kartelak.': 'Fotos, vídeos y carteles de los conciertos de Xendra.',
+  'Xendraren argazkiak eta bideoak zuzenean, kontzertuetako kartelak eta oroigarriak: lehen kontzertuko sarrera eta abesti-zerrenda bat.':
+    'Fotos y vídeos de Xendra en directo, carteles de sus conciertos y recuerdos: la entrada de su primer concierto y una lista de canciones.',
   'Bidali zure ontzia Xendraren uhartean': 'Envía tu barco en la isla de Xendra',
   'Marraztu paperezko ontzi bat, idatzi mezu bat eta bidali Xendraren uharteko ibaian behera.':
     'Dibuja un barco de papel, escribe un mensaje y envíalo río abajo por la isla de Xendra.',
@@ -352,7 +353,8 @@ export const es: Record<string, string> = {
   'Jarri harremanetan Xendrarekin: kontzertuak, elkarlanak eta bestelakoak.':
     'Ponte en contacto con Xendra: conciertos, colaboraciones y lo que haga falta.',
   'Xendraren abestien hitzak': 'Letras de las canciones de Xendra',
-  'Xendraren «{album}» diskoko abestien hitzak.': 'Las letras de las canciones de «{album}», el disco de Xendra.',
+  'Xendraren «{album}» diskoko zortzi abestien hitzak osorik, euskaraz: abesti bakoitzarenak bere orrian.':
+    'Las letras completas de las ocho canciones de «{album}», el disco de Xendra, en euskera: cada una en su propia página.',
   '{song}: hitzak (Xendra)': '{song}: letra (Xendra)',
   'Xendraren «{song}» abestiaren hitzak, «{album}» diskokoa.': 'La letra de «{song}», canción de Xendra, del disco «{album}».',
   'Xendra: barraskiloa eta taldearen logoa': 'Xendra: el caracol y el logo del grupo',

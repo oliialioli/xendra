@@ -49,7 +49,7 @@ export const SECTION_META: PageMeta[] = [
   {
     path: SECTION_PATHS.bulletinBoard,
     title: msg('Xendraren galeria: argazkiak, bideoak eta kartelak'),
-    description: msg('Xendraren argazkiak, bideoak eta kontzertuetako kartelak.'),
+    description: msg('Xendraren argazkiak eta bideoak zuzenean, kontzertuetako kartelak eta oroigarriak: lehen kontzertuko sarrera eta abesti-zerrenda bat.'),
   },
   {
     path: SECTION_PATHS.dockMessages,
@@ -75,7 +75,7 @@ function lyricsMeta(lang: Lang): PageMeta[] {
     {
       path: LYRICS_PATH,
       title: translate(lang, 'Xendraren abestien hitzak'),
-      description: translate(lang, 'Xendraren «{album}» diskoko abestien hitzak.', { album }),
+      description: translate(lang, 'Xendraren «{album}» diskoko zortzi abestien hitzak osorik, euskaraz: abesti bakoitzarenak bere orrian.', { album }),
     },
     ...SONGS.map((song) => ({
       path: song.path,

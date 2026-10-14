@@ -341,7 +341,8 @@ export const ca: Record<string, string> = {
   'Xendraren kamisetak (BEGIRA eta SUA) eta «Bihia» diskoa: prezioak eta eskaera-orria.':
     'Les samarretes de Xendra (BEGIRA i SUA) i el disc «Bihia»: preus i formulari de comanda.',
   'Xendraren galeria: argazkiak, bideoak eta kartelak': 'La galeria de Xendra: fotos, vídeos i cartells',
-  'Xendraren argazkiak, bideoak eta kontzertuetako kartelak.': 'Fotos, vídeos i cartells dels concerts de Xendra.',
+  'Xendraren argazkiak eta bideoak zuzenean, kontzertuetako kartelak eta oroigarriak: lehen kontzertuko sarrera eta abesti-zerrenda bat.':
+    "Fotos i vídeos de Xendra en directe, cartells dels seus concerts i records: l'entrada del seu primer concert i una llista de cançons.",
   'Bidali zure ontzia Xendraren uhartean': "Envia el teu vaixell a l'illa de Xendra",
   'Marraztu paperezko ontzi bat, idatzi mezu bat eta bidali Xendraren uharteko ibaian behera.':
     "Dibuixa un vaixell de paper, escriu un missatge i envia'l riu avall per l'illa de Xendra.",
@@ -352,7 +353,8 @@ export const ca: Record<string, string> = {
   'Jarri harremanetan Xendrarekin: kontzertuak, elkarlanak eta bestelakoak.':
     "Posa't en contacte amb Xendra: concerts, col·laboracions i el que calgui.",
   'Xendraren abestien hitzak': 'Lletres de les cançons de Xendra',
-  'Xendraren «{album}» diskoko abestien hitzak.': 'Les lletres de les cançons de «{album}», el disc de Xendra.',
+  'Xendraren «{album}» diskoko zortzi abestien hitzak osorik, euskaraz: abesti bakoitzarenak bere orrian.':
+    'Les lletres completes de les vuit cançons de «{album}», el disc de Xendra, en basc: cadascuna a la seva pàgina.',
   '{song}: hitzak (Xendra)': '{song}: lletra (Xendra)',
   'Xendraren «{song}» abestiaren hitzak, «{album}» diskokoa.': 'La lletra de «{song}», cançó de Xendra, del disc «{album}».',
   'Xendra: barraskiloa eta taldearen logoa': 'Xendra: el cargol i el logotip del grup',
