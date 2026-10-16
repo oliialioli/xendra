@@ -76,6 +76,12 @@ function seoHtml(): Plugin {
         mkdirSync(dirname(file), { recursive: true })
         writeFileSync(file, fill(template, seo.headHtml(page), page))
       }
+      // Not to be found by search, but there when opened directly.
+      for (const page of seo.cookiesPages() as Page[]) {
+        const file = join(outDir, new URL(page.url).pathname, 'index.html')
+        mkdirSync(dirname(file), { recursive: true })
+        writeFileSync(file, fill(template, seo.headHtml(page, undefined, { noindex: true }), page))
+      }
       const notFound = seo.notFoundPage()
       writeFileSync(join(outDir, '404.html'), fill(template, seo.headHtml(notFound, undefined, { noindex: true }), notFound))
       writeFileSync(join(outDir, 'sitemap.xml'), seo.sitemapXml())

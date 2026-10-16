@@ -1,4 +1,4 @@
-import { MAP_PATH, SECTION_PATHS } from '../content/sectionPaths';
+import { COOKIES_PATH, MAP_PATH, SECTION_PATHS } from '../content/sectionPaths';
 import { LYRICS_PATH, SONGS } from '../content/lyricsPaths';
 import { xendraContent } from '../content/xendraContent';
 import { DEFAULT_LANG, type Lang } from '../i18n/languages';
@@ -68,6 +68,13 @@ export const SECTION_META: PageMeta[] = [
   },
 ];
 
+/** The cookies page: published, but kept out of search results and the sitemap (see siteSeo's cookiesPages). */
+export const COOKIES_META: PageMeta = {
+  path: COOKIES_PATH,
+  title: msg('Xendra: cookieak'),
+  description: msg('Xendraren webguneak erabiltzen dituen cookieak eta zure nabigatzailean gordetzen dena.'),
+};
+
 /** The songs' words: the list, then one page per song. */
 function lyricsMeta(lang: Lang): PageMeta[] {
   const album = xendraContent.album.albumTitle;
@@ -102,7 +109,12 @@ export function allPageMeta(lang: Lang = DEFAULT_LANG): PageMeta[] {
 
 const metaByLang = new Map<Lang, Map<string, PageMeta>>();
 
+export function cookiesMeta(lang: Lang = DEFAULT_LANG): PageMeta {
+  return inLang(lang, COOKIES_META);
+}
+
 export function pageMetaFor(path: string, lang: Lang = DEFAULT_LANG): PageMeta {
+  if (path === COOKIES_PATH) return cookiesMeta(lang);
   let byPath = metaByLang.get(lang);
   if (!byPath) {
     byPath = new Map(allPageMeta(lang).map((meta) => [meta.path, meta]));

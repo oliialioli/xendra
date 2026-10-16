@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Question } from '@phosphor-icons/react';
+import { Cookie, Question } from '@phosphor-icons/react';
 import { LANDMARK_INDICATOR_CONFIG } from '../features/navigation/landmarkIndicatorConfig';
 import { PhaserGame } from '../game/PhaserGame';
 import { Hud } from '../features/navigation/Hud';
@@ -26,7 +26,8 @@ import { useProgress } from './providers/ProgressContext';
 import { xendraContent, landmarkById } from '../content/xendraContent';
 import { useContent, useLangPath, useLocalNavigate, useT } from '../i18n/LanguageContext';
 import { MAP_ROUTE, panelRouteByLandmarkId, panelRouteByPath } from './routes';
-import { SECTION_PATHS } from '../content/sectionPaths';
+import { COOKIES_PATH, SECTION_PATHS } from '../content/sectionPaths';
+import { CookiesPanel } from '../features/panels/CookiesPanel';
 import { lyricsSlugFromPath } from '../content/lyricsPaths';
 import { LyricsPanel } from '../features/panels/LyricsPanel';
 import { pageMetaFor } from '../seo/pageMeta';
@@ -71,6 +72,7 @@ export function MapLayout() {
   const lyricsSlug = lyricsSlugFromPath(path);
   const isLyricsRoute = lyricsSlug !== null;
   const LyricsIcon = LANDMARK_INDICATOR_CONFIG.school.icon;
+  const isCookiesRoute = path === COOKIES_PATH;
   useWorldAmbience(bus, panelEntry ? panelEntry.route : isLyricsRoute ? SECTION_PATHS.school : null);
 
   // The tab's title follows the section that's open, as its published page's does.
@@ -78,14 +80,14 @@ export function MapLayout() {
     document.title = pageMetaFor(path, lang).title;
     document.documentElement.lang = lang;
   }, [path, lang]);
-  const isUnknownRoute = !isMapRoute && !panelEntry && !isLyricsRoute;
+  const isUnknownRoute = !isMapRoute && !panelEntry && !isLyricsRoute && !isCookiesRoute;
   // The intro opens on every visit (every page load), not just the first --
   // it's the way into the island. Only leaving it dismisses it, for this load.
   // A visit that starts on a link straight to a panel (or the castle game)
   // skips it: closing that panel goes straight to the map.
   const [introDismissed, setIntroDismissed] = useState(() => path !== MAP_ROUTE);
   const showIntro = isMapRoute && !introDismissed && !menuOpen;
-  const controlsBlocked = Boolean(panelEntry) || isLyricsRoute || isUnknownRoute || menuOpen || showIntro;
+  const controlsBlocked = Boolean(panelEntry) || isLyricsRoute || isCookiesRoute || isUnknownRoute || menuOpen || showIntro;
 
   useEffect(() => {
     bus.emit('controls:setEnabled', { enabled: !controlsBlocked });
@@ -301,7 +303,8 @@ export function MapLayout() {
 
       <LiveRegion message={liveMessage} />
       <Toast message={toastMessage} />
-      <AnalyticsConsent />
+      {/* The cookies page has the same two answers: the note steps aside there. */}
+      <AnalyticsConsent hidden={isCookiesRoute} />
 
       {showIntro && (
         <IntroScreen
@@ -352,6 +355,12 @@ export function MapLayout() {
       {isLyricsRoute && (
         <Panel title={t('Hitzak')} icon={<LyricsIcon size={20} aria-hidden="true" />} onClose={() => navigate(MAP_ROUTE)}>
           <LyricsPanel slug={lyricsSlug} />
+        </Panel>
+      )}
+
+      {isCookiesRoute && (
+        <Panel title={t('Cookieak')} icon={<Cookie size={20} aria-hidden="true" />} onClose={() => navigate(MAP_ROUTE)}>
+          <CookiesPanel />
         </Panel>
       )}
 

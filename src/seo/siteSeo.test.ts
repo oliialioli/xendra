@@ -3,7 +3,7 @@ import { xendraContent } from '../content/xendraContent';
 import { MAP_PATH, SECTION_PATHS } from '../content/sectionPaths';
 import { LYRICS_PATH, SONGS } from '../content/lyricsPaths';
 import { HOME_META, SECTION_META, pageMetaFor } from './pageMeta';
-import { SITE_URL, headHtml, isoDuration, notFoundPage, pageUrl, seoJsonLd, seoPageForUrl, seoPages, sitemapXml } from './siteSeo';
+import { SITE_URL, cookiesPages, headHtml, isoDuration, notFoundPage, pageUrl, seoJsonLd, seoPageForUrl, seoPages, sitemapXml } from './siteSeo';
 import { LANGUAGES } from '../i18n/languages';
 
 const DAY = new Date('2026-01-01');
@@ -236,6 +236,27 @@ describe('sitemapXml', () => {
     seoPages(DAY).forEach((page) => expect(xml).toContain(`<loc>${page.url}</loc>`));
     expect(xml.match(/<url>/g)).toHaveLength(seoPages(DAY).length);
     expect(xml.match(/<xhtml:link /g)).toHaveLength(seoPages(DAY).length * LANGUAGES.length);
+  });
+});
+
+describe('the cookies page', () => {
+  const pages = cookiesPages();
+
+  it('is published in every language, under /cookieak', () => {
+    expect(pages.map((page) => page.url)).toEqual(LANGUAGES.map((lang) => pageUrl('/cookieak', lang)));
+    pages.forEach((page) => expect(page.summaryHtml).toContain('Google Analytics'));
+  });
+
+  it('is kept out of search results and the sitemap', () => {
+    const head = headHtml(pages[0], DAY, { noindex: true });
+    expect(head).toContain('noindex');
+    expect(head).not.toContain('rel="canonical"');
+    pages.forEach((page) => expect(sitemapXml(DAY)).not.toContain(page.url));
+  });
+
+  it('points to itself in the other languages', () => {
+    const spanish = pages.find((page) => page.lang === 'es')!;
+    expect(spanish.summaryHtml).toContain('<a href="/cookieak/" hreflang="eu" lang="eu">Euskara</a>');
   });
 });
 

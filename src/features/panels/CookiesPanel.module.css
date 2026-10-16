@@ -1,0 +1,53 @@
+/* Reading text: the panel's own type, a comfortable measure. */
+.page h3 {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.page p {
+  margin: 0 0 var(--space-3);
+  max-width: 62ch;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.page .state {
+  margin-bottom: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ui-ink-muted);
+}
+
+.answers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.answer {
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border: none;
+  border-radius: 999px;
+  background: var(--ui-well);
+  color: var(--ui-ink);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.answer:hover {
+  background: var(--ui-khaki);
+}
+
+.answer[aria-pressed='true'] {
+  background: var(--ui-khaki-strong);
+}
+
+.answer:focus-visible {
+  outline: 2px solid var(--ui-ink);
+  outline-offset: 2px;
+}

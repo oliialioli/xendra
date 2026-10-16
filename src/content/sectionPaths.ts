@@ -23,6 +23,9 @@ export const SECTION_PATHS = {
   postbox: '/kontaktua',
 } as const satisfies Record<LandmarkId, string>;
 
+/** What cookies the site uses and the visitor's choice about them (linked from the cookie notice and the menu). */
+export const COOKIES_PATH = '/cookieak';
+
 /** Each section's name: in the menu, on its map badge, as its panel's title. */
 export const SECTION_TITLES: Record<LandmarkId, string> = {
   school: 'Musika',

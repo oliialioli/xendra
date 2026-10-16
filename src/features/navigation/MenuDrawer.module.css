@@ -53,7 +53,7 @@
   gap: var(--space-3);
 }
 
-/* Brings the statistics question back (see AnalyticsConsent). */
+/* The cookies page: what the site keeps and the visitor's choice about it. */
 .settingsLink {
   padding: var(--space-2) 0;
   border: none;

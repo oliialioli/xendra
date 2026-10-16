@@ -1,8 +1,8 @@
 import { xendraContent } from '../content/xendraContent';
-import { MAP_PATH, SECTION_PATHS, SECTION_TITLES } from '../content/sectionPaths';
+import { COOKIES_PATH, MAP_PATH, SECTION_PATHS, SECTION_TITLES } from '../content/sectionPaths';
 import type { LandmarkId } from '../types/content';
 import { LYRICS_PATH, SONGS, songBySlug, lyricsSlugFromPath, type Song } from '../content/lyricsPaths';
-import { HOME_META, allPageMeta, homeMeta, type PageMeta } from './pageMeta';
+import { HOME_META, allPageMeta, cookiesMeta, homeMeta, type PageMeta } from './pageMeta';
 import { contentFor } from '../i18n/content';
 import { DEFAULT_LANG, LANGUAGES, LANGUAGE_NAMES, OG_LOCALES, localizePath, splitLangPath, type Lang } from '../i18n/languages';
 import { translate, type TranslateValues } from '../i18n/translate';
@@ -282,7 +282,7 @@ function siteNav(current: string, lang: Lang): string {
       .map((entry) => `<a href="${pageHref(entry.path, lang)}">${escapeHtml(entry.label)}</a>`),
   )}</nav>`;
   // An address that isn't a page has no versions of its own: the other languages' home pages, then.
-  const here = allPageMeta(lang).some((meta) => meta.path === current) ? current : MAP_PATH;
+  const here = current === COOKIES_PATH || allPageMeta(lang).some((meta) => meta.path === current) ? current : MAP_PATH;
   const languages = `<nav aria-label="${escapeHtml(t('Hizkuntza'))}">${list(
     LANGUAGES.filter((other) => other !== lang).map(
       (other) => `<a href="${pageHref(here, other)}" hreflang="${other}" lang="${other}">${escapeHtml(LANGUAGE_NAMES[other])}</a>`,
@@ -424,6 +424,7 @@ export function seoPageFor(path: string, today: Date = new Date(), lang: Lang = 
 /** The same, from a request's URL (query and trailing slash ignored; the language is its first part). */
 export function seoPageForUrl(url: string, today: Date = new Date()): SeoPage {
   const { lang, path } = splitLangPath(new URL(url, SITE_URL).pathname);
+  if (path === COOKIES_PATH) return cookiesPages().find((page) => page.lang === lang)!;
   return seoPageFor(path, today, lang);
 }
 
@@ -444,6 +445,44 @@ export function notFoundPage(): SeoPage {
     summaryHtml: `<main id="static-summary"><h1>${escapeHtml(t('Orri ezezaguna'))}</h1><p>${escapeHtml(t('Helbide hau ez dagokio Xendraren atal bati ere.'))}</p>${siteNav('/404', lang)}</main>`,
     ...shellTexts(lang),
   };
+}
+
+/**
+ * The cookies page in each language: published so its address works when
+ * opened directly, but marked noindex and left out of the sitemap -- it's
+ * there to be read from the site, not found. The same text as CookiesPanel.
+ */
+export function cookiesPages(): SeoPage[] {
+  return LANGUAGES.map((lang) => {
+    const t = translator(lang);
+    const meta = cookiesMeta(lang);
+    const section = (heading: string, ...paragraphs: string[]) =>
+      `<h2>${escapeHtml(heading)}</h2>${paragraphs.map(paragraph).join('')}`;
+    const body = [
+      section(t('Zer dira?'), t('Cookieak webgune batek zure nabigatzailean gordetzen dituen fitxategi txikiak dira.')),
+      section(
+        t('Zein erabiltzen ditugu?'),
+        t('Zuk onartzen baduzu bakarrik, Google Analytics-en cookieak (_ga eta _ga_…), webgunea zenbat bisitatzen den eta zein orri ikusten diren jakiteko. Datuak bateratuta ikusten ditugu (adibidez, «gaur 40 bisita»): ez dakigu nor zaren, eta ez ditugu iragarkietarako erabiltzen.'),
+        t('Google Ireland Limited-ek kudeatzen ditu, 2 urte arte irauten dute, eta Google-k Europar Batasunetik kanpo ere trata ditzake datuak.'),
+        t('Musika atalean Bandcamp-en erreproduzitzailea eta YouTubeko bideo bat daude: erabiltzen badituzu, beren cookieak jar ditzakete, Bandcamp-en eta YouTuberen arauen arabera.'),
+      ),
+      section(
+        t('Zure nabigatzailean gordetzen dena'),
+        t('Webguneak zure aukera batzuk ere gogoratzen ditu (hizkuntza, soinua, mapan aurkitutako lekuak eta cookieei buruzko erantzuna). Ez dira cookieak eta ez dira inora bidaltzen: webguneak funtziona dezan dira.'),
+      ),
+      section(
+        t('Zure erabakia aldatzeko'),
+        t('Nahi duzunean alda dezakezu zure erantzuna; ezezkoa ematen baduzu, Google Analytics-en cookieak ezabatu egiten dira.'),
+      ),
+    ].join('');
+    return {
+      ...meta,
+      lang,
+      url: pageUrl(COOKIES_PATH, lang),
+      summaryHtml: `<main id="static-summary"><h1>${escapeHtml(t('Cookieak'))}</h1>${body}${siteNav(COOKIES_PATH, lang)}</main>`,
+      ...shellTexts(lang),
+    };
+  });
 }
 
 /** The page's versions in every language, for search engines to offer each reader theirs (the Basque one when in doubt). */

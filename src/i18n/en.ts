@@ -359,10 +359,37 @@ export const en: Record<string, string> = {
 
   // Statistics (Google Analytics), only with consent
   'Cookieak': 'Cookies',
-  'Barraskilo honek cookieak jaten ditu. Bat emango diozu?': 'This snail eats cookies. Spare one?',
-  'Zertarako?': 'What for?',
-  'Webgunearen bisitak zenbatzeko, Google Analytics-ekin.': 'To count visits to the site, with Google Analytics.',
-  'Gaur ez': 'Not today',
-  'Bai, tori': 'Sure, here',
-  'Cookieen ezarpenak': 'Cookie settings',
+  '🍪 Webgune honek cookieak erabiltzen ditu. Gure barraskiloak nahiago du letxuga.': '🍪 This site uses cookies. Our snail prefers lettuce.',
+  'Letxuga bakarrik': 'Just lettuce',
+  'Cookieak bai': 'Cookies, yes',
+
+  // The cookies page (/cookieak)
+  'Cookie propioak eta hirugarrenenak erabiltzen ditugu zure nabigazio-esperientzia hobetzeko.':
+    'We use our own and third-party cookies to improve your browsing experience.',
+  'Informazio gehiago': 'More information',
+  'Xendra: cookieak': 'Xendra: cookies',
+  'Xendraren webguneak erabiltzen dituen cookieak eta zure nabigatzailean gordetzen dena.':
+    "The cookies Xendra's site uses and what is kept in your browser.",
+  'Zer dira?': 'What are they?',
+  'Cookieak webgune batek zure nabigatzailean gordetzen dituen fitxategi txikiak dira.':
+    'Cookies are small files a website stores in your browser.',
+  'Zein erabiltzen ditugu?': 'Which ones do we use?',
+  'Zuk onartzen baduzu bakarrik, Google Analytics-en cookieak (_ga eta _ga_…), webgunea zenbat bisitatzen den eta zein orri ikusten diren jakiteko. Datuak bateratuta ikusten ditugu (adibidez, «gaur 40 bisita»): ez dakigu nor zaren, eta ez ditugu iragarkietarako erabiltzen.':
+    'Only if you accept them, Google Analytics cookies (_ga and _ga_…), to know how many visits the site gets and which pages are seen. We see the data grouped together (for example, “40 visits today”): we don’t know who you are, and we don’t use it for advertising.',
+  'Google Ireland Limited-ek kudeatzen ditu, 2 urte arte irauten dute, eta Google-k Europar Batasunetik kanpo ere trata ditzake datuak.':
+    'They are run by Google Ireland Limited, last up to 2 years, and Google may also process the data outside the European Union.',
+  'Musika atalean Bandcamp-en erreproduzitzailea eta YouTubeko bideo bat daude: erabiltzen badituzu, beren cookieak jar ditzakete, Bandcamp-en eta YouTuberen arauen arabera.':
+    'The Music section has a Bandcamp player and a YouTube video: if you use them, they may set their own cookies, under Bandcamp’s and YouTube’s rules.',
+  'Zure nabigatzailean gordetzen dena': 'What is kept in your browser',
+  'Webguneak zure aukera batzuk ere gogoratzen ditu (hizkuntza, soinua, mapan aurkitutako lekuak eta cookieei buruzko erantzuna). Ez dira cookieak eta ez dira inora bidaltzen: webguneak funtziona dezan dira.':
+    'The site also remembers some of your choices (the language, the sound, the places you have found on the map and your answer about cookies). They are not cookies and are not sent anywhere: they are there for the site to work.',
+  'Zure erabakia aldatzeko': 'To change your mind',
+  'Nahi duzunean alda dezakezu zure erantzuna; ezezkoa ematen baduzu, Google Analytics-en cookieak ezabatu egiten dira.':
+    'You can change your answer whenever you like; if you say no, the Google Analytics cookies are deleted.',
+  'Orain: onartuta.': 'Right now: accepted.',
+  'Orain: ukatuta.': 'Right now: declined.',
+  'Oraindik ez duzu erantzun.': "You haven't answered yet.",
+  'Nor gara': 'Who we are',
+  'Webgune hau Xendra musika taldearena da. Zalantzarik baduzu, idatziguzu:':
+    'This site belongs to the band Xendra. If you have any questions, write to us:',
 };
