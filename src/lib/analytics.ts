@@ -18,7 +18,7 @@ export type AnalyticsSender = (event: AnalyticsEvent) => void;
  * Only on the published site: the dev server never loads it, so testing
  * doesn't count as visits.
  */
-export const GA_MEASUREMENT_ID = 'G-SBZWB372DG';
+export const GA_MEASUREMENT_ID = 'G-4C1FNN2GR2';
 
 export type AnalyticsConsent = 'granted' | 'denied';
 
