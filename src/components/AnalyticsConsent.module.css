@@ -24,10 +24,40 @@
 }
 
 .text {
-  margin: 0;
   font-family: var(--font-ui);
   font-size: 0.8rem;
   line-height: 1.4;
+}
+
+.text p {
+  margin: 0;
+}
+
+/* "What for?": a small underlined aside, opening the line below. */
+.why {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ui-ink-muted);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.why:hover {
+  color: var(--ui-ink);
+}
+
+.why:focus-visible {
+  outline: 2px solid var(--ui-ink);
+  outline-offset: 2px;
+}
+
+.text .detail {
+  margin-top: var(--space-1);
+  color: var(--ui-ink-muted);
+  font-size: 0.75rem;
 }
 
 .actions {

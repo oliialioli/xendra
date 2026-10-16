@@ -361,8 +361,9 @@ export const ca: Record<string, string> = {
 
   // Statistics (Google Analytics), only with consent
   'Cookieak': 'Galetes',
-  'Barraskilo honek cookieak jaten ditu, bisitak zenbatzeko bakarrik. Bat emango diozu?':
-    "Aquest cargol menja galetes, només per comptar visites. Li'n dones una?",
+  'Barraskilo honek cookieak jaten ditu. Bat emango diozu?': "Aquest cargol menja galetes. Li'n dones una?",
+  'Zertarako?': 'Per a què?',
+  'Webgunearen bisitak zenbatzeko, Google Analytics-ekin.': 'Per comptar les visites del web, amb Google Analytics.',
   'Gaur ez': 'Avui no',
   'Bai, tori': 'Sí, té',
   'Cookieen ezarpenak': 'Configuració de galetes',
