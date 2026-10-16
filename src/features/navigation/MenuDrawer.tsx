@@ -4,6 +4,7 @@ import { MENU_ENTRIES } from '../../app/routes';
 import { LANDMARK_INDICATOR_CONFIG } from './landmarkIndicatorConfig';
 import { LanguageSwitch } from './LanguageSwitch';
 import { LocalLink, useT } from '../../i18n/LanguageContext';
+import { reopenAnalyticsConsent } from '../../lib/analytics';
 import styles from './MenuDrawer.module.css';
 
 export function MenuDrawer({ onClose }: { onClose: () => void }) {
@@ -30,6 +31,17 @@ export function MenuDrawer({ onClose }: { onClose: () => void }) {
       </nav>
       <div className={styles.languages}>
         <LanguageSwitch placement="up" />
+        <button
+          type="button"
+          className={styles.settingsLink}
+          onClick={() => {
+            // The menu goes, so the question it brings back can be answered (it'd be outside the menu's focus).
+            onClose();
+            reopenAnalyticsConsent();
+          }}
+        >
+          {t('Cookieen ezarpenak')}
+        </button>
       </div>
     </Panel>
   );

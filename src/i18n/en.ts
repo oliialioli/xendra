@@ -356,4 +356,12 @@ export const en: Record<string, string> = {
   '{song}: hitzak (Xendra)': '{song}: lyrics (Xendra)',
   'Xendraren «{song}» abestiaren hitzak, «{album}» diskokoa.': "The lyrics of Xendra's song “{song}”, from the album “{album}”.",
   'Xendra: barraskiloa eta taldearen logoa': "Xendra: the snail and the band's logo",
+
+  // Statistics (Google Analytics), only with consent
+  'Cookieak': 'Cookies',
+  'Google Analytics erabili nahi genuke webgunea nola erabiltzen den jakiteko (zein orri ikusten diren, zenbat bisita dauden). Cookieak gordetzen ditu zure nabigatzailean. Onartzen duzu?':
+    'We would like to use Google Analytics to learn how the site is used (which pages are seen, how many visits there are). It stores cookies in your browser. Is that OK?',
+  'Ez, eskerrik asko': 'No, thanks',
+  'Onartu': 'Accept',
+  'Cookieen ezarpenak': 'Cookie settings',
 };

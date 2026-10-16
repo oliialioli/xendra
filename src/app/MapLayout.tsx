@@ -13,6 +13,7 @@ import { LiveRegion } from '../components/LiveRegion';
 import { DevWarningBanner } from '../components/DevWarningBanner';
 import { WorldLoading } from '../components/WorldLoading';
 import { Toast } from '../components/Toast';
+import { AnalyticsConsent } from '../components/AnalyticsConsent';
 import { BoatFleet } from '../features/boats/BoatFleet';
 import { BoatCreator } from '../features/boats/BoatCreator';
 import { useBoatFleet } from '../features/boats/useBoatFleet';
@@ -300,6 +301,7 @@ export function MapLayout() {
 
       <LiveRegion message={liveMessage} />
       <Toast message={toastMessage} />
+      <AnalyticsConsent />
 
       {showIntro && (
         <IntroScreen

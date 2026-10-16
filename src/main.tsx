@@ -5,6 +5,7 @@ import { App } from './app/App';
 import { legacyRedirect } from './content/sectionPaths';
 import { DEFAULT_LANG, localizePath, splitLangPath } from './i18n/languages';
 import { rememberedLang } from './i18n/rememberedLang';
+import { startAnalytics } from './lib/analytics';
 
 // Links from before the site had real paths (xendra.eus/#/musica): rewritten
 // to the current address before the router ever reads it.
@@ -24,6 +25,9 @@ const arrived = splitLangPath(window.location.pathname);
 if (chosen && chosen !== DEFAULT_LANG && arrived.lang === DEFAULT_LANG && !/^\/eu(\/|$)/.test(window.location.pathname)) {
   window.history.replaceState(null, '', localizePath(chosen, arrived.path) + window.location.search);
 }
+
+// Counted from the first page if the visitor accepted statistics on an earlier visit.
+startAnalytics();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

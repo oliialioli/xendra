@@ -45,3 +45,32 @@
   padding-top: var(--space-4);
   border-top: 1px solid var(--ui-well);
 }
+
+.languages {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+/* Brings the statistics question back (see AnalyticsConsent). */
+.settingsLink {
+  padding: var(--space-2) 0;
+  border: none;
+  background: none;
+  color: var(--ui-ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.settingsLink:hover {
+  color: var(--ui-ink);
+}
+
+.settingsLink:focus-visible {
+  outline: 2px solid var(--ui-ink);
+  outline-offset: 2px;
+}
