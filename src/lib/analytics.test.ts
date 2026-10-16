@@ -46,7 +46,7 @@ describe('analytics', () => {
     const analytics = await freshAnalytics();
     analytics.setAnalyticsConsent('granted');
     document.cookie = '_ga=GA1.1.123; path=/';
-    document.cookie = '_ga_4C1FNN2GR2=GS1.1.456; path=/';
+    document.cookie = '_ga_SBZWB372DG=GS1.1.456; path=/';
     document.cookie = 'other=1; path=/';
 
     analytics.setAnalyticsConsent('denied');
