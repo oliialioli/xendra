@@ -1,48 +1,74 @@
-/* A small cream card at the bottom of the screen, over everything (the intro included). */
+/* A small note in the bottom-left corner, over everything (the intro included) but out of the way. */
 .root {
   position: fixed;
-  left: 50%;
-  bottom: max(var(--space-4), env(safe-area-inset-bottom));
-  transform: translateX(-50%);
+  left: max(var(--space-3), env(safe-area-inset-left));
+  bottom: max(var(--space-3), env(safe-area-inset-bottom));
   z-index: var(--z-toast);
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: var(--space-4);
-  width: min(calc(100vw - 2 * var(--space-4)), 620px);
-  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  column-gap: var(--space-3);
+  row-gap: var(--space-2);
+  width: min(calc(100vw - 2 * var(--space-3)), 340px);
+  padding: var(--space-3);
   border-radius: var(--ui-radius-lg);
   background: var(--ui-surface);
   color: var(--ui-ink);
   box-shadow: var(--ui-shadow-raised);
+  animation: arrive var(--duration-medium) var(--ease-organic) 1.2s both;
+}
+
+.snail {
+  width: 34px;
+  height: 34px;
 }
 
 .text {
   margin: 0;
   font-family: var(--font-ui);
-  font-size: 0.82rem;
-  line-height: 1.45;
+  font-size: 0.8rem;
+  line-height: 1.4;
 }
 
 .actions {
+  grid-column: 1 / -1;
   display: flex;
-  flex-shrink: 0;
+  justify-content: flex-end;
   gap: var(--space-2);
 }
 
-.actions :global(.xnd-btn-secondary) {
-  min-height: 40px;
-  padding: 0 var(--space-4);
-  white-space: nowrap;
+.answer {
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  border: none;
+  border-radius: 999px;
+  background: var(--ui-well);
+  color: var(--ui-ink);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-organic);
 }
 
-@media (max-width: 560px) {
-  .root {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-3);
-  }
+.answer:hover {
+  background: var(--ui-khaki);
+}
 
-  .actions :global(.xnd-btn-secondary) {
-    flex: 1;
+.answer:focus-visible {
+  outline: 2px solid var(--ui-ink);
+  outline-offset: 2px;
+}
+
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    animation: none;
   }
 }

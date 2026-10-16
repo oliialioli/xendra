@@ -359,9 +359,9 @@ export const en: Record<string, string> = {
 
   // Statistics (Google Analytics), only with consent
   'Cookieak': 'Cookies',
-  'Google Analytics erabili nahi genuke webgunea nola erabiltzen den jakiteko (zein orri ikusten diren, zenbat bisita dauden). Cookieak gordetzen ditu zure nabigatzailean. Onartzen duzu?':
-    'We would like to use Google Analytics to learn how the site is used (which pages are seen, how many visits there are). It stores cookies in your browser. Is that OK?',
+  'Barraskiloak bisitak zenbatu nahi ditu Google Analytics-ekin (cookieak erabiltzen ditu). Utziko diozu?':
+    'Mind if the snail counts visits with Google Analytics? (It uses cookies.)',
   'Ez, eskerrik asko': 'No, thanks',
-  'Onartu': 'Accept',
+  'Bai, tira': 'Sure',
   'Cookieen ezarpenak': 'Cookie settings',
 };

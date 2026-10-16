@@ -359,9 +359,9 @@ export const gl: Record<string, string> = {
 
   // Statistics (Google Analytics), only with consent
   'Cookieak': 'Cookies',
-  'Google Analytics erabili nahi genuke webgunea nola erabiltzen den jakiteko (zein orri ikusten diren, zenbat bisita dauden). Cookieak gordetzen ditu zure nabigatzailean. Onartzen duzu?':
-    'Gustaríanos usar Google Analytics para saber como se usa a web (que páxinas se ven, cantas visitas hai). Garda cookies no teu navegador. Acéptalo?',
+  'Barraskiloak bisitak zenbatu nahi ditu Google Analytics-ekin (cookieak erabiltzen ditu). Utziko diozu?':
+    'O caracol quere contar as visitas con Google Analytics (usa cookies). Déixaslle?',
   'Ez, eskerrik asko': 'Non, grazas',
-  'Onartu': 'Aceptar',
+  'Bai, tira': 'Vale',
   'Cookieen ezarpenak': 'Configuración de cookies',
 };

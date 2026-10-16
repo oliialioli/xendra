@@ -1,13 +1,15 @@
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { analyticsConsent, setAnalyticsConsent, subscribeAnalyticsConsent } from '../lib/analytics';
 import { useT } from '../i18n/LanguageContext';
+import { SnailFigure } from './SnailFigure';
 import styles from './AnalyticsConsent.module.css';
 
 /**
- * The notice asking whether Google Analytics may be used (see lib/analytics):
- * at the bottom of the screen until the visitor answers, both answers equally
- * easy. It doesn't block anything behind it, nor take the focus on arrival;
- * only when asked again (from the menu) does the focus come to it.
+ * The question whether Google Analytics may be used (see lib/analytics), put
+ * by the snail: a small note in the bottom corner until it's answered, both
+ * answers equally easy. It doesn't block anything behind it, nor take the
+ * focus on arrival; only when asked again (from the menu) does the focus come
+ * to it.
  */
 export function AnalyticsConsent() {
   const t = useT();
@@ -22,15 +24,16 @@ export function AnalyticsConsent() {
 
   return (
     <section className={styles.root} aria-label={t('Cookieak')}>
+      <SnailFigure direction="right" className={styles.snail} />
       <p className={styles.text}>
-        {t('Google Analytics erabili nahi genuke webgunea nola erabiltzen den jakiteko (zein orri ikusten diren, zenbat bisita dauden). Cookieak gordetzen ditu zure nabigatzailean. Onartzen duzu?')}
+        {t('Barraskiloak bisitak zenbatu nahi ditu Google Analytics-ekin (cookieak erabiltzen ditu). Utziko diozu?')}
       </p>
       <div className={styles.actions}>
-        <button ref={firstButtonRef} type="button" className="xnd-btn-secondary" onClick={() => setAnalyticsConsent('denied')}>
+        <button ref={firstButtonRef} type="button" className={styles.answer} onClick={() => setAnalyticsConsent('denied')}>
           {t('Ez, eskerrik asko')}
         </button>
-        <button type="button" className="xnd-btn-secondary" onClick={() => setAnalyticsConsent('granted')}>
-          {t('Onartu')}
+        <button type="button" className={styles.answer} onClick={() => setAnalyticsConsent('granted')}>
+          {t('Bai, tira')}
         </button>
       </div>
     </section>
