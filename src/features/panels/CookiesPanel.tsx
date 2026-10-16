@@ -63,7 +63,7 @@ export function CookiesPanel() {
             aria-pressed={consent === 'denied'}
             onClick={() => setAnalyticsConsent('denied')}
           >
-            {t('Letxuga bakarrik')}
+            {t('Ukatu')}
           </button>
           <button
             type="button"
@@ -71,7 +71,7 @@ export function CookiesPanel() {
             aria-pressed={consent === 'granted'}
             onClick={() => setAnalyticsConsent('granted')}
           >
-            {t('Cookieak bai')}
+            {t('Onartu')}
           </button>
         </div>
       </section>

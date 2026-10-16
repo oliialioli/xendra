@@ -360,12 +360,10 @@ export const en: Record<string, string> = {
   // Statistics (Google Analytics), only with consent
   'Cookieak': 'Cookies',
   '🍪 Webgune honek cookieak erabiltzen ditu. Gure barraskiloak nahiago du letxuga.': '🍪 This site uses cookies. Our snail prefers lettuce.',
-  'Letxuga bakarrik': 'Just lettuce',
-  'Cookieak bai': 'Cookies, yes',
+  'Ukatu': 'Decline',
+  'Onartu': 'Accept',
 
   // The cookies page (/cookieak)
-  'Cookie propioak eta hirugarrenenak erabiltzen ditugu zure nabigazio-esperientzia hobetzeko.':
-    'We use our own and third-party cookies to improve your browsing experience.',
   'Informazio gehiago': 'More information',
   'Xendra: cookieak': 'Xendra: cookies',
   'Xendraren webguneak erabiltzen dituen cookieak eta zure nabigatzailean gordetzen dena.':

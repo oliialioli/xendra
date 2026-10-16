@@ -36,13 +36,6 @@
   font-size: 0.82rem;
 }
 
-/* The plain version, smaller, with the way to the cookies page. */
-.text .small {
-  margin-top: var(--space-1);
-  font-size: 0.72rem;
-  color: var(--ui-ink-muted);
-}
-
 /* "More information": the cookies page. */
 .more {
   color: var(--ui-ink-muted);

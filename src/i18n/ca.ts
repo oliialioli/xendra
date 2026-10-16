@@ -363,12 +363,10 @@ export const ca: Record<string, string> = {
   'Cookieak': 'Galetes',
   '🍪 Webgune honek cookieak erabiltzen ditu. Gure barraskiloak nahiago du letxuga.':
     "🍪 Aquest web fa servir galetes. El nostre cargol prefereix l'enciam.",
-  'Letxuga bakarrik': 'Només enciam',
-  'Cookieak bai': 'Galetes, sí',
+  'Ukatu': 'Rebutjar',
+  'Onartu': 'Acceptar',
 
   // The cookies page (/cookieak)
-  'Cookie propioak eta hirugarrenenak erabiltzen ditugu zure nabigazio-esperientzia hobetzeko.':
-    'Fem servir galetes pròpies i de tercers per millorar la teva experiència de navegació.',
   'Informazio gehiago': 'Més informació',
   'Xendra: cookieak': 'Xendra: galetes',
   'Xendraren webguneak erabiltzen dituen cookieak eta zure nabigatzailean gordetzen dena.':

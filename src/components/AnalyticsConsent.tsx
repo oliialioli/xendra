@@ -8,8 +8,8 @@ import styles from './AnalyticsConsent.module.css';
 /**
  * The question whether the statistics cookies (Google Analytics, see
  * lib/analytics) may be used, put by the snail: a small note in the bottom
- * corner until it's answered, both answers equally easy ("just lettuce" is
- * the no). "More information" opens the cookies page, which says what they're
+ * corner until it's answered, both answers equally easy and plainly named.
+ * "More information" opens the cookies page, which says what they're
  * for and whose they are (consent has to be informed) and has the same two
  * answers -- so the note steps aside there. It doesn't block anything behind
  * it, nor take the focus on arrival; only when asked again does the focus
@@ -30,9 +30,8 @@ export function AnalyticsConsent({ hidden = false }: { hidden?: boolean }) {
     <section className={styles.root} aria-label={t('Cookieak')}>
       <SnailFigure direction="right" className={styles.snail} />
       <div className={styles.text}>
-        <p className={styles.joke}>{t('🍪 Webgune honek cookieak erabiltzen ditu. Gure barraskiloak nahiago du letxuga.')}</p>
-        <p className={styles.small}>
-          {t('Cookie propioak eta hirugarrenenak erabiltzen ditugu zure nabigazio-esperientzia hobetzeko.')}{' '}
+        <p className={styles.joke}>
+          {t('🍪 Webgune honek cookieak erabiltzen ditu. Gure barraskiloak nahiago du letxuga.')}{' '}
           <LocalLink to={COOKIES_PATH} className={styles.more}>
             {t('Informazio gehiago')}
           </LocalLink>
@@ -40,10 +39,10 @@ export function AnalyticsConsent({ hidden = false }: { hidden?: boolean }) {
       </div>
       <div className={styles.actions}>
         <button ref={firstButtonRef} type="button" className={styles.answer} onClick={() => setAnalyticsConsent('denied')}>
-          {t('Letxuga bakarrik')}
+          {t('Ukatu')}
         </button>
         <button type="button" className={styles.answer} onClick={() => setAnalyticsConsent('granted')}>
-          {t('Cookieak bai')}
+          {t('Onartu')}
         </button>
       </div>
     </section>

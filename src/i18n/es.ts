@@ -363,12 +363,10 @@ export const es: Record<string, string> = {
   'Cookieak': 'Cookies',
   '🍪 Webgune honek cookieak erabiltzen ditu. Gure barraskiloak nahiago du letxuga.':
     '🍪 Esta web usa cookies. Nuestro caracol prefiere la lechuga.',
-  'Letxuga bakarrik': 'Solo lechuga',
-  'Cookieak bai': 'Cookies, sí',
+  'Ukatu': 'Rechazar',
+  'Onartu': 'Aceptar',
 
   // The cookies page (/cookieak)
-  'Cookie propioak eta hirugarrenenak erabiltzen ditugu zure nabigazio-esperientzia hobetzeko.':
-    'Utilizamos cookies propias y de terceros para mejorar tu experiencia de navegación.',
   'Informazio gehiago': 'Más información',
   'Xendra: cookieak': 'Xendra: cookies',
   'Xendraren webguneak erabiltzen dituen cookieak eta zure nabigatzailean gordetzen dena.':
