@@ -5,8 +5,8 @@ import { SnailFigure } from './SnailFigure';
 import styles from './AnalyticsConsent.module.css';
 
 /**
- * The question whether Google Analytics may be used (see lib/analytics), put
- * by the snail: a small note in the bottom corner until it's answered, both
+ * The question whether the statistics cookies (Google Analytics, see
+ * lib/analytics) may be used, put by the snail: a small note in the bottom corner until it's answered, both
  * answers equally easy. It doesn't block anything behind it, nor take the
  * focus on arrival; only when asked again (from the menu) does the focus come
  * to it.
@@ -26,7 +26,7 @@ export function AnalyticsConsent() {
     <section className={styles.root} aria-label={t('Cookieak')}>
       <SnailFigure direction="right" className={styles.snail} />
       <p className={styles.text}>
-        {t('Barraskiloak bisitak zenbatu nahi ditu Google Analytics-ekin (cookieak erabiltzen ditu). Utziko diozu?')}
+        {t('Barraskiloak cookie batzuk erabili nahi ditu bisitak zenbatzeko. Utziko diozu?')}
       </p>
       <div className={styles.actions}>
         <button ref={firstButtonRef} type="button" className={styles.answer} onClick={() => setAnalyticsConsent('denied')}>

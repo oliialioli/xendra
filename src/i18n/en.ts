@@ -359,8 +359,7 @@ export const en: Record<string, string> = {
 
   // Statistics (Google Analytics), only with consent
   'Cookieak': 'Cookies',
-  'Barraskiloak bisitak zenbatu nahi ditu Google Analytics-ekin (cookieak erabiltzen ditu). Utziko diozu?':
-    'Mind if the snail counts visits with Google Analytics? (It uses cookies.)',
+  'Barraskiloak cookie batzuk erabili nahi ditu bisitak zenbatzeko. Utziko diozu?': 'Mind if the snail uses a few cookies to count visits?',
   'Ez, eskerrik asko': 'No, thanks',
   'Bai, tira': 'Sure',
   'Cookieen ezarpenak': 'Cookie settings',
