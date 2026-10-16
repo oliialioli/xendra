@@ -26,14 +26,14 @@ export function AnalyticsConsent() {
     <section className={styles.root} aria-label={t('Cookieak')}>
       <SnailFigure direction="right" className={styles.snail} />
       <p className={styles.text}>
-        {t('Barraskiloak cookie batzuk erabili nahi ditu bisitak zenbatzeko. Utziko diozu?')}
+        {t('Barraskilo honek cookieak jaten ditu, bisitak zenbatzeko bakarrik. Bat emango diozu?')}
       </p>
       <div className={styles.actions}>
         <button ref={firstButtonRef} type="button" className={styles.answer} onClick={() => setAnalyticsConsent('denied')}>
-          {t('Ez, eskerrik asko')}
+          {t('Gaur ez')}
         </button>
         <button type="button" className={styles.answer} onClick={() => setAnalyticsConsent('granted')}>
-          {t('Bai, tira')}
+          {t('Bai, tori')}
         </button>
       </div>
     </section>
