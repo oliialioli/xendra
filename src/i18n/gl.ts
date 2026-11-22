@@ -43,6 +43,7 @@ export const gl: Record<string, string> = {
 
   // Around the map: the intro, the top bar, the guide, loading
   'Arakatu uhartea': 'Explora a illa',
+  'Uharteko musika taldea · folk, pop eta rock euskaraz': 'Grupo de música de Uharte · folk, pop e rock en éuscaro',
   'Sartu uhartera': 'Entrar na illa',
   'Ikusi menua': 'Ver o menú',
   'Mugitu geziekin edo WASD teklak erabiliz.': 'Móvete coas frechas ou coas teclas WASD.',

@@ -89,6 +89,15 @@ export function IntroScreen({ onEnter, onOpenMenu }: IntroScreenProps) {
         <h1 id="intro-title" className={styles.tagline}>
           {content.band.entrySubtitle}
         </h1>
+        {/* Who this is, in words: the island itself is drawn, so this is most of what the home page says. */}
+        <p className={styles.subline}>
+          {/* Two halves: side by side with a dot between them, or one under the other where there's no room. */}
+          {t('Uharteko musika taldea · folk, pop eta rock euskaraz')
+            .split(' · ')
+            .map((part) => (
+              <span key={part}>{part}</span>
+            ))}
+        </p>
 
         <div className={styles.actions} onAnimationEnd={handleActionsShown}>
           <button ref={enterButtonRef} type="button" className="xnd-btn-primary" onClick={onEnter}>

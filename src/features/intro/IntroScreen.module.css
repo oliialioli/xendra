@@ -96,6 +96,35 @@
   animation: rise 600ms var(--ease-organic) var(--t-tagline) both;
 }
 
+.subline {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  text-wrap: balance;
+  color: rgb(215 198 175 / 82%);
+  animation: rise 600ms var(--ease-organic) calc(var(--t-tagline) + 150ms) both;
+}
+
+.subline span {
+  display: inline-block;
+}
+
+.subline span + span::before {
+  content: '·';
+  margin: 0 0.6em;
+}
+
+@media (max-width: 560px) {
+  .subline span {
+    display: block;
+  }
+
+  .subline span + span::before {
+    content: none;
+  }
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
