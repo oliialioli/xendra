@@ -22,6 +22,12 @@
   animation: modalIn var(--duration-medium) var(--ease-organic);
 }
 
+/* The drawing step fills the card (the canvas takes the room); the message step is shorter: the card fits it, with no empty space below. */
+.modal[data-step='message'] {
+  height: auto;
+  max-height: min(720px, calc(100dvh - var(--space-5) * 2));
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -196,12 +202,14 @@
     padding: var(--space-2) var(--space-4) 0;
   }
 
-  .modal {
+  .modal,
+  .modal[data-step='message'] {
     top: 0;
     left: 0;
     transform: none;
     width: 100vw;
     height: 100dvh;
+    max-height: none;
     border-radius: 0;
     padding-bottom: env(safe-area-inset-bottom);
   }

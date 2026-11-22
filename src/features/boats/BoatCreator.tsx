@@ -161,6 +161,7 @@ export function BoatCreator({ onClose, onBoatCreated }: BoatCreatorProps) {
       <div
         ref={containerRef}
         className={styles.modal}
+        data-step={step}
         role="dialog"
         aria-modal="true"
         aria-labelledby="boat-creator-title"
