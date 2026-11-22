@@ -270,7 +270,7 @@ export const es: Record<string, string> = {
   'Mezuak ezin ditu {max} karaktere baino gehiago izan.': 'El mensaje no puede tener más de {max} caracteres.',
   'Izenak ezin ditu {max} karaktere baino gehiago izan.': 'El nombre no puede tener más de {max} caracteres.',
   'Zer eramango du zure ontziak?': '¿Qué llevará tu barco?',
-  'Idatzi Xendrari esan nahi diozuna eta utzi ibaiari eramaten.': 'Escribe lo que quieras decirle a Xendra y deja que el río se lo lleve.',
+  'Idatzi Xendrari esan nahi diozuna eta bota ibaira.': 'Escribe lo que quieras decirle a Xendra y échalo al río.',
   'Aldatu marrazkia': 'Cambiar el dibujo',
   'Izena (aukerakoa)': 'Nombre (opcional)',
   'Bidaltzen...': 'Enviando...',

@@ -268,7 +268,7 @@ export const gl: Record<string, string> = {
   'Mezuak ezin ditu {max} karaktere baino gehiago izan.': 'A mensaxe non pode ter máis de {max} caracteres.',
   'Izenak ezin ditu {max} karaktere baino gehiago izan.': 'O nome non pode ter máis de {max} caracteres.',
   'Zer eramango du zure ontziak?': 'Que levará o teu barco?',
-  'Idatzi Xendrari esan nahi diozuna eta utzi ibaiari eramaten.': 'Escribe o que lle queiras dicir a Xendra e deixa que o río o leve.',
+  'Idatzi Xendrari esan nahi diozuna eta bota ibaira.': 'Escribe o que lle queiras dicir a Xendra e bótao ao río.',
   'Aldatu marrazkia': 'Cambiar o debuxo',
   'Izena (aukerakoa)': 'Nome (opcional)',
   'Bidaltzen...': 'Enviando...',

@@ -68,7 +68,7 @@ export function MessageStep({
         <BoatPreview drawing={drawing} size="large" />
         <div>
           <h3 className={styles.title}>{t('Zer eramango du zure ontziak?')}</h3>
-          <p className={styles.intro}>{t('Idatzi Xendrari esan nahi diozuna eta utzi ibaiari eramaten.')}</p>
+          <p className={styles.intro}>{t('Idatzi Xendrari esan nahi diozuna eta bota ibaira.')}</p>
           <button type="button" className={styles.editDrawing} onClick={onEditDrawing}>
             <PencilSimple size={16} aria-hidden="true" />
             {t('Aldatu marrazkia')}

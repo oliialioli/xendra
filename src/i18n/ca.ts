@@ -270,7 +270,7 @@ export const ca: Record<string, string> = {
   'Mezuak ezin ditu {max} karaktere baino gehiago izan.': 'El missatge no pot tenir més de {max} caràcters.',
   'Izenak ezin ditu {max} karaktere baino gehiago izan.': 'El nom no pot tenir més de {max} caràcters.',
   'Zer eramango du zure ontziak?': 'Què portarà el teu vaixell?',
-  'Idatzi Xendrari esan nahi diozuna eta utzi ibaiari eramaten.': "Escriu el que vulguis dir a Xendra i deixa que el riu se l'emporti.",
+  'Idatzi Xendrari esan nahi diozuna eta bota ibaira.': 'Escriu el que vulguis dir a Xendra i llança-ho al riu.',
   'Aldatu marrazkia': 'Canviar el dibuix',
   'Izena (aukerakoa)': 'Nom (opcional)',
   'Bidaltzen...': 'Enviant...',
